@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#121212">
 <meta name="color-scheme" content="dark">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.github.io https://cdnjs.cloudflare.com; worker-src 'self' blob: https://cdnjs.cloudflare.com; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.github.io; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -28,7 +28,7 @@
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--font);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;
- overflow-x:clip;padding-bottom:calc(150px + env(safe-area-inset-bottom))}
+ overflow-x:clip;padding-bottom:calc(150px + var(--sab,env(safe-area-inset-bottom,0px)))}
 svg{display:block}
 h1,h2,h3{letter-spacing:-.02em}
 /* hero */
@@ -157,7 +157,7 @@ input[type=checkbox]{width:24px;height:24px;min-height:0;accent-color:var(--gree
 .erow small{display:block;color:var(--sub);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .erow button{width:40px;min-height:40px;padding:0;background:none;color:var(--sub);font-size:22px}
 /* mini player */
-.mini{position:fixed;z-index:9;left:8px;right:8px;bottom:calc(66px + env(safe-area-inset-bottom));max-width:624px;margin:auto;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;
+.mini{position:fixed;z-index:9;left:8px;right:8px;bottom:calc(66px + var(--sab,env(safe-area-inset-bottom,0px)));max-width:624px;margin:auto;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;
  padding:8px 8px 10px;border-radius:8px;background:#1f3b2a;box-shadow:0 10px 30px rgba(0,0,0,.6);overflow:hidden;cursor:pointer}
 .mini img{width:44px;height:44px;border-radius:4px;object-fit:cover}
 .mini b{display:block;font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -167,12 +167,12 @@ input[type=checkbox]{width:24px;height:24px;min-height:0;accent-color:var(--gree
 .mini button{width:40px;height:40px;min-height:40px;padding:0;background:none;color:#fff;display:grid;place-items:center}
 .mini button svg{width:26px;height:26px}
 /* nav */
-nav{position:fixed;z-index:10;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+nav{position:fixed;z-index:10;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(5,1fr);padding:6px 4px calc(6px + var(--sab,env(safe-area-inset-bottom,0px)));
  background:linear-gradient(180deg,rgba(0,0,0,.6),#000 40%)}
 nav button{background:none;color:var(--sub);border-radius:8px;min-height:52px;padding:0;font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}
 nav button svg{width:24px;height:24px}
 nav button.on{color:#fff}
-#toast{position:fixed;z-index:20;left:50%;bottom:calc(140px + env(safe-area-inset-bottom));width:max-content;max-width:calc(100% - 48px);translate:-50% 0;background:#fff;color:#000;padding:9px 16px;border-radius:99px;font-weight:800;font-size:14px;text-align:center;
+#toast{position:fixed;z-index:20;left:50%;bottom:calc(140px + var(--sab,env(safe-area-inset-bottom,0px)));width:max-content;max-width:calc(100% - 48px);translate:-50% 0;background:#fff;color:#000;padding:9px 16px;border-radius:99px;font-weight:800;font-size:14px;text-align:center;
  opacity:0;transform:translateY(10px);transition:.25s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.6)}
 #toast.on{opacity:1;transform:none}
 dialog{border:0;border-radius:12px;padding:22px;width:min(400px,calc(100% - 32px));background:#282828;color:#fff;box-shadow:0 30px 60px rgba(0,0,0,.7)}
@@ -1017,21 +1017,41 @@ function parseResume(text){
   return {skills:skillsIn(t),years,level:lvl,role:roleM?roleM[0].trim().replace(/\s+/g,' '):'QA Automation Engineer',updated:Date.now()};
 }
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('load'));document.head.appendChild(s)})}
+/* Word (.docx) text without any outside library: a .docx file is a zip; read word/document.xml with the browser's own unzip. */
+async function docxText(buf){
+  const u8=new Uint8Array(buf),dv=new DataView(buf);let e=-1;
+  for(let i=u8.length-22;i>=Math.max(0,u8.length-65558);i--){if(dv.getUint32(i,true)===0x06054b50){e=i;break}}
+  if(e<0)throw new Error('read');
+  let n=dv.getUint16(e+10,true),p=dv.getUint32(e+16,true);
+  while(n-->0&&p+46<=u8.length&&dv.getUint32(p,true)===0x02014b50){
+    const method=dv.getUint16(p+10,true),csize=dv.getUint32(p+20,true),usize=dv.getUint32(p+24,true),nl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),off=dv.getUint32(p+42,true);
+    const name=new TextDecoder().decode(u8.subarray(p+46,p+46+nl));p+=46+nl+xl+cl;
+    if(name!=='word/document.xml')continue;
+    if(usize>20*1024*1024||off+30>u8.length)throw new Error('read');          // refuse zip bombs
+    const start=off+30+dv.getUint16(off+26,true)+dv.getUint16(off+28,true),data=u8.subarray(start,start+csize);
+    let xml;
+    if(method===0)xml=new TextDecoder().decode(data);
+    else if(method===8&&'DecompressionStream' in window){const out=await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();if(out.byteLength>20*1024*1024)throw new Error('read');xml=new TextDecoder().decode(out)}
+    else throw new Error('read');
+    return xml.replace(/<\/w:p>/g,'\n').replace(/<w:(tab|br)\/>/g,' ').replace(/<[^>]+>/g,'').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&apos;/g,"'").replace(/&amp;/g,'&');
+  }
+  throw new Error('read');
+}
 async function readResume(file){
-  const name=file.name.toLowerCase();
   if(file.size>8*1024*1024)throw new Error('big');
-  if(name.endsWith('.txt'))return await file.text();
-  if(name.endsWith('.pdf')){
-    if(!window.pdfjsLib)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
-    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    const pdf=await pdfjsLib.getDocument({data:await file.arrayBuffer(),isEvalSupported:false,disableFontFace:true}).promise;  // isEvalSupported:false blocks CVE-2024-4367let out='';
+  const buf=await file.arrayBuffer(),head=new Uint8Array(buf.slice(0,5)),sig=String.fromCharCode(...head);
+  const name=(file.name||'').toLowerCase(),type=file.type||'';
+  // Detect by the file's real content, so it works even when the phone gives the file no extension
+  if(sig.startsWith('%PDF')||type==='application/pdf'||name.endsWith('.pdf')){
+    if(!window.pdfjsLib)await loadScript('lib/pdf.js');
+    pdfjsLib.GlobalWorkerOptions.workerSrc='lib/pdf.worker.js';
+    const pdf=await pdfjsLib.getDocument({data:buf,isEvalSupported:false,disableFontFace:true}).promise;let out='';  // isEvalSupported:false blocks CVE-2024-4367
     for(let i=1;i<=Math.min(pdf.numPages,8);i++){const c=await (await pdf.getPage(i)).getTextContent();out+=c.items.map(x=>x.str).join(' ')+'\n'}
+    if(out.trim().length<80)throw new Error('scan');
     return out;
   }
-  if(name.endsWith('.docx')){
-    if(!window.mammoth)await loadScript('https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.13.0/mammoth.browser.min.js');
-    return (await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()})).value;
-  }
+  if(sig.startsWith('PK')||name.endsWith('.docx'))return await docxText(buf);
+  if(type.startsWith('text/')||name.endsWith('.txt')||!/[\x00-\x08]/.test(new TextDecoder().decode(buf.slice(0,2000))))return new TextDecoder().decode(buf);
   throw new Error('type');
 }
 function scoreJob(j,p){
@@ -1066,9 +1086,9 @@ function boards(role){
 }
 function renderJobs(){
   const st=J(),p=st.profile;
-  $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills found</span></div><label class="btn ghost sm">Update resume<input type="file" accept=".pdf,.docx,.txt" hidden data-resume></label></div>
+  $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills found</span></div><label class="btn ghost sm">Update resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>
     <div class="chips">${(skOpen?p.skills:p.skills.slice(0,6)).map(s=>`<button class="chip-s" data-rm="${esc(s)}" aria-label="Remove ${esc(s)}">${esc(s)} ×</button>`).join('')}${p.skills.length>6?`<button class="chip-s add" id="skMore">${skOpen?'Show less':'+'+(p.skills.length-6)+' more'}</button>`:''}<button class="chip-s add" id="addSkill">+ Add skill</button></div>`
-   :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Grade then scores every new QA job against your skills and experience.</p><label class="btn">Choose resume<input type="file" accept=".pdf,.docx,.txt" hidden data-resume></label></div>`;
+   :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Grade then scores every new QA job against your skills and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>`;
   $('jobLocs').innerHTML=[['uae','UAE'],['remote','Remote'],['india','India']].map(([k,l])=>`<button class="seg ${st.locs[k]?'on':''}" data-loc="${k}">${l}</button>`).join('');
   $('jobBoards').innerHTML=boards(p?p.role:'QA Engineer').map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · UAE</small></a>`).join('');
   const tabs={for:'For you',saved:'Saved',applied:'Applied'};
@@ -1105,7 +1125,7 @@ $('v-jobs').addEventListener('change',async e=>{
   toast('Reading your resume…');
   try{const text=await readResume(f);if(text.trim().length<80)throw new Error('empty');
     const p=parseResume(text);J().profile=p;save();renderJobs();toast(`Found ${p.skills.length} skills · matching jobs`)}
-  catch(err){toast(err.message==='type'?'Please choose a PDF, .docx or .txt file':err.message==='big'?'That file is larger than 8 MB':err.message==='load'?'Connect to the internet to read PDF or Word files':'Could not read that resume. Try another format.')}
+  catch(err){toast(err.message==='type'?'Please choose a PDF, Word (.docx) or text file':err.message==='big'?'That file is larger than 8 MB':err.message==='scan'?'This PDF looks like a scanned image. Please use a text PDF or Word file.':err.message==='load'?'Could not load the PDF reader. Please try again.':'Could not read that resume. Try saving it as PDF or .docx.')}
 });
 $('v-jobs').addEventListener('click',async e=>{
   if(e.target.closest('#skMore')){skOpen=!skOpen;renderJobs();return}

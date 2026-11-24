@@ -48,6 +48,7 @@ public class MainActivity extends Activity {
     private ValueCallback<Uri[]> fileCallback;
     private String pendingOpen;
     private boolean pageReady;
+    private int bottomInsetCss = 0;   // navigation bar height in CSS px, handed to the page
     private volatile String currentUrl = "";   // checked by the bridge so only Grade's own pages can use it
 
     @SuppressLint({"SetJavaScriptEnabled", "AddJavascriptInterface"})
@@ -56,7 +57,14 @@ public class MainActivity extends Activity {
         super.onCreate(state);
         Notifs.channels(this);
         getWindow().setStatusBarColor(Color.BLACK);
-        getWindow().setNavigationBarColor(Color.BLACK);
+        if (Build.VERSION.SDK_INT >= 30) {
+            // Same layout on every Android version: the app draws to the screen edges and handles the bars itself.
+            getWindow().setDecorFitsSystemWindows(false);
+            getWindow().setNavigationBarColor(Color.TRANSPARENT);
+            getWindow().setNavigationBarContrastEnforced(false);
+        } else {
+            getWindow().setNavigationBarColor(Color.BLACK);
+        }
 
         web = new WebView(this);
         web.setBackgroundColor(Color.parseColor("#121212"));
@@ -67,8 +75,14 @@ public class MainActivity extends Activity {
         // Android 15 draws apps edge to edge: keep content clear of the status and navigation bars.
         root.setOnApplyWindowInsetsListener((View v, WindowInsets wi) -> {
             if (Build.VERSION.SDK_INT >= 30) {
-                Insets in = wi.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.ime());
-                v.setPadding(in.left, in.top, in.right, in.bottom);
+                Insets bars = wi.getInsets(WindowInsets.Type.systemBars());
+                Insets ime = wi.getInsets(WindowInsets.Type.ime());
+                // Top: keep clear of the status bar. Bottom: no gap; the page's tab bar pads itself
+                // by the navigation bar height so it reaches the screen edge. Keyboard: lift content.
+                v.setPadding(bars.left, bars.top, bars.right, ime.bottom);
+                float density = getResources().getDisplayMetrics().density;
+                bottomInsetCss = ime.bottom > 0 ? 0 : Math.round(bars.bottom / density);
+                pushInsets();
             }
             return wi;
         });
@@ -128,6 +142,7 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView view, String url) {
                 currentUrl = url == null ? "" : url;
                 pageReady = true;
+                pushInsets();
                 if (!url.startsWith("file:") || BuildConfig.SITE_URL.isEmpty()) return;
                 view.evaluateJavascript("window.GRADE_NEWS_URL=" + JSONObject.quote(BuildConfig.SITE_URL + "news.json")
                         + ";window.GRADE_JOBS_URL=" + JSONObject.quote(BuildConfig.SITE_URL + "jobs.json")
@@ -139,8 +154,21 @@ public class MainActivity extends Activity {
             public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> cb, FileChooserParams params) {
                 if (fileCallback != null) fileCallback.onReceiveValue(null);
                 fileCallback = cb;
+                // Build the picker from real file types (application/pdf, ...) so PDFs and Word files are selectable.
+                List<String> types = new ArrayList<>();
+                for (String t : params.getAcceptTypes()) {
+                    if (t != null && t.contains("/")) types.add(t.trim());
+                }
+                Intent pick = new Intent(Intent.ACTION_GET_CONTENT);
+                pick.addCategory(Intent.CATEGORY_OPENABLE);
+                if (types.size() == 1) {
+                    pick.setType(types.get(0));
+                } else {
+                    pick.setType("*/*");
+                    if (!types.isEmpty()) pick.putExtra(Intent.EXTRA_MIME_TYPES, types.toArray(new String[0]));
+                }
                 try {
-                    startActivityForResult(params.createIntent(), REQ_FILE);
+                    startActivityForResult(pick, REQ_FILE);
                 } catch (ActivityNotFoundException e) {
                     fileCallback = null;
                     return false;
@@ -155,6 +183,12 @@ public class MainActivity extends Activity {
 
         if (permissionsOk()) startBackground();
         ReminderReceiver.schedule(this);
+    }
+
+    private void pushInsets() {
+        if (web != null) {
+            web.evaluateJavascript("document.documentElement.style.setProperty('--sab','" + bottomInsetCss + "px')", null);
+        }
     }
 
     private boolean isOwn(String url) {
