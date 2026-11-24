@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write   # to save each day's data to the 'data' branch
   pages: write
   id-token: write
 
@@ -28,10 +28,22 @@ jobs:
         continue-on-error: true
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional: adds crisp AI summaries
-        run: python scripts/fetch_news.py
+        run: python scripts/fetch_news.py 2>&1 | tee -a fetch-log.txt
       - name: Fetch QA job openings
         continue-on-error: true
-        run: python scripts/fetch_jobs.py
+        run: python scripts/fetch_jobs.py 2>&1 | tee -a fetch-log.txt
+      - name: Save today's data to the 'data' branch (for checking what was collected)
+        continue-on-error: true
+        env:
+          TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/data"
+          cp web/news.json web/jobs.json fetch-log.txt "$RUNNER_TEMP/data/" 2>/dev/null || true
+          cd "$RUNNER_TEMP/data"
+          git init -q -b data
+          git add -A
+          git -c user.name="grade-bot" -c user.email="grade-bot@users.noreply.github.com" commit -q -m "Data $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git" data
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
