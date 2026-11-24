@@ -1,0 +1,42 @@
+plugins { id 'com.android.application' }
+
+// The online address of the web app (GitHub Pages). Passed in by the build workflow.
+def siteUrl = (project.findProperty('siteUrl') ?: '').toString()
+
+android {
+    namespace 'com.aswin.grade'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.aswin.grade'
+        minSdk 26
+        targetSdk 35
+        versionCode ((project.findProperty('versionCode') ?: '1').toString().toInteger())
+        versionName '1.0'
+        buildConfigField 'String', 'SITE_URL', "\"${siteUrl}\""
+    }
+    buildFeatures { buildConfig true }
+    // Same key on every build, so each new APK installs over the previous one and keeps your data.
+    // For a Play Store release, create your own private upload key instead of this one.
+    signingConfigs {
+        grade {
+            // A private key from the GRADE_KEYSTORE_B64 secret is used when present (see README).
+            def pass = (project.findProperty('storePass') ?: 'gradepass').toString()
+            storeFile file((project.findProperty('storeFile') ?: '../keystore/grade.jks').toString())
+            storePassword pass
+            keyAlias 'grade'
+            keyPassword pass
+        }
+    }
+    buildTypes {
+        debug { signingConfig signingConfigs.grade }
+        release { minifyEnabled false; signingConfig signingConfigs.grade }
+    }
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
