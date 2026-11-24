@@ -32,23 +32,33 @@ def gnews(query, region="AE"):
     return f"https://news.google.com/rss/search?q={q}&hl={lang}&gl={region}&ceid={region}:en"
 
 
+def gtopic(topic, region):
+    lang = {"AE": "en-AE", "IN": "en-IN", "US": "en-US"}[region]
+    return f"https://news.google.com/rss/headlines/section/topic/{topic}?hl={lang}&gl={region}&ceid={region}:en"
+
+
+# Relevance filter for the QA section: "Playwright" is also a theatre word, so require software context.
+QA_YES = re.compile(r"software|testing|tester|\bqa\b|quality (assurance|engineering)|test automation|automated test|sdet|"
+                    r"\bbugs?\b|outage|devops|ci/cd|selenium|cypress|appium|jmeter|unit test|regression|test(ing)? tool|"
+                    r"code review|vulnerab|release|deployment|observability", re.I)
+QA_NO = re.compile(r"actress|actor|theat(re|er)|broadway|stage play|playwright(s)? (award|father|dad|mother)|novel|film|movie|"
+                   r"maga|poet|drama|musical|oscar|celebrity|covid test|drug test|blood test|exam|students?\b", re.I)
+
+# (id, title, how many, per-site limit, feeds, keep feed order (top stories) or sort by time, filter)
 SECTIONS = [
-    ("qa", "QA & Testing", 6, [
-        gnews('"software testing" OR "test automation" OR "quality engineering" when:3d', "US"),
-        gnews('Playwright OR Selenium OR Cypress OR "AI testing" OR "testing tools" when:7d', "US"),
-    ]),
-    ("tech", "Tech & AI", 5, [
-        gnews('artificial intelligence OR cybersecurity OR "cloud computing" OR software when:1d', "US"),
-    ]),
-    ("uae", "UAE", 5, [
-        gnews('UAE government OR law OR visa OR economy OR announces OR Dubai OR "Abu Dhabi" when:1d', "AE"),
-    ]),
-    ("india", "India", 5, [
-        gnews('India government OR economy OR RBI OR "Supreme Court" OR policy OR budget when:1d', "IN"),
-    ]),
-    ("uaeindia", "UAE–India", 3, [
-        gnews('India UAE visa OR remittance OR rupee OR dirham OR flights OR expats when:3d', "AE"),
-    ]),
+    ("qa", "QA & Testing", 6, 2, [
+        gnews('"software testing" OR "test automation" OR "QA automation" OR "software quality" OR "quality engineering" when:3d', "US"),
+        gnews('(Playwright OR Selenium OR Cypress OR Appium) (testing OR "test automation" OR Microsoft OR framework) when:7d', "US"),
+        gnews('software outage OR "testing failure" OR "software bug" root cause when:2d', "US"),
+    ], False, "qa"),
+    ("tech", "Tech & AI", 5, 1, [gtopic("TECHNOLOGY", "US")], True, None),
+    ("uae", "UAE", 5, 1, [gtopic("NATION", "AE"),
+                          gnews('UAE government OR law OR visa OR economy OR announces when:1d', "AE")], True, None),
+    ("india", "India", 5, 1, [gtopic("NATION", "IN"),
+                              gnews('India government OR economy OR RBI OR "Supreme Court" OR policy when:1d', "IN")], True, None),
+    ("uaeindia", "UAE–India", 3, 1, [
+        gnews('India UAE (visa OR remittance OR rupee OR dirham OR flights OR expats OR trade) when:3d', "AE"),
+    ], False, None),
 ]
 
 TAG = re.compile(r"<[^>]+>")
@@ -100,6 +110,16 @@ def norm(t):
     return re.sub(r"[^a-z0-9 ]", "", t.lower())[:70]
 
 
+def words(t):
+    return {w for w in re.findall(r"[a-z0-9]{3,}", t.lower())} - {"the", "and", "for", "with", "after", "from", "says", "new"}
+
+
+def similar(a, b):
+    """Same story from two outlets? Compare the headline words."""
+    wa, wb = words(a), words(b)
+    return bool(wa and wb) and len(wa & wb) / min(len(wa), len(wb)) >= 0.6
+
+
 def ai_summaries(sections):
     key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
     if not key:
@@ -142,23 +162,34 @@ def ai_summaries(sections):
 def main():
     now = dt.datetime.now(dt.timezone.utc)
     cutoff = now - dt.timedelta(hours=36)
-    seen, out = set(), []
-    for sid, title, limit, feeds in SECTIONS:
+    seen, titles, out = set(), [], []
+    for sid, title, limit, per_site, feeds, keep_order, filt in SECTIONS:
         pool = []
         for url in feeds:
             try:
-                pool += parse(fetch(url), now)
+                got = parse(fetch(url), now)
+                print(f"[{sid}] feed returned {len(got)}")
+                pool += got
             except Exception as e:
                 print(f"[{sid}] feed failed: {e}", file=sys.stderr)
-        fresh_window = cutoff if sid not in ("qa", "uaeindia") else now - dt.timedelta(days=7)
-        pool = [p for p in pool if dt.datetime.fromisoformat(p["ts"]) >= fresh_window and p["t"]]
-        pool.sort(key=lambda p: p["ts"], reverse=True)
-        picked = []
+        window = now - dt.timedelta(days=7) if sid in ("qa", "uaeindia") else cutoff
+        pool = [p for p in pool if dt.datetime.fromisoformat(p["ts"]) >= window and p["t"]]
+        if filt == "qa":
+            before = len(pool)
+            pool = [p for p in pool if QA_YES.search(p["t"]) and not QA_NO.search(p["t"] + " " + p["src"])]
+            print(f"[qa] relevance filter kept {len(pool)} of {before}")
+        if not keep_order:
+            pool.sort(key=lambda p: p["ts"], reverse=True)
+        picked, per = [], {}
         for p in pool:
             k = norm(p["t"])
-            if k in seen:
+            if k in seen or any(similar(p["t"], t) for t in titles):
+                continue
+            if per.get(p["src"], 0) >= per_site:
                 continue
             seen.add(k)
+            titles.append(p["t"])
+            per[p["src"]] = per.get(p["src"], 0) + 1
             picked.append(p)
             if len(picked) >= limit:
                 break

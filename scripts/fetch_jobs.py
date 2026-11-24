@@ -18,6 +18,10 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "web", "jobs.json")
 UA = "Mozilla/5.0 (GradeJobs/1.0; personal job alerts)"
 QA = re.compile(r"\b(qa|q\.a\.|quality (assurance|engineer)|test(ing|er)?\b|sdet|automation engineer|test automation|quality engineering)", re.I)
 TAG = re.compile(r"<[^>]+>")
+# "QA" jobs that are not software testing (language, audio, content, manufacturing...)
+NOT_SOFTWARE = re.compile(r"linguist|transcription|audio|video|translat|language|content (review|moderat)|annotat|"
+                          r"rater|search quality|food|pharma|manufactur|clinical|medical device|construction|welding|"
+                          r"mechanical|automotive quality|supplier quality|call quality|customer", re.I)
 
 
 def clean(s, n=2500):
@@ -44,7 +48,18 @@ def iso(v):
 
 
 def remotive():
-    for j in get("https://remotive.com/api/remote-jobs?category=qa&limit=100").get("jobs", []):
+    seen = set()
+    raw = []
+    for q in ("category=qa", "search=qa", "search=test%20automation", "search=sdet"):
+        try:
+            raw += get(f"https://remotive.com/api/remote-jobs?{q}&limit=100").get("jobs", [])
+        except Exception as e:
+            print(f"remotive {q} failed: {e}", file=sys.stderr)
+    print(f"remotive raw: {len(raw)}")
+    for j in raw:
+        if j.get("id") in seen:
+            continue
+        seen.add(j.get("id"))
         yield dict(id="rm" + str(j.get("id")), title=j.get("title"), company=j.get("company_name"), logo=j.get("company_logo"),
                    loc=j.get("candidate_required_location") or "Remote", remote=True, salary=j.get("salary") or "",
                    type=(j.get("job_type") or "").replace("_", " "), tags=j.get("tags") or [], desc=clean(j.get("description")),
@@ -52,7 +67,17 @@ def remotive():
 
 
 def jobicy():
-    for j in get("https://jobicy.com/api/v2/remote-jobs?count=50&tag=qa").get("jobs", []):
+    raw, ids = [], set()
+    for tag in ("qa", "testing", "automation", "sdet", "quality"):
+        try:
+            for j in get(f"https://jobicy.com/api/v2/remote-jobs?count=50&tag={tag}").get("jobs", []):
+                if j.get("id") not in ids:
+                    ids.add(j.get("id"))
+                    raw.append(j)
+        except Exception as e:
+            print(f"jobicy {tag} failed: {e}", file=sys.stderr)
+    print(f"jobicy raw: {len(raw)}")
+    for j in raw:
         sal = ""
         if j.get("annualSalaryMin"):
             sal = f"{j.get('salaryCurrency', '')} {j['annualSalaryMin']:,}–{j.get('annualSalaryMax', j['annualSalaryMin']):,} / year".strip()
@@ -63,7 +88,15 @@ def jobicy():
 
 
 def arbeitnow():
-    for j in get("https://www.arbeitnow.com/api/job-board-api").get("data", []):
+    raw = []
+    for page in (1, 2, 3, 4, 5):
+        try:
+            raw += get(f"https://www.arbeitnow.com/api/job-board-api?page={page}").get("data", [])
+        except Exception as e:
+            print(f"arbeitnow page {page} failed: {e}", file=sys.stderr)
+            break
+    print(f"arbeitnow raw: {len(raw)}")
+    for j in raw:
         if not QA.search(j.get("title", "")):
             continue
         yield dict(id="an" + str(j.get("slug")), title=j.get("title"), company=j.get("company_name"), logo="",
@@ -72,20 +105,52 @@ def arbeitnow():
 
 
 def remoteok():
-    data = get("https://remoteok.com/api?tag=qa")
-    for j in data[1:] if isinstance(data, list) else []:
+    data = get("https://remoteok.com/api")          # full recent feed; filtered for QA below
+    data = [d for d in data if isinstance(d, dict) and d.get("position")] if isinstance(data, list) else []
+    print(f"remoteok raw: {len(data)}")
+    for j in data:
         sal = f"USD {j['salary_min']:,}–{j['salary_max']:,} / year" if j.get("salary_min") else ""
         yield dict(id="ro" + str(j.get("id")), title=j.get("position"), company=j.get("company"), logo=j.get("company_logo") or j.get("logo") or "",
                    loc=j.get("location") or "Remote", remote=True, salary=sal, type="", tags=j.get("tags") or [],
                    desc=clean(j.get("description")), url=j.get("apply_url") or j.get("url"), posted=iso(j.get("date")), source="Remote OK")
 
 
+def workingnomads():
+    data = get("https://www.workingnomads.com/api/exposed_jobs/")
+    data = data if isinstance(data, list) else []
+    print(f"workingnomads raw: {len(data)}")
+    for j in data:
+        yield dict(id="wn" + re.sub(r"\W", "", str(j.get("url", "")))[-40:], title=clean(j.get("title"), 160), company=j.get("company_name"), logo="",
+                   loc=j.get("location") or "Remote", remote=True, salary="", type="", tags=(j.get("tags") or "").split(",") if isinstance(j.get("tags"), str) else [],
+                   desc=clean(j.get("description")), url=j.get("url"), posted=iso(j.get("pub_date")), source="Working Nomads")
+
+
+def weworkremotely():
+    import xml.etree.ElementTree as ET
+    req = urllib.request.Request("https://weworkremotely.com/remote-jobs.rss", headers={"User-Agent": UA})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        data = r.read(10_000_001)
+    items = list(ET.fromstring(data).iter("item"))
+    print(f"weworkremotely raw: {len(items)}")
+    import email.utils
+    for it in items:
+        t = clean(it.findtext("title"), 200)
+        company, _, title = t.partition(": ")
+        try:
+            posted = email.utils.parsedate_to_datetime(it.findtext("pubDate")).isoformat()
+        except Exception:
+            posted = iso(None)
+        yield dict(id="wwr" + re.sub(r"\W", "", it.findtext("link") or "")[-40:], title=title or t, company=company if title else "",
+                   logo="", loc=clean(it.findtext("region") or "Remote", 80), remote=True, salary="", type="", tags=[],
+                   desc=clean(it.findtext("description")), url=(it.findtext("link") or "").strip(), posted=posted, source="We Work Remotely")
+
+
 def main():
     now = dt.datetime.now(dt.timezone.utc)
-    cutoff = now - dt.timedelta(days=21)
+    cutoff = now - dt.timedelta(days=30)
     jobs, seen = [], set()
-    for src in (remotive, jobicy, arbeitnow, remoteok):
-        n = 0
+    for src in (remotive, jobicy, arbeitnow, remoteok, workingnomads, weworkremotely):
+        n, dropped = 0, {"not QA": 0, "not software": 0, "too old": 0, "duplicate": 0}
         try:
             for j in src():
                 if not j.get("title") or not re.match(r"^https?://\S+$", str(j.get("url") or "")):
@@ -97,12 +162,18 @@ def main():
                 j["type"] = clean(str(j.get("type") or ""), 40)
                 j["url"] = str(j["url"])[:1000]
                 j["logo"] = ""   # remote logos are not loaded (privacy, CSP)
-                if not QA.search(j["title"] + " " + " ".join(map(str, j.get("tags", [])))):
+                if not QA.search(j["title"]):
+                    dropped["not QA"] += 1
+                    continue
+                if NOT_SOFTWARE.search(j["title"]):
+                    dropped["not software"] += 1
                     continue
                 if dt.datetime.fromisoformat(j["posted"]) < cutoff:
+                    dropped["too old"] += 1
                     continue
                 key = re.sub(r"\W", "", (j["title"] + (j["company"] or "")).lower())
                 if key in seen:
+                    dropped["duplicate"] += 1
                     continue
                 seen.add(key)
                 j["tags"] = [str(t) for t in j.get("tags", []) if t][:12]
@@ -110,7 +181,7 @@ def main():
                 n += 1
         except Exception as e:
             print(f"{src.__name__} failed: {e}", file=sys.stderr)
-        print(f"{src.__name__}: {n} QA jobs")
+        print(f"{src.__name__}: kept {n} | dropped {dropped}")
     jobs.sort(key=lambda j: j["posted"], reverse=True)
     jobs = jobs[:150]
     if not jobs:
