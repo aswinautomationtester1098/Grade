@@ -40,8 +40,7 @@ jobs:
       - name: Build
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          REPO="${{ github.event.repository.name }}"
-          if [ "$REPO" = "$OWNER.github.io" ]; then SITE="https://$OWNER.github.io/"; else SITE="https://$OWNER.github.io/$REPO/"; fi
+          SITE="https://$OWNER.github.io/grade-app/"   # public app-only site; source code stays private
           gradle -p android assembleRelease -PsiteUrl="$SITE" -PversionCode=${{ github.run_number }}
           cp android/app/build/outputs/apk/release/app-release.apk Grade.apk
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2

@@ -6,6 +6,12 @@ Aswin's personal coach: walking, water, multivitamin, habits, daily expenses, a 
 - **Android app (APK)**: always-on step counting using the phone's step-counter chip, plus background reminders.
 - **Daily refresh** at 05:30 Dubai time: a new briefing and new job openings. Yesterday's briefing disappears automatically.
 
+## How it is published
+
+- This repository (**Grade**) is **private**: all source code, scripts and build pipelines.
+- The public repository **grade-app** receives only the finished web app and the daily news/jobs files, pushed by the *Publish Grade* workflow using the `SITE_DEPLOY_TOKEN` secret. App address: `https://YOUR-USERNAME.github.io/grade-app/`.
+- APKs are published to this private repository's Releases (download them while signed in to GitHub).
+
 ## Go live (one time, about 5 minutes)
 
 1. Create a GitHub account at github.com, if you don't have one.

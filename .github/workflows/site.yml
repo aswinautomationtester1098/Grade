@@ -1,5 +1,9 @@
 name: Publish Grade (daily news + jobs)
 
+# The source code stays in this (private) repository. Only the finished web app and the
+# daily news/jobs files are published, to the public repository "grade-app".
+# Until the SITE_DEPLOY_TOKEN secret exists, it falls back to GitHub Pages of this repo.
+
 on:
   push:
     branches: [main]
@@ -19,6 +23,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      mode: ${{ steps.mode.outputs.mode }}
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
@@ -44,12 +50,37 @@ jobs:
           git add -A
           git -c user.name="grade-bot" -c user.email="grade-bot@users.noreply.github.com" commit -q -m "Data $(date -u +%FT%TZ)"
           git push -q -f "https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.git" data
+      - name: Choose where to publish
+        id: mode
+        env:
+          DEPLOY: ${{ secrets.SITE_DEPLOY_TOKEN }}
+        run: |
+          if [ -n "$DEPLOY" ]; then echo "mode=public-repo" >> "$GITHUB_OUTPUT"; else echo "mode=pages" >> "$GITHUB_OUTPUT"; fi
+      - name: Publish the app only (no source code) to the public grade-app repository
+        if: steps.mode.outputs.mode == 'public-repo'
+        env:
+          DEPLOY: ${{ secrets.SITE_DEPLOY_TOKEN }}
+        run: |
+          OUT="$RUNNER_TEMP/site"
+          mkdir -p "$OUT"
+          cp -r web/* "$OUT/"
+          touch "$OUT/.nojekyll"
+          printf 'User-agent: *\nDisallow: /\n' > "$OUT/robots.txt"
+          printf '# Grade\n\nPublished app files only. Source code is private.\n' > "$OUT/README.md"
+          cd "$OUT"
+          git init -q -b main
+          git add -A
+          git -c user.name="grade-bot" -c user.email="grade-bot@users.noreply.github.com" commit -q -m "Publish $(date -u +%FT%TZ)"
+          git push -q -f "https://x-access-token:${DEPLOY}@github.com/${{ github.repository_owner }}/grade-app.git" main
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
+        if: steps.mode.outputs.mode == 'pages'
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
+        if: steps.mode.outputs.mode == 'pages'
         with:
           path: web
   deploy:
     needs: build
+    if: needs.build.outputs.mode == 'pages'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
