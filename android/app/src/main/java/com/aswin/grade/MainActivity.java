@@ -104,6 +104,15 @@ public class MainActivity extends Activity {
             }
 
             @Override
+            public void onReceivedHttpError(WebView view, WebResourceRequest req, android.webkit.WebResourceResponse res) {
+                // Site not published yet (404) or GitHub having trouble (5xx): show the built-in copy instead.
+                if (req.isForMainFrame() && res != null && res.getStatusCode() >= 400
+                        && !req.getUrl().toString().startsWith("file:")) {
+                    view.loadUrl(ASSET_URL);
+                }
+            }
+
+            @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 currentUrl = url == null ? "" : url;
             }
