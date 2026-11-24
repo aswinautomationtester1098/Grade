@@ -50,7 +50,7 @@ h1,h2,h3{letter-spacing:-.02em}
 .stat{text-align:center;padding:10px 4px;border-radius:12px;background:rgba(0,0,0,.5);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
 .stat b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums}
 .stat span{font-size:12px;font-weight:600;color:var(--sub)}
-.compact .ringwrap{width:min(130px,36vw);margin-top:10px}.compact .big{font-size:32px}.compact .stats{display:none}
+.compact .ringwrap,.compact .stats{display:none}.compact.hero{padding-bottom:14px}
 main{max-width:640px;margin:0 auto;padding:0 16px}
 .view{display:none}.view.on{display:grid;gap:26px;animation:in .3s ease}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
@@ -228,6 +228,10 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
 .icon{width:48px;min-height:48px;padding:0;border-radius:50%;background:#2a2a2a;color:#fff;display:grid;place-items:center}
 .icon svg{width:20px;height:20px}.icon.on{color:var(--coral)}
 .src{font-size:11px;color:#8a8a8a;font-weight:600;margin-top:-6px}
+.wk{display:grid;gap:10px}.wk div{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line)}
+.wk div:first-child{border-top:0}.wk b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}.wk em{font-style:normal;font-size:13px;font-weight:800}
+.up{color:var(--green)}.down{color:var(--coral)}
+.erow{cursor:pointer}.erow.editing{background:#2e2614;border-radius:8px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:380px){.water{grid-template-columns:90px 1fr}.glass{width:90px;height:122px}.grid2{grid-template-columns:1fr}.cats{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
@@ -336,7 +340,7 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
       <div>
         <div><span class="wnum" id="water">0</span> <span class="mute">/ <span id="wgoal">2,500</span> ml</span></div>
         <span class="pct" id="wpct">0%</span>
-        <div class="row"><button class="ghost" id="wMinus" aria-label="Remove a glass" style="width:48px;padding:0;font-size:22px">−</button><button class="blue" id="wPlus" style="flex:1">+ Glass</button></div>
+        <div class="row"><button class="ghost" id="wMinus" aria-label="Remove a glass" style="width:48px;padding:0;font-size:22px">−</button><button class="blue" id="wPlus" style="flex:1">+ Glass</button><button class="ghost" id="wBottle" aria-label="Add a 500 ml bottle">+ 500</button></div>
       </div>
     </div>
   </div>
@@ -358,6 +362,7 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
   <button class="ghost" id="histLink" style="justify-self:center"><svg style="width:18px;height:18px;display:inline-block;vertical-align:-3px;margin-right:6px"><use href="#i-chart"/></svg>See your history &amp; streaks</button>
 </section>
 <section class="view" id="v-hist">
+  <div class="card"><div class="ch"><h2>This week vs last week</h2><span class="mute">last 7 days</span></div><div class="wk" id="weekBox"></div></div>
   <div class="card"><div class="ch"><h2>Steps</h2><span class="mute">Last 7 days</span></div><div class="hist" id="histSteps"></div><p class="mute" id="histSum" style="margin:12px 0 0"></p></div>
   <div class="card"><div class="ch"><h2>Water</h2><span class="mute">Last 7 days</span></div><div class="hist" id="histWater"></div></div>
   <div class="card"><div class="ch"><h2>Streaks</h2><span class="mute">Days in a row</span></div><div class="streaks" id="streaks"></div></div>
@@ -366,10 +371,8 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
 <section class="view" id="v-jobs">
   <div class="sec"><h2><span>Jobs for you</span><small id="jobCount"></small></h2></div>
   <div class="panel" id="jobProfile"></div>
-  <div class="sec" style="margin-top:-8px">
-    <div class="segs" id="jobLocs" aria-label="Where you want to work"></div>
-  </div>
   <div class="sec">
+    <div class="segs" id="jobLocs" aria-label="Where you want to work" style="margin-bottom:10px"></div>
     <div class="row" style="justify-content:space-between"><div class="segs" id="jobTabs"></div>
     <label style="grid-auto-flow:column;align-items:center;gap:8px">Min match<select id="minMatch" style="width:auto;min-height:38px"><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option></select></label></div>
   </div>
@@ -400,7 +403,8 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
       <div class="amt"><span id="curLbl">AED</span><input id="expAmt" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000" placeholder="0.00" required aria-label="Amount"></div>
       <div class="cats" id="cats" role="radiogroup" aria-label="Category"></div>
       <input id="expNote" maxlength="60" placeholder="Note (optional), e.g. lunch with team" aria-label="Note">
-      <div class="row" style="margin-top:12px"><input id="expDate" type="date" aria-label="Date" style="flex:1" max="2100-01-01"><button class="gold" style="flex:1.4">Add</button></div>
+      <div class="row" style="margin-top:12px"><input id="expDate" type="date" aria-label="Date" style="flex:1" max="2100-01-01"><button class="gold" id="expSave" style="flex:1.4">Add</button></div>
+      <button type="button" class="ghost sm" id="expCancel" hidden style="margin-top:10px">Cancel editing</button>
     </form>
   </div>
   <div class="card">
@@ -412,7 +416,7 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
     <div id="budgetBox" hidden><div class="bar"><i id="budgetBar"></i></div><p class="mute" id="budgetTxt" style="margin:6px 0 0"></p></div>
     <p class="mute" id="noSpendTxt" style="margin:10px 0 0"></p>
   </div>
-  <div class="card"><div class="ch"><h2>Where it went</h2><span class="mute" id="catMonthLbl"></span></div><div id="catBreak"></div></div>
+  <div class="card"><div class="ch"><h2>Where it went</h2><span class="mute" id="catMonthLbl"></span></div><div id="catBreak"></div><button class="ghost sm" id="csvBtn" style="margin-top:12px">Copy this month as a table (CSV)</button></div>
   <div class="card"><div class="ch"><h2>Recent</h2><button class="ghost sm" id="noSpendBtn">No spending today</button></div><div id="expList"></div></div>
 </section>
 
@@ -492,6 +496,21 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
   <button data-v="set"><svg><use href="#i-gear"/></svg>Settings</button>
 </nav>
 <div id="toast" role="status"></div>
+<dialog id="onbDlg">
+  <form method="dialog" id="onbForm">
+    <h2>Welcome to Grade</h2>
+    <p class="mute">30 seconds to personalise your goals. You can change these anytime in Settings.</p>
+    <div class="grid2" style="margin-top:14px">
+      <label>Your name<input id="o-name" maxlength="24" autocomplete="given-name"></label>
+      <label>Weight (kg)<input id="o-weight" type="number" inputmode="decimal" min="25" max="300"></label>
+      <label>Height (cm)<input id="o-height" type="number" inputmode="decimal" min="100" max="250"></label>
+      <label>Daily step goal<select id="o-goal"><option>5000</option><option>6000</option><option selected>8000</option><option>10000</option><option>12000</option></select></label>
+      <label>Currency<input id="o-cur" maxlength="4"></label>
+      <label>Wake-up time<input id="o-wake" type="time"></label>
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:16px"><button value="ok" id="onbOk">Let's go</button></div>
+  </form>
+</dialog>
 <dialog id="expDlg">
   <form method="dialog">
     <span class="ic" style="width:52px;height:52px;border-radius:18px;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#fbbf24,#f59e0b);margin-bottom:10px"><svg style="width:28px;height:28px"><use href="#i-wallet"/></svg></span>
@@ -520,7 +539,7 @@ const $ = id => document.getElementById(id);
 const N = window.AswinNative || null;           // present only inside the Android app
 const KEY = 'aswin-v1';
 const DEF = {name:'Aswin',weight:70,height:172,stepGoal:8000,glassMl:250,waterGoal:0,hot:true,
-  wake:'07:00',sleep:'23:00',vitTime:'09:00',every:60,sens:1.2,notify:false,tracking:false,currency:'AED',expTime:'21:00',budget:0};
+  wake:'07:00',sleep:'23:00',vitTime:'09:00',every:60,sens:1.2,notify:false,tracking:false,currency:'AED',expTime:'21:00',budget:0,onboarded:false};
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
 /* Every value loaded from storage or a backup file is validated: wrong types are reset, text is length-limited. */
@@ -618,7 +637,7 @@ function advice(){
   if(!awake){out.push([`Rest well, ${s.name}. Good sleep makes tomorrow's walk easier.`,'g']);
     out.push([d.steps>=s.stepGoal?`You hit your step goal today with ${fmt(d.steps)} steps.`:`${fmt(d.steps)} steps today. Tomorrow is a fresh start.`,'']);return out}
   const wExp=wg*f, sExp=s.stepGoal*Math.min(1,f*1.1);
-  if(minsSinceWake()<45&&d.water<s.glassMl)out.push(['Good morning! Start with a glass of water before anything else.','w']);
+  if(minsSinceWake()<90&&d.water<s.glassMl)out.push(['Good morning! Start with a glass of water before anything else.','w']);
   else if(d.water<wExp-s.glassMl){const behind=wExp-d.water;out.push([behind>s.glassMl*3?`You are about ${fmt(behind)} ml behind on water. Catch up gradually: one glass now and one every 30 minutes. Don't force it all at once.`:`You are about ${fmt(behind)} ml behind on water. Drink a glass now.`,'w'])}
   else if(d.water>=wg)out.push(['Water goal reached. Keep sipping when thirsty, especially after walking.','w']);
   if(!d.vit&&nowMin()>=mins(s.vitTime))out.push(['Multivitamin not taken yet. Take it with your next meal.','v']);
@@ -663,7 +682,7 @@ function render(){
   const IC={w:['drop','water','Hydration'],v:['pill','vit','Vitamins'],g:['leaf','mind','Wellbeing'],'':['foot','walk','Walking']};
   setH('tips',advice().map(([t,c])=>{const[ic,art,lab]=IC[c];return `<li class="tcard"><div class="cov"><img src="art-${art}.jpg" alt=""><svg><use href="#i-${ic}"/></svg></div><b>${lab}</b><p>${esc(t)}</p></li>`}).join(''));
   $('autoWater').textContent='Auto goal right now: '+fmt(s.weight*35+(s.hot?500:0))+' ml base (35 ml × body weight), plus 250 ml for every 4,000 steps.';
-  renderHist();renderMoney();if(typeof jobsTile==='function')jobsTile();
+  renderHist();renderMoney();renderWeek();if(typeof jobsTile==='function')jobsTile();
 }
 function renderHist(){
   const s=S.settings,days=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);days.push([d,S.days[dkey(d)]||blank()])}
@@ -741,10 +760,12 @@ function lockUI(){$('lockBtn').textContent=wantLock&&lock?'Screen stays on ✓':
 $('lockBtn').onclick=()=>{if(wantLock){wantLock=false;if(lock)lock.release();lock=null;lockUI()}else{wantLock=true;getLock()}};
 
 /* small in-app dialog (replaces prompt/confirm, which some phones block) */
-function ask({title,text,input,ok}){
+function ask({title,text,input,ok,type}){
   return new Promise(res=>{
     const dl=$('dlg');$('dlgTitle').textContent=title;$('dlgText').textContent=text||'';
-    $('dlgInput').hidden=!input;$('dlgInput').value=input||'';$('dlgOk').textContent=ok||'OK';
+    const inp=$('dlgInput');inp.type=type||'number';inp.inputMode=type==='text'?'text':'numeric';
+    if(type==='text'){inp.removeAttribute('min');inp.removeAttribute('max');inp.maxLength=40}else{inp.min='1';inp.max='100000'}
+    inp.hidden=!input;inp.value=(input||'').trim();$('dlgOk').textContent=ok||'OK';
     dl.onclose=()=>res(dl.returnValue==='ok'?(input?$('dlgInput').value:true):null);
     dl.returnValue='';
     if(dl.showModal)dl.showModal();else res(null);
@@ -880,7 +901,7 @@ function renderMoney(){
   const list=[...S.exp].sort((a,b)=>b.day.localeCompare(a.day)||b.ts-a.ts).slice(0,40);let html='',cur='';
   for(const e of list){if(e.day!==cur){cur=e.day;const dd=new Date(e.day+'T12:00');html+=`<div class="dayh"><span>${esc(e.day===k?'Today':dd.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'}))}</span><span>${esc(money(sumWhere(x=>x.day===e.day)))}</span></div>`}
     const[_,l,ic,col]=CAT[e.cat]||CAT.other;
-    html+=`<div class="erow"><i class="ci" style="background:${col}"><svg><use href="#${ic}"/></svg></i><div><span>${l}</span><small>${esc(e.note||'')}</small></div><b>${esc(money(e.amt))}</b><button aria-label="Delete" data-del="${esc(String(e.id))}">×</button></div>`}
+    html+=`<div class="erow${e.id===editId?' editing':''}" data-id="${esc(String(e.id))}" title="Tap to edit"><i class="ci" style="background:${col}"><svg><use href="#${ic}"/></svg></i><div><span>${l}</span><small>${esc(e.note||'')}</small></div><b>${esc(money(e.amt))}</b><button aria-label="Delete" data-del="${esc(String(e.id))}">×</button></div>`}
   setH('expList',html||'<p class="mute" style="margin:0">Your expenses will appear here.</p>');
 }
 $('expList').addEventListener('click',async e=>{const b=e.target.closest('[data-del]');if(!b)return;const x=S.exp.find(v=>String(v.id)===b.dataset.del);if(!x)return;
@@ -888,6 +909,8 @@ $('expList').addEventListener('click',async e=>{const b=e.target.closest('[data-
 $('expForm').addEventListener('submit',e=>{e.preventDefault();
   const amt=Math.round(parseFloat($('expAmt').value)*100)/100;if(!(amt>0&&amt<=1000000)){toast('Enter an amount');$('expAmt').focus();return}
   let day=$('expDate').value||dkey();if(day>dkey()){toast('That date is in the future');return}
+  if(editId!==null){const x=S.exp.find(v=>v.id===editId);if(x){Object.assign(x,{day,amt,cat:selCat,note:$('expNote').value.trim().slice(0,60)})}
+    save();toast('Expense updated');stopEdit();render();return}
   S.exp.push({id:Date.now()+Math.floor(Math.random()*1000),ts:Date.now(),day,amt,cat:selCat,note:$('expNote').value.trim().slice(0,60)});
   if(day===dkey())today().noSpend=false;
   $('expAmt').value='';$('expNote').value='';save();render();toast(`Added ${money(amt)} · ${CAT[selCat][1]}`);$('expAmt').focus();
@@ -910,7 +933,7 @@ $('bgReset').onclick=()=>{try{localStorage.removeItem(BGK)}catch(e){}applyBg();t
 applyBg();
 let expDlgOpen=false;
 function checkExpensePrompt(force){
-  const s=S.settings;if(expDlgOpen||$('dlg').open)return;
+  const s=S.settings;if(expDlgOpen||$('dlg').open||$('onbDlg').open||!s.onboarded)return;
   if(!force){if(expLoggedToday()||nowMin()<mins(s.expTime)||S.last.expAskDay===dkey()&&Date.now()<(S.last.expSnooze||0))return;
     if(S.last.expAskDay===dkey()&&!S.last.expSnooze)return}
   const dl=$('expDlg');if(!dl.showModal)return;expDlgOpen=true;
@@ -1006,7 +1029,7 @@ const SKILLS=[
  ['Leadership',/lead(ing|ership)? (a |the )?team|mentor|people manag|head of qa|qa manager/i],['Banking/Fintech',/banking|fintech|payments?\b/i],['E-commerce',/e-?commerce|retail/i]];
 const LEVELS=[['Junior',/junior|graduate|intern|entry/i,1],['Mid-level',/\bmid\b|intermediate/i,2],['Senior',/senior|\bsr\.?\b/i,3],['Lead',/\blead\b|staff/i,4],['Architect / Manager',/architect|principal|manager|head of|director/i,5]];
 const J=()=>S.jobs||(S.jobs={profile:null,status:{},minMatch:60,tab:'for',locs:{uae:true,remote:true,india:false}});
-let JOBS=null,skOpen=false;
+let JOBS=null,skOpen=false,profOpen=false;
 const skillsIn=t=>SKILLS.filter(([,re])=>re.test(t)).map(([n])=>n);
 function levelOf(t,years){for(const[,re,l] of [...LEVELS].reverse())if(re.test(t))return l;return years>=12?5:years>=8?4:years>=5?3:years>=2?2:1}
 function parseResume(text){
@@ -1058,7 +1081,12 @@ function scoreJob(j,p){
   const text=`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`;
   const js=skillsIn(text),mine=new Set(p.skills);
   const matched=js.filter(s=>mine.has(s)),missing=js.filter(s=>!mine.has(s));
-  const skill=js.length?matched.length/js.length:.4;
+  // Confidence: a job that names only 1-2 skills cannot be a near-perfect match on skills alone
+  const conf=Math.min(1,js.length/6);
+  const skill=js.length?(matched.length/js.length)*conf+.3*(1-conf):.25;
+  // Software-testing title? Hardware/mechanical "test engineer" roles are pushed down
+  const swTitle=/\b(qa|q\.a\.|sdet|tester|quality assurance|software (test|quality)|test automation|automation (engineer|tester)|quality engineer)/i.test(j.title);
+  const hwTitle=/thermal|propulsion|mechatronic|mechanical|electrical|electronics|hardware|hil\b|firmware|embedded|sensor|vision|industrial|technician|manufactur|robot/i.test(j.title);
   const jl=levelOf(j.title,0),pl=p.level,dl=Math.abs((/senior|lead|architect|principal|manager|head|junior|staff/i.test(j.title)?jl:3)-pl);
   const lvl=[1,.75,.35,.1,0][Math.min(4,dl)];
   let req=0;for(const m of (j.desc||'').matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)){const y=+m[1];if(y<=20&&y>req)req=y}
@@ -1067,7 +1095,9 @@ function scoreJob(j,p){
   const uae=/uae|dubai|abu dhabi|sharjah|emirates|middle east|mena|gcc/.test(loc),india=/india|bangalore|bengaluru|pune|hyderabad|chennai|mumbai|delhi/.test(loc);
   const anywhere=j.remote&&(/worldwide|anywhere|global|remote$|^remote|emea|asia/.test(loc)||!loc);
   const locS=(L.uae&&uae)||(L.india&&india)||(L.remote&&anywhere)?1:(L.remote&&j.remote?.45:.1);
-  const score=Math.round(100*(.5*skill+.2*lvl+.15*exp+.15*locS));
+  let score=100*(.5*skill+.2*lvl+.15*exp+.15*locS);
+  if(hwTitle&&!/software/i.test(j.title))score*=.55;else if(!swTitle)score*=.8;
+  score=Math.min(99,Math.round(score));   // never claim a perfect 100% from a text match
   return {score,matched,missing:missing.slice(0,3),req};
 }
 async function loadJobs(){
@@ -1086,8 +1116,8 @@ function boards(role){
 }
 function renderJobs(){
   const st=J(),p=st.profile;
-  $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills found</span></div><label class="btn ghost sm">Update resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>
-    <div class="chips">${(skOpen?p.skills:p.skills.slice(0,6)).map(s=>`<button class="chip-s" data-rm="${esc(s)}" aria-label="Remove ${esc(s)}">${esc(s)} ×</button>`).join('')}${p.skills.length>6?`<button class="chip-s add" id="skMore">${skOpen?'Show less':'+'+(p.skills.length-6)+' more'}</button>`:''}<button class="chip-s add" id="addSkill">+ Add skill</button></div>`
+  $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills</span></div><button class="ghost sm" id="profToggle" aria-expanded="${profOpen}">${profOpen?'Done':'Edit'}</button></div>
+    ${profOpen?`<div class="row" style="margin-top:10px"><label class="btn ghost sm">Upload new resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div><div class="chips">${(skOpen?p.skills:p.skills.slice(0,6)).map(s=>`<button class="chip-s" data-rm="${esc(s)}" aria-label="Remove ${esc(s)}">${esc(s)} ×</button>`).join('')}${p.skills.length>6?`<button class="chip-s add" id="skMore">${skOpen?'Show less':'+'+(p.skills.length-6)+' more'}</button>`:''}<button class="chip-s add" id="addSkill">+ Add skill</button></div>`:''}`
    :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Grade then scores every new QA job against your skills and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>`;
   $('jobLocs').innerHTML=[['uae','UAE'],['remote','Remote'],['india','India']].map(([k,l])=>`<button class="seg ${st.locs[k]?'on':''}" data-loc="${k}">${l}</button>`).join('');
   $('jobBoards').innerHTML=boards(p?p.role:'QA Engineer').map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · UAE</small></a>`).join('');
@@ -1129,11 +1159,12 @@ $('v-jobs').addEventListener('change',async e=>{
 });
 $('v-jobs').addEventListener('click',async e=>{
   if(e.target.closest('#skMore')){skOpen=!skOpen;renderJobs();return}
+  if(e.target.closest('#profToggle')){profOpen=!profOpen;renderJobs();return}
   const st=J(),el=e.target.closest('[data-tab],[data-loc],[data-st],[data-rm],#addSkill,[data-open]');if(!el)return;
   if(el.dataset.tab){st.tab=el.dataset.tab}
   else if(el.dataset.loc){st.locs[el.dataset.loc]=!st.locs[el.dataset.loc]}
   else if(el.dataset.rm){st.profile.skills=st.profile.skills.filter(s=>s!==el.dataset.rm)}
-  else if(el.id==='addSkill'){const v=await ask({title:'Add a skill',text:'For example: Playwright, API testing, JMeter',input:' ',ok:'Add'});const s=(v||'').trim();if(s&&!st.profile.skills.includes(s)){const known=SKILLS.find(([n,re])=>re.test(s));st.profile.skills.push(known?known[0]:s.slice(0,30))}}
+  else if(el.id==='addSkill'){const v=await ask({title:'Add a skill',text:'For example: Playwright, API testing, JMeter',input:' ',ok:'Add',type:'text'});const s=(v||'').trim();if(s&&!st.profile.skills.includes(s)){const known=SKILLS.find(([n,re])=>re.test(s));st.profile.skills.push(known?known[0]:s.slice(0,30))}}
   else if(el.hasAttribute('data-open')){const id=el.closest('.job').dataset.id;if(st.status[id]!=='applied')st.status[id]='opened';save();setTimeout(renderJobs,800);return}
   else if('st' in el.dataset){const id=el.closest('.job').dataset.id;if(el.dataset.st)st.status[id]=el.dataset.st;else delete st.status[id];
     if(el.dataset.st==='applied')toast('Marked as applied. Good luck!');if(el.dataset.st==='hidden')toast('Hidden. You will not see this job again.')}
@@ -1147,6 +1178,46 @@ function jobsTile(){const st=J();if(!st.profile){$('jobsTxt').textContent='Uploa
   if(!JOBS){$('jobsTxt').textContent='New matches arrive every morning';return}
   const n=JOBS.jobs.filter(j=>!st.status[j.id]&&scoreJob(j,st.profile).score>=st.minMatch).length;$('jobsTxt').textContent=n?`${n} new match${n===1?'':'es'} for your profile`:'No new strong matches today'}
 window.aswinReload=()=>{loadNews();loadJobs()};
+/* ---------- first-run setup ---------- */
+function onboard(){
+  const s=S.settings;if(s.onboarded)return;
+  if(Object.keys(S.days).length>1||S.exp.length){s.onboarded=true;save();return}   // existing user
+  const dl=$('onbDlg');if(!dl.showModal)return;
+  $('o-name').value=s.name;$('o-weight').value=s.weight;$('o-height').value=s.height;$('o-goal').value=String(s.stepGoal);$('o-cur').value=s.currency;$('o-wake').value=s.wake;
+  dl.showModal();
+  dl.onclose=()=>{
+    const n=$('o-name').value.trim().slice(0,24);if(n)s.name=n;
+    const w=parseFloat($('o-weight').value),h=parseFloat($('o-height').value);if(w>=25&&w<=300)s.weight=w;if(h>=100&&h<=250)s.height=h;
+    s.stepGoal=+$('o-goal').value||8000;const c=$('o-cur').value.trim().toUpperCase();if(/^[A-Z]{1,4}$/.test(c))s.currency=c;
+    if(/^([01]\d|2[0-3]):[0-5]\d$/.test($('o-wake').value))s.wake=$('o-wake').value;
+    s.onboarded=true;save();loadSettings();render();toast(`All set, ${s.name}!`);
+  };
+}
+/* ---------- weekly summary ---------- */
+function renderWeek(){
+  const sum=(from,to)=>{let st=0,wd=0,n=0;for(let i=from;i<to;i++){const d=new Date();d.setDate(d.getDate()-i);const v=S.days[dkey(d)];n++;if(v){st+=v.steps||0;if(v.water>=(v.wg||waterGoal()))wd++}}
+    const a=new Date();a.setDate(a.getDate()-(to-1));const z=new Date();z.setDate(z.getDate()-from);const ka=dkey(a),kz=dkey(z);
+    return {steps:st/n,water:wd,money:S.exp.filter(e=>e.day>=ka&&e.day<=kz).reduce((x,e)=>x+e.amt,0)}};
+  const t=sum(0,7),l=sum(7,14);
+  const diff=(a,b,goodUp)=>{if(!b)return'<em class="mute">no data before</em>';const p=Math.round((a-b)/b*100);if(!p)return'<em class="mute">same</em>';const good=goodUp?p>0:p<0;return `<em class="${good?'up':'down'}">${p>0?'▲':'▼'} ${Math.abs(p)}%</em>`};
+  setH('weekBox',`<div><span>Average steps a day</span><b>${fmt(t.steps)}</b>${diff(t.steps,l.steps,true)}</div>
+    <div><span>Days water goal met</span><b>${t.water}/7</b>${diff(t.water,l.water,true)}</div>
+    <div><span>Money spent</span><b>${esc(money(t.money))}</b>${diff(t.money,l.money,false)}</div>`);
+}
+/* ---------- expense editing + CSV ---------- */
+let editId=null;
+function stopEdit(){editId=null;$('expSave').textContent='Add';$('expCancel').hidden=true;$('expAmt').value='';$('expNote').value='';$('expDate').value=dkey();renderMoney()}
+$('expCancel').onclick=stopEdit;
+$('expList').addEventListener('click',e=>{if(e.target.closest('[data-del]'))return;const row=e.target.closest('.erow');if(!row)return;
+  const x=S.exp.find(v=>String(v.id)===row.dataset.id);if(!x)return;editId=x.id;
+  $('expAmt').value=x.amt;$('expNote').value=x.note||'';$('expDate').value=x.day;selCat=x.cat;renderCats();
+  $('expSave').textContent='Save changes';$('expCancel').hidden=false;window.scrollTo({top:0,behavior:'smooth'});setTimeout(()=>$('expAmt').focus(),300);renderMoney()});
+$('csvBtn').onclick=async()=>{const mk=dkey().slice(0,7),q=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const rows=[['Date','Category','Amount','Currency','Note']].concat(S.exp.filter(e=>e.day.slice(0,7)===mk).sort((a,b)=>a.day.localeCompare(b.day)).map(e=>[e.day,(CAT[e.cat]||CAT.other)[1],e.amt.toFixed(2),S.settings.currency,e.note||'']));
+  const csv=rows.map(r=>r.map(q).join(',')).join('\n');
+  try{await navigator.clipboard.writeText(csv);toast(`Copied ${rows.length-1} expenses. Paste into Sheets or Excel.`)}catch(_){toast('Copy is not allowed here')}};
+$('wBottle').onclick=()=>{const d=today(),was=d.water>=waterGoal();d.water+=500;S.last.water=Date.now();save();render();toast(!was&&d.water>=waterGoal()?'Water goal reached!':'+500 ml')};
+
 /* ---------- nav ---------- */
 document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{
   document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x===b));
@@ -1168,7 +1239,7 @@ loadSettings();
 if(N)pullNative();
 renderCats();$('expDate').value=dkey();
 render();trackUI();notifUI();nativeUI();save();
-setTimeout(()=>checkExpensePrompt(),1200);
+setTimeout(()=>{onboard();if(!$('onbDlg').open)checkExpensePrompt()},1200);
 loadNews();loadJobs();$('minMatch').value=J().minMatch;
 if(!N&&S.settings.tracking)startTracking(false);
 if(N&&!N.permissionsOk())setTimeout(()=>N.requestPermissions(),600);

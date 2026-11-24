@@ -21,7 +21,9 @@ TAG = re.compile(r"<[^>]+>")
 # "QA" jobs that are not software testing (language, audio, content, manufacturing...)
 NOT_SOFTWARE = re.compile(r"linguist|transcription|audio|video|translat|language|content (review|moderat)|annotat|"
                           r"rater|search quality|food|pharma|manufactur|clinical|medical device|construction|welding|"
-                          r"mechanical|automotive quality|supplier quality|call quality|customer", re.I)
+                          r"mechanical|automotive quality|supplier quality|call quality|customer|thermal|propulsion|mechatronic|"
+                          r"electrical test|electronics test|hardware test|\bhil\b|documentation technician|industrial|"
+                          r"intern\b|working student|werkstudent|praktik", re.I)
 
 
 def clean(s, n=2500):
