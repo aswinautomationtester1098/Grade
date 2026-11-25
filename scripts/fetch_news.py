@@ -10,6 +10,8 @@ Runs every morning in GitHub Actions. Uses only the Python standard library.
 The app shows the briefing only on the date stamped in the file, so
 yesterday's news disappears automatically.
 """
+import time
+import urllib.error
 import datetime as dt
 import email.utils
 import html
@@ -108,10 +110,24 @@ def clean(s):
     return re.sub(r"\s+", " ", html.unescape(TAG.sub(" ", s or ""))).strip()
 
 
+_last_google = [0.0]
+
+
 def fetch(url):
     req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=25) as r:
-        data = r.read(5_000_001)          # never accept more than 5 MB from a feed
+    google = "news.google.com" in url
+    for attempt in range(4):
+        if google:   # Google News rate-limits bursts: space requests out
+            time.sleep(max(0, 1.2 - (time.time() - _last_google[0])))
+            _last_google[0] = time.time()
+        try:
+            with urllib.request.urlopen(req, timeout=25) as r:
+                data = r.read(5_000_001)          # never accept more than 5 MB from a feed
+            break
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 503) and attempt < 3:
+                time.sleep(4 * (attempt + 1)); continue
+            raise
     if len(data) > 5_000_000:
         raise ValueError("feed too large")
     return data
