@@ -51,6 +51,22 @@ SECTIONS = [
         gnews('(Playwright OR Selenium OR Cypress OR Appium) (testing OR "test automation" OR Microsoft OR framework) when:7d', "US"),
         gnews('software outage OR "testing failure" OR "software bug" root cause when:2d', "US"),
     ], False, "qa"),
+    ("qablogs", "QA Reads", 5, 2, [
+        "https://testing.googleblog.com/feeds/posts/default",
+        "https://playwright.dev/blog/rss.xml",
+        "https://www.cypress.io/blog/rss.xml",
+        "https://www.selenium.dev/feed.xml",
+        "https://testguild.com/feed/",
+        "https://automationpanda.com/feed/",
+        "https://applitools.com/blog/feed/",
+        "https://www.ministryoftesting.com/feed",
+        "https://www.softwaretestinghelp.com/feed/",
+    ], False, None),
+    ("tools", "QA Tool Releases", 5, 1, [
+        f"https://github.com/{r}/releases.atom" for r in (
+            "microsoft/playwright", "cypress-io/cypress", "SeleniumHQ/selenium", "appium/appium",
+            "grafana/k6", "pytest-dev/pytest", "webdriverio/webdriverio", "apache/jmeter", "postmanlabs/newman")
+    ], False, None),
     ("tech", "Tech & AI", 5, 1, [gtopic("TECHNOLOGY", "US")], True, None),
     ("uae", "UAE", 5, 1, [gtopic("NATION", "AE"),
                           gnews('UAE government OR law OR visa OR economy OR announces when:1d', "AE")], True, None),
@@ -77,14 +93,57 @@ def fetch(url):
     return data
 
 
+ATOM = "{http://www.w3.org/2005/Atom}"
+
+
+def parse_atom(root, now):
+    """Atom feeds (GitHub releases, Blogger, many blogs)."""
+    items = []
+    feed_title = clean(root.findtext(ATOM + "title"))
+    for en in root.iter(ATOM + "entry"):
+        title = clean(en.findtext(ATOM + "title"))
+        link = ""
+        for l in en.findall(ATOM + "link"):
+            if l.get("rel", "alternate") == "alternate" and l.get("href"):
+                link = l.get("href").strip()
+                break
+        when_s = en.findtext(ATOM + "updated") or en.findtext(ATOM + "published") or ""
+        try:
+            when = dt.datetime.fromisoformat(when_s.replace("Z", "+00:00"))
+        except Exception:
+            when = now
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=dt.timezone.utc)
+        src = feed_title
+        m = re.match(r"^https://github\.com/([^/]+)/([^/]+)/releases/", link)
+        if m:                                   # GitHub release: "playwright v1.50.0"
+            src = m.group(2)
+            if m.group(2).lower() not in title.lower():
+                title = f"{m.group(2)} {title}"
+            desc = ""
+        else:
+            desc = clean(en.findtext(ATOM + "summary") or en.findtext(ATOM + "content"))
+            if desc.lower().startswith(title.lower()[:40]) or len(desc) < 40:
+                desc = ""
+        if not re.match(r"^https?://", link) or not title:
+            continue
+        items.append({"t": title[:200], "s": desc[:220], "src": src[:60], "u": link[:1000], "ts": when.isoformat()})
+    return items
+
+
 def parse(xml_bytes, now):
     items = []
     root = ET.fromstring(xml_bytes)
+    if root.tag == ATOM + "feed":
+        return parse_atom(root, now)
+    channel_title = clean(root.findtext("channel/title"))
     for it in root.iter("item"):
         title = clean(it.findtext("title"))
         link = (it.findtext("link") or "").strip()
         src_el = it.find("source")
         source = clean(src_el.text) if src_el is not None and src_el.text else ""
+        if not source and "news.google.com" not in (root.findtext("channel/link") or "news.google.com"):
+            source = channel_title          # blogs: use the site name
         if source and title.endswith(" - " + source):
             title = title[: -len(source) - 3].strip()
         elif " - " in title and not source:
@@ -172,7 +231,8 @@ def main():
                 pool += got
             except Exception as e:
                 print(f"[{sid}] feed failed: {e}", file=sys.stderr)
-        window = now - dt.timedelta(days=7) if sid in ("qa", "uaeindia") else cutoff
+        days = {"qa": 7, "uaeindia": 7, "qablogs": 10, "tools": 14}.get(sid)
+        window = now - dt.timedelta(days=days) if days else cutoff
         pool = [p for p in pool if dt.datetime.fromisoformat(p["ts"]) >= window and p["t"]]
         if filt == "qa":
             before = len(pool)

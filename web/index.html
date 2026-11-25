@@ -231,7 +231,10 @@ nav button{position:relative}.nb{position:absolute;top:4px;left:calc(50% + 6px);
 .insp{background:var(--elev);border-radius:14px;padding:16px;display:grid;gap:12px}.insp h3{font-size:17px}.insp .sub{font-size:13px;color:var(--sub);margin-top:-8px}
 .jl{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center}.jl .logo{width:38px;height:38px;font-size:17px}.jl h3{font-size:14px;line-height:1.25}.jl .job-t span{font-size:12px}.jl .pct{font-size:15px;color:var(--green)}.jl .apply{min-height:36px;padding:0 12px;font-size:13px}
 .tip{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4}.tip i{flex:none;width:24px;height:24px;border-radius:50%;background:#1f3b2a;color:#7dffa8;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px}
-.apc a.btn{text-decoration:none}.nudge{font-size:13px;font-weight:700;color:#ffc23d}
+.apc a.btn{text-decoration:none}.lv{display:grid;gap:10px}.lv h2{font-size:20px;font-weight:800;margin:0}.lv .tagrow{display:flex;gap:6px;flex-wrap:wrap}.lv .tagrow span{font-size:12px;font-weight:800;padding:4px 10px;border-radius:99px;background:#1f3b2a;color:#7dffa8}
+.lv .qq{font-size:19px;font-weight:800;line-height:1.3}.lv .qa-a{font-size:16px;line-height:1.5;background:#161616;border-left:4px solid var(--green);border-radius:8px;padding:12px 14px}.lv .row{gap:10px}.lv .row button{flex:1}
+.lv a.lvl{display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;text-decoration:none;color:inherit;background:#1b1b1b;border-radius:12px;padding:12px 14px;min-height:56px}.lv a.lvl b{font-size:16px}.lv a.lvl span{font-size:13px;color:var(--sub)}.lv a.lvl em{font-style:normal;font-weight:800;color:#000;background:var(--green);border-radius:99px;padding:6px 12px;font-size:13px;grid-row:1/3;grid-column:2}
+.nudge{font-size:13px;font-weight:700;color:#ffc23d}
 .asked{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#1f3b2a;border-radius:10px;padding:10px}.asked span{font-weight:800;flex:1}
 .job-a{display:grid;grid-template-columns:minmax(0,1fr) 48px 48px;gap:8px}
 .apply{display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;border-radius:99px;background:var(--green);color:#000;font-weight:900;font-size:16px;text-decoration:none;transition:transform .12s}
@@ -448,6 +451,9 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
     <h2><span>Today's briefing</span><small id="newsDate"></small></h2>
     <p class="mute" id="newsStatus" style="margin:-4px 0 0"></p>
   </div>
+  <div class="panel lv" id="lvBox"></div>
+  <div class="panel lv" id="qBox"></div>
+  <div class="panel lv" id="tipBox"></div>
   <div class="concept">
     <img src="art-mind.jpg" alt="">
     <div class="cbody"><b>Concept of the day</b><h3 id="cTitle"></h3><p id="cText"></p></div>
@@ -625,6 +631,7 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
   </form>
 </dialog>
 
+<script src="learn-data.js"></script>
 <script>
 if(window.top!==window.self){try{window.top.location.replace(window.self.location.href)}catch(e){document.documentElement.innerHTML=''}}
 {
@@ -1091,7 +1098,7 @@ const CONCEPTS=[
  ['Idempotency','Repeating the same request gives the same result, for example a retried payment is charged once. A key API test case.'],
  ['Definition of Done','A team checklist (tests pass, reviewed, documented) every story meets before it counts as done. It makes quality explicit.'],
  ['DORA metrics','Deployment frequency, lead time, change failure rate and time to restore: four numbers for delivery speed and stability.']];
-const NCOL={qa:'#1ed760',tech:'#4cc2ff',uae:'#ff6b8a',india:'#ffc23d',uaeindia:'#b49bff'};
+const NCOL={qablogs:'#7dffa8',tools:'#ff9f43',qa:'#1ed760',tech:'#4cc2ff',uae:'#ff6b8a',india:'#ffc23d',uaeindia:'#b49bff'};
 let NEWS=null;
 function dayOfYear(){const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/864e5)}
 function ago(ts){const m=Math.round((Date.now()-Date.parse(ts))/60000);if(!(m>=0))return'';return m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'}
@@ -1104,7 +1111,21 @@ async function loadNews(){
   }catch(e){}
   renderLearn();
 }
+let qIdx=null,qShow=false;
+function marketGaps(){const p=J().profile,jobs=JOBS?JOBS.jobs:[],kc={};for(const j of jobs)for(const k of new Set(skillsIn(`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`)))kc[k]=(kc[k]||0)+1;
+  const mine=new Set(p?p.skills:[]),all=Object.entries(kc).filter(([k])=>TESTSK.has(k)||['CI/CD','Docker','Python','Java','TypeScript','JavaScript','SQL','Git','Kubernetes','AWS'].includes(k)).sort((a,b)=>b[1]-a[1]);
+  return {p,n:jobs.length,list:all.filter(([k,n])=>!mine.has(k)&&n/Math.max(1,jobs.length)>=.08).slice(0,3).map(([k,n])=>[k,Math.round(n/jobs.length*100)])}}
+function renderLearnExtra(){
+  const g=marketGaps(),link=k=>`https://www.google.com/search?q=${encodeURIComponent('learn '+k+' for QA engineers tutorial')}`;
+  $('lvBox').innerHTML=g.n&&g.list.length?`<h2>${g.p?'Level up for your next job':'Skills in demand today'}</h2><p class="mute" style="margin:0">${g.p?'Skills employers ask for that are not on your resume yet.':'Upload your resume on the Jobs page to see which ones you are missing.'}</p>${g.list.map(([k,pc])=>`<a class="lvl" href="${esc(link(k))}" target="_blank" rel="noopener"><b>${esc(k)}</b><span>In ${pc}% of today's QA jobs</span><em>Learn</em></a>`).join('')}`:'';
+  $('lvBox').hidden=!$('lvBox').innerHTML;
+  const Q=window.QA_QUESTIONS||[],T=window.QA_TIPS||[];
+  if(Q.length){if(qIdx==null)qIdx=dayOfYear()%Q.length;const q=Q[qIdx%Q.length];
+    $('qBox').innerHTML=`<h2>Interview question</h2><div class="tagrow"><span>${esc(q[2])}</span></div><div class="qq">${esc(q[0])}</div>${qShow?`<div class="qa-a">${esc(q[1])}</div>`:''}<div class="row"><button class="ghost" id="qReveal">${qShow?'Hide answer':'Show answer'}</button><button id="qNext">Next question</button></div>`;
+    $('qReveal').onclick=()=>{qShow=!qShow;renderLearnExtra()};$('qNext').onclick=()=>{qIdx=(qIdx+1)%Q.length;qShow=false;renderLearnExtra()}}
+  if(T.length){const t=T[dayOfYear()%T.length];$('tipBox').innerHTML=`<h2>QA tip of the day</h2><div class="qq">${esc(t[0])}</div><p style="margin:0;font-size:16px;line-height:1.5">${esc(t[1])}</p>`}}
 function renderLearn(){
+  renderLearnExtra();
   const c=CONCEPTS[dayOfYear()%CONCEPTS.length];$('cTitle').textContent=c[0];$('cText').textContent=c[1];
   $('newsDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
   const ok=NEWS&&NEWS.date===dkey();
@@ -1253,7 +1274,7 @@ function scoreJob(j,p){
 }
 async function loadJobs(){
   try{const r=await fetch((window.GRADE_JOBS_URL||'jobs.json')+'?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(Array.isArray(j.jobs))JOBS=j}}catch(e){}
-  renderJobs();
+  renderJobs();if(typeof renderLearnExtra==='function')renderLearnExtra();
 }
 if(location.hash==='#eval')window.__e={scoreJob,J:()=>J(),jobs:()=>JOBS,learn};   // test hook, only with #eval in the address
 const safeUrl=u=>/^https?:\/\/[^\s]+$/i.test(String(u||''))?String(u):'#';
