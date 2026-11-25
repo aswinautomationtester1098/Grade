@@ -31,6 +31,8 @@ jobs:
         run: python scripts/fetch_news.py 2>&1 | tee -a fetch-log.txt
       - name: Fetch QA job openings
         continue-on-error: true
+        env:
+          JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}   # optional: UAE office jobs
         run: python scripts/fetch_jobs.py 2>&1 | tee -a fetch-log.txt
       - name: Save today's data to the 'data' branch (for checking what was collected)
         continue-on-error: true

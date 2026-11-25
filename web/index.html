@@ -232,6 +232,21 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
 .wk div:first-child{border-top:0}.wk b{font-size:18px;font-weight:900;font-variant-numeric:tabular-nums}.wk em{font-style:normal;font-size:13px;font-weight:800}
 .up{color:var(--green)}.down{color:var(--coral)}
 .erow{cursor:pointer}.erow.editing{background:#2e2614;border-radius:8px}
+.jtop{position:sticky;top:0;z-index:5;background:var(--bg);margin:0 -16px;padding:8px 16px 10px;display:grid;gap:10px}
+.search{display:grid;grid-template-columns:22px minmax(0,1fr) 44px;align-items:center;gap:10px;background:#fff;color:#000;border-radius:99px;padding:0 4px 0 16px;min-height:50px}
+.search>svg{width:22px;height:22px;color:#121212}
+.search input{border:0;background:transparent;color:#000;font-weight:700;min-height:48px;padding:0}
+.search input:focus-visible{outline:0}.search:focus-within{outline:3px solid var(--green);outline-offset:2px}
+.search .icon{width:42px;min-height:42px;background:#121212}
+.fchips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.fchips::-webkit-scrollbar{display:none}
+.fchip{flex:none;min-height:36px;padding:0 12px;font-size:13px;font-weight:800;background:var(--elev2);color:#fff;border-radius:99px;display:inline-flex;gap:4px;align-items:center;white-space:nowrap}
+.fchip svg{width:16px;height:16px}.fchip.on{background:var(--green);color:#000}
+.fopts{display:grid;gap:4px;margin-top:10px;max-height:55vh;overflow:auto}
+.fopt{display:flex;align-items:center;gap:12px;min-height:48px;padding:0 6px;border-radius:8px;font-weight:700;color:#fff;cursor:pointer}
+.fopt input{width:22px;height:22px;min-height:0;accent-color:var(--green)}
+.fopt small{margin-left:auto;color:var(--sub);font-weight:700}
+mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1px}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:380px){.water{grid-template-columns:90px 1fr}.glass{width:90px;height:122px}.grid2{grid-template-columns:1fr}.cats{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
@@ -268,6 +283,9 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21s-8.5-5.2-8.5-11.2A4.8 4.8 0 0 1 12 6.6a4.8 4.8 0 0 1 8.5 3.2C20.5 15.8 12 21 12 21z"/></symbol>
  <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
  <symbol id="i-arrow" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="M7 17 17 7M9 7h8v8"/></symbol>
+ <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2.4"/><path stroke="currentColor" stroke-width="2.6" stroke-linecap="round" d="m15.5 15.5 5 5"/></symbol>
+ <symbol id="i-refresh" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M20 11a8 8 0 1 0-2.3 5.7M20 5v6h-6"/></symbol>
+ <symbol id="i-down" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></symbol>
  <symbol id="i-play" viewBox="0 0 24 24"><path fill="currentColor" d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></symbol>
  <symbol id="i-pause" viewBox="0 0 24 24"><path fill="currentColor" d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z"/></symbol>
  <symbol id="i-live" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" fill="currentColor"/><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2" opacity=".5"/></symbol>
@@ -369,19 +387,24 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
 </section>
 
 <section class="view" id="v-jobs">
-  <div class="sec"><h2><span>Jobs for you</span><small id="jobCount"></small></h2></div>
-  <div class="panel" id="jobProfile"></div>
-  <div class="sec">
-    <div class="segs" id="jobLocs" aria-label="Where you want to work" style="margin-bottom:10px"></div>
-    <div class="row" style="justify-content:space-between"><div class="segs" id="jobTabs"></div>
-    <label style="grid-auto-flow:column;align-items:center;gap:8px">Min match<select id="minMatch" style="width:auto;min-height:38px"><option value="50">50%</option><option value="60">60%</option><option value="70">70%</option><option value="80">80%</option></select></label></div>
+  <div class="jtop">
+    <div class="sec"><h2><span>Job search</span><small id="jobCount"></small></h2></div>
+    <div class="search">
+      <svg aria-hidden="true"><use href="#i-search"/></svg>
+      <input id="jq" type="search" placeholder="Search title, company or skill" enterkeyhint="search" autocomplete="off" aria-label="Search jobs">
+      <button class="icon" id="jRefresh" aria-label="Get the latest jobs"><svg><use href="#i-refresh"/></svg></button>
+    </div>
+    <div class="fchips" id="jChips" aria-label="Filters"></div>
   </div>
+  <div class="panel" id="jobProfile"></div>
+  <div class="row" style="justify-content:space-between"><div class="segs" id="jobTabs"></div><span class="mute" id="jSummary"></span></div>
   <div id="jobList" style="display:grid;gap:14px"></div>
+  <button class="ghost" id="jMore" hidden style="justify-self:center">Show more jobs</button>
   <div class="sec">
     <h2><span>More on UAE job boards</span><small>last 24h</small></h2>
     <div class="shelf" id="jobBoards"></div>
   </div>
-  <p class="mute" style="font-size:12px">Openings come from public job boards (Remotive, Jobicy, Arbeitnow, Remote OK) and are refreshed daily. Match scores are an estimate based on your resume; always read the full job description.</p>
+  <p class="mute" style="font-size:12px">Jobs come from public job boards and are refreshed every morning. Match scores compare each job with your resume (skills, seniority, years, location); always read the full job description.</p>
 </section>
 
 <section class="view" id="v-learn">
@@ -496,6 +519,13 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
   <button data-v="set"><svg><use href="#i-gear"/></svg>Settings</button>
 </nav>
 <div id="toast" role="status"></div>
+<dialog id="fDlg">
+  <form method="dialog">
+    <h2 id="fTitle">Filter</h2>
+    <div id="fOpts" class="fopts"></div>
+    <div class="row" style="justify-content:space-between;margin-top:16px"><button type="button" class="ghost" id="fReset">Reset</button><button value="ok">Show jobs</button></div>
+  </form>
+</dialog>
 <dialog id="onbDlg">
   <form method="dialog" id="onbForm">
     <h2>Welcome to Grade</h2>
@@ -568,7 +598,10 @@ function sanitize(src){
     o.jobs={profile:p?{role:str(p.role,60).trim()||'QA Engineer',skills:(Array.isArray(p.skills)?p.skills:[]).filter(x=>typeof x==='string').map(x=>x.slice(0,40)).slice(0,80),
       years:num(p.years,0,50,0),level:Math.round(num(p.level,1,5,3)),updated:num(p.updated,0,1e14,0)}:null,status:{},minMatch:[50,60,70,80].includes(j.minMatch)?j.minMatch:60,
       tab:['for','saved','applied'].includes(j.tab)?j.tab:'for',locs:{uae:!isObj(j.locs)||j.locs.uae!==false,remote:!isObj(j.locs)||j.locs.remote!==false,india:isObj(j.locs)&&j.locs.india===true}};
-    if(isObj(j.status))for(const[k,v]of Object.entries(j.status))if(/^[\w.-]{1,80}$/.test(k)&&['saved','applied','opened','hidden'].includes(v))o.jobs.status[k]=v}
+    if(isObj(j.status))for(const[k,v]of Object.entries(j.status))if(/^[\w.-]{1,80}$/.test(k)&&['saved','applied','opened','hidden'].includes(v))o.jobs.status[k]=v;
+    if(isObj(j.f)){const f=j.f;o.jobs.f={q:str(f.q,60),posted:['1','3','7','30'].includes(f.posted)?f.posted:'30',level:['fit','any','2','3','4','5'].includes(f.level)?f.level:'fit',
+      type:['any','full','contract','part'].includes(f.type)?f.type:'any',salary:f.salary===true,sort:['match','new','salary'].includes(f.sort)?f.sort:'match',
+      where:(Array.isArray(f.where)?f.where:[]).filter(w=>['uae','remote','india','europe','any'].includes(w))}}}
   return o;
 }
 const normalize=()=>{S=sanitize(S)};
@@ -1091,10 +1124,10 @@ function scoreJob(j,p){
   const lvl=[1,.75,.35,.1,0][Math.min(4,dl)];
   let req=0;for(const m of (j.desc||'').matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)){const y=+m[1];if(y<=20&&y>req)req=y}
   const exp=!req||p.years>=req?1:Math.max(0,1-(req-p.years)/4);
-  const L=J().locs,loc=(j.loc||'').toLowerCase();
+  const W=F().where,L={uae:W.includes('uae')||W.includes('any'),remote:W.includes('remote')||W.includes('any'),india:W.includes('india')||W.includes('any')},loc=(j.loc||'').toLowerCase();
   const uae=/uae|dubai|abu dhabi|sharjah|emirates|middle east|mena|gcc/.test(loc),india=/india|bangalore|bengaluru|pune|hyderabad|chennai|mumbai|delhi/.test(loc);
   const anywhere=j.remote&&(/worldwide|anywhere|global|remote$|^remote|emea|asia/.test(loc)||!loc);
-  const locS=(L.uae&&uae)||(L.india&&india)||(L.remote&&anywhere)?1:(L.remote&&j.remote?.45:.1);
+  const europe=LOCRE.europe.test(loc);const locS=W.includes('any')||(L.uae&&uae)||(L.india&&india)||(L.remote&&anywhere)||(W.includes('europe')&&europe)?1:(L.remote&&j.remote?.45:.1);
   let score=100*(.5*skill+.2*lvl+.15*exp+.15*locS);
   if(hwTitle&&!/software/i.test(j.title))score*=.55;else if(!swTitle)score*=.8;
   score=Math.min(99,Math.round(score));   // never claim a perfect 100% from a text match
@@ -1114,34 +1147,88 @@ function boards(role){
    ['Naukrigulf',`https://www.naukrigulf.com/${slug}-jobs-in-uae`,'#2a7de1'],
    ['Google Jobs',`https://www.google.com/search?q=${q}+jobs+UAE&ibp=htl;jobs`,'#34a853']];
 }
+const WHERE=[['uae','UAE'],['remote','Remote'],['india','India'],['europe','Europe'],['any','Anywhere']];
+const POSTED=[['1','Last 24 hours'],['3','Last 3 days'],['7','Last 7 days'],['30','Last 30 days']];
+const LEVELF=[['fit','Right for my level'],['any','Any level'],['3','Senior'],['4','Lead / Staff'],['5','Architect / Manager'],['2','Mid-level']];
+const TYPES=[['any','Any type'],['full','Full-time'],['contract','Contract / Freelance'],['part','Part-time']];
+const SORTS=[['match','Best match'],['new','Newest first'],['salary','Highest salary']];
+const LOCRE={uae:/uae|dubai|abu dhabi|sharjah|emirates|middle east|mena|gcc|ajman/i,india:/india|bangalore|bengaluru|pune|hyderabad|chennai|mumbai|delhi|noida|gurgaon|kochi/i,
+ europe:/europe|emea|cet\b|germany|deutschland|berlin|munich|france|paris|netherlands|amsterdam|switzerland|zurich|bern|uk\b|united kingdom|london|spain|portugal|poland|italy|ireland|sweden|norway|oslo|denmark|finland|belgium|austria|cyprus|czech/i};
+const F=()=>{const st=J();st.f=Object.assign({q:'',posted:'30',level:'fit',type:'any',salary:false,sort:'match'},st.f||{});
+  if(!Array.isArray(st.f.where))st.f.where=Object.entries(st.locs||{uae:true,remote:true}).filter(([,v])=>v).map(([k])=>k);if(!st.f.where.length)st.f.where=['any'];return st.f};
+let jPage=1;
+function salaryNum(s){if(!s)return 0;const n=[...String(s).replace(/,/g,'').matchAll(/\d+(\.\d+)?/g)].map(m=>+m[0]);if(!n.length)return 0;let v=Math.max(...n);if(/k\b/i.test(s)&&v<1000)v*=1000;if(/month/i.test(s))v*=12;if(/hour/i.test(s))v*=2000;return v}
+function jobLevel(t){for(const[,re,l] of [...LEVELS].reverse())if(re.test(t))return l;return 0}
+function jobMatchesFilters(j,f,p){
+  const days=(Date.now()-Date.parse(j.posted))/864e5;if(days>+f.posted)return false;
+  if(!f.where.includes('any')){const loc=`${j.loc||''}`;const hit=f.where.some(w=>w==='remote'?j.remote:LOCRE[w]&&LOCRE[w].test(loc));if(!hit)return false}
+  const jl=jobLevel(j.title);
+  if(f.level==='fit'){if(p&&jl&&Math.abs(jl-p.level)>1)return false}else if(f.level!=='any'&&jl!==+f.level)return false;
+  const tt=`${j.type||''} ${j.title}`;
+  if(f.type==='full'&&/contract|freelance|part.time/i.test(tt))return false;
+  if(f.type==='contract'&&!/contract|freelance/i.test(tt))return false;
+  if(f.type==='part'&&!/part.time/i.test(tt))return false;
+  if(f.salary&&!j.salary)return false;
+  if(f.q){const hay=`${j.title} ${j.company} ${j.loc} ${(j.tags||[]).join(' ')} ${j.desc||''}`.toLowerCase();if(!f.q.toLowerCase().split(/\s+/).filter(Boolean).every(w=>hay.includes(w)))return false}
+  return true;
+}
+const hl=(text,q)=>{let h=esc(text);if(!q)return h;for(const w of q.split(/\s+/).filter(x=>x.length>1)){const re=new RegExp('('+w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');h=h.replace(re,'<mark>$1</mark>')}return h};
+function renderChips(){
+  const f=F(),lab=(arr,v)=>(arr.find(x=>x[0]===v)||arr[0])[1];
+  const where=f.where.includes('any')?'Anywhere':f.where.map(w=>lab(WHERE,w)).join(', ');
+  const chip=(id,text,on,arrow=true)=>`<button class="fchip ${on?'on':''}" data-chip="${id}">${esc(text)}${arrow?'<svg><use href="#i-down"/></svg>':''}</button>`;
+  $('jChips').innerHTML=chip('where',where,true)+chip('posted',lab(POSTED,f.posted),f.posted!=='30')+chip('level',lab(LEVELF,f.level),f.level!=='any')+chip('type',lab(TYPES,f.type),f.type!=='any')
+    +chip('salary','Salary shown',f.salary,false)+chip('sort','Sort: '+lab(SORTS,f.sort),f.sort!=='match')+chip('min','Match ≥ '+J().minMatch+'%',true);
+}
+function openSheet(id){
+  const f=F(),st=J();let title,opts,multi=false,cur;
+  if(id==='where'){title='Where do you want to work?';opts=WHERE;multi=true;cur=f.where}
+  else if(id==='posted'){title='Date posted';opts=POSTED;cur=[f.posted]}
+  else if(id==='level'){title='Seniority';opts=LEVELF;cur=[f.level]}
+  else if(id==='type'){title='Job type';opts=TYPES;cur=[f.type]}
+  else if(id==='sort'){title='Sort jobs by';opts=SORTS;cur=[f.sort]}
+  else if(id==='min'){title='Minimum match score';opts=[['50','50% and above'],['60','60% and above'],['70','70% and above'],['80','80% and above']];cur=[String(st.minMatch)]}
+  else return;
+  $('fTitle').textContent=title;
+  $('fOpts').innerHTML=opts.map(([v,l])=>`<label class="fopt"><input type="${multi?'checkbox':'radio'}" name="fo" value="${v}" ${cur.includes(v)?'checked':''}>${esc(l)}</label>`).join('');
+  const dl=$('fDlg');dl.returnValue='';
+  $('fReset').onclick=()=>{const def={where:['uae','remote'],posted:['30'],level:['fit'],type:['any'],sort:['match'],min:['60']}[id];$('fOpts').querySelectorAll('input').forEach(i=>i.checked=def.includes(i.value))};
+  dl.onclose=()=>{const vals=[...$('fOpts').querySelectorAll('input:checked')].map(i=>i.value);if(!vals.length&&id!=='where')return;
+    if(id==='where'){f.where=vals.includes('any')||!vals.length?['any']:vals}else if(id==='min')st.minMatch=+vals[0];else f[id]=vals[0];
+    jPage=1;save();renderJobs()};
+  dl.showModal();
+}
 function renderJobs(){
-  const st=J(),p=st.profile;
+  const st=J(),p=st.profile,f=F();
+  renderChips();
   $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills</span></div><button class="ghost sm" id="profToggle" aria-expanded="${profOpen}">${profOpen?'Done':'Edit'}</button></div>
     ${profOpen?`<div class="row" style="margin-top:10px"><label class="btn ghost sm">Upload new resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div><div class="chips">${(skOpen?p.skills:p.skills.slice(0,6)).map(s=>`<button class="chip-s" data-rm="${esc(s)}" aria-label="Remove ${esc(s)}">${esc(s)} ×</button>`).join('')}${p.skills.length>6?`<button class="chip-s add" id="skMore">${skOpen?'Show less':'+'+(p.skills.length-6)+' more'}</button>`:''}<button class="chip-s add" id="addSkill">+ Add skill</button></div>`:''}`
-   :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Grade then scores every new QA job against your skills and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>`;
-  $('jobLocs').innerHTML=[['uae','UAE'],['remote','Remote'],['india','India']].map(([k,l])=>`<button class="seg ${st.locs[k]?'on':''}" data-loc="${k}">${l}</button>`).join('');
+   :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Every job is then ranked against your skills, seniority and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>`;
   $('jobBoards').innerHTML=boards(p?p.role:'QA Engineer').map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · UAE</small></a>`).join('');
-  const tabs={for:'For you',saved:'Saved',applied:'Applied'};
-  let list=[],counts={for:0,saved:0,applied:0};
-  if(JOBS&&p){
-    list=JOBS.jobs.map(j=>({...j,...scoreJob(j,p),status:st.status[j.id]||''}));
-    counts.for=list.filter(j=>j.score>=st.minMatch&&j.status!=='hidden'&&j.status!=='applied').length;
-    counts.saved=list.filter(j=>j.status==='saved').length;counts.applied=list.filter(j=>j.status==='applied').length;
-    list=st.tab==='for'?list.filter(j=>j.score>=st.minMatch&&j.status!=='hidden'&&j.status!=='applied'):list.filter(j=>j.status===st.tab);
-    list.sort((a,b)=>b.score-a.score||b.posted.localeCompare(a.posted));
+  const tabs={for:'For you',saved:'Saved',applied:'Applied'};let list=[],counts={for:0,saved:0,applied:0},total=0;
+  if(JOBS){
+    const all=JOBS.jobs.map(j=>({...j,...(p?scoreJob(j,p):{score:0,matched:[],missing:[]}),status:st.status[j.id]||''}));total=all.length;
+    const filtered=all.filter(j=>jobMatchesFilters(j,f,p));
+    const forYou=filtered.filter(j=>(!p||j.score>=st.minMatch)&&j.status!=='hidden'&&j.status!=='applied');
+    counts={for:forYou.length,saved:all.filter(j=>j.status==='saved').length,applied:all.filter(j=>j.status==='applied').length};
+    list=st.tab==='for'?forYou:all.filter(j=>j.status===st.tab);
+    const sorters={match:(a,b)=>b.score-a.score||b.posted.localeCompare(a.posted),new:(a,b)=>b.posted.localeCompare(a.posted),salary:(a,b)=>salaryNum(b.salary)-salaryNum(a.salary)||b.score-a.score};
+    list.sort(sorters[p?f.sort:(f.sort==='match'?'new':f.sort)]||sorters.match);
   }
   $('jobTabs').innerHTML=Object.entries(tabs).map(([k,l])=>`<button class="seg ${st.tab===k?'on':''}" data-tab="${k}">${l} <span>${counts[k]}</span></button>`).join('');
-  $('jobCount').textContent=JOBS?`Updated ${ago(JOBS.generated)}`:'';
-  if(!p){$('jobList').innerHTML='';return}
-  if(!JOBS){$('jobList').innerHTML=`<div class="panel empty"><b>${navigator.onLine?'Fresh jobs are on their way':'You are offline'}</b><span class="mute">New QA openings are collected every morning. Meanwhile, use the UAE job board searches above.</span></div>`;return}
-  if(!list.length){$('jobList').innerHTML=`<div class="panel empty"><b>${st.tab==='for'?'No strong matches today':'Nothing here yet'}</b><span class="mute">${st.tab==='for'?`Only jobs scoring ${st.minMatch}% or more are shown. New jobs arrive every morning.`:'Tap the heart on a job to save it.'}</span></div>`;return}
-  $('jobList').innerHTML=list.slice(0,60).map(j=>{
+  $('jobCount').textContent=JOBS?`${total} jobs · updated ${ago(JOBS.generated)}`:'';
+  $('jSummary').textContent=JOBS&&st.tab==='for'?(p?`${list.length} match${list.length===1?'':'es'}`:`${list.length} job${list.length===1?'':'s'} · upload a resume to rank them`):'';
+  $('jMore').hidden=true;
+  if(!JOBS){$('jobList').innerHTML=`<div class="panel empty"><b>${navigator.onLine?'Loading jobs…':'You are offline'}</b><span class="mute">New QA openings are collected every morning. Tap ↻ to try again, or use the UAE job boards below.</span></div>`;return}
+  if(!list.length){$('jobList').innerHTML=`<div class="panel empty"><b>${st.tab==='for'?'No jobs match these filters':'Nothing here yet'}</b><span class="mute">${st.tab==='for'?'Try "Anywhere", a longer date range, "Any level" or a lower match score.':'Tap the heart on a job to save it.'}</span></div>`;return}
+  const shown=list.slice(0,jPage*20);$('jMore').hidden=list.length<=shown.length;
+  $('jobList').innerHTML=shown.map(j=>{
     const isNew=Date.now()-Date.parse(j.posted)<864e5,col=j.score>=85?'#1ed760':j.score>=70?'#b6f36a':'#ffc23d',C=2*Math.PI*21;
     return `<article class="job" data-id="${esc(j.id)}">
       <div class="job-h"><div class="logo" style="background:hsl(${hue(j.company)} 55% 42%)">${esc((j.company||'?').trim()[0]||'?')}</div>
-        <div class="job-t"><h3>${esc(j.title)}</h3><span>${esc(j.company||'')} · ${esc(j.loc||'')}</span></div>
-        <div class="match"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="21" fill="none" stroke="#333" stroke-width="5"/><circle cx="25" cy="25" r="21" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-j.score/100)}" transform="rotate(-90 25 25)"/></svg><b>${j.score}%</b><small>match</small></div></div>
-      <div class="tags">${isNew?'<span class="tag new">New</span>':''}${j.remote?'<span class="tag">Remote</span>':''}${j.salary?`<span class="tag money">${esc(j.salary)}</span>`:''}${j.req?`<span class="tag">${j.req}+ yrs</span>`:''}<span class="tag">${esc(ago(j.posted))}</span></div>
+        <div class="job-t"><h3>${hl(j.title,f.q)}</h3><span>${esc(j.company||'')} · ${esc(j.loc||'')}</span></div>
+        ${p?`<div class="match"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="21" fill="none" stroke="#333" stroke-width="5"/><circle cx="25" cy="25" r="21" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-j.score/100)}" transform="rotate(-90 25 25)"/></svg><b>${j.score}%</b><small>match</small></div>`:''}</div>
+      <div class="tags">${isNew?'<span class="tag new">New</span>':''}${j.remote?'<span class="tag">Remote</span>':''}${j.salary?`<span class="tag money">${esc(j.salary)}</span>`:''}${j.req?`<span class="tag">${j.req}+ yrs</span>`:''}${j.type?`<span class="tag">${esc(j.type)}</span>`:''}<span class="tag">${esc(ago(j.posted))}</span></div>
       ${j.matched.length?`<p class="fit"><b>Why you fit</b>${j.matched.slice(0,6).map(s=>`<span>✓ ${esc(s)}</span>`).join('')}</p>`:''}
       ${j.missing.length?`<p class="gap"><b>Brush up</b>${j.missing.map(s=>`<span>${esc(s)}</span>`).join('')}</p>`:''}
       ${j.status==='opened'?`<div class="asked"><span>Did you apply?</span><button class="sm" data-st="applied">Yes, applied</button><button class="ghost sm" data-st="">Not yet</button></div>`:''}
@@ -1170,7 +1257,11 @@ $('v-jobs').addEventListener('click',async e=>{
     if(el.dataset.st==='applied')toast('Marked as applied. Good luck!');if(el.dataset.st==='hidden')toast('Hidden. You will not see this job again.')}
   save();renderJobs();
 });
-$('minMatch').addEventListener('change',e=>{J().minMatch=+e.target.value;save();renderJobs()});
+$('jChips').addEventListener('click',e=>{const c=e.target.closest('[data-chip]');if(!c)return;const f=F();
+  if(c.dataset.chip==='salary'){f.salary=!f.salary;jPage=1;save();renderJobs()}else openSheet(c.dataset.chip)});
+let qT;$('jq').addEventListener('input',e=>{clearTimeout(qT);qT=setTimeout(()=>{F().q=e.target.value.trim().slice(0,60);jPage=1;save();renderJobs()},250)});
+$('jRefresh').onclick=async()=>{$('jRefresh').disabled=true;await loadJobs();$('jRefresh').disabled=false;toast(JOBS?`${JOBS.jobs.length} jobs · updated ${ago(JOBS.generated)}`:'Could not reach the job list')};
+$('jMore').onclick=()=>{jPage++;renderJobs()};
 
 $('jobsLink').onclick=()=>document.querySelector('nav button[data-v=jobs]').click();
 $('histLink').onclick=()=>document.querySelector('nav button[data-v=hist]').click();
@@ -1240,7 +1331,7 @@ if(N)pullNative();
 renderCats();$('expDate').value=dkey();
 render();trackUI();notifUI();nativeUI();save();
 setTimeout(()=>{onboard();if(!$('onbDlg').open)checkExpensePrompt()},1200);
-loadNews();loadJobs();$('minMatch').value=J().minMatch;
+loadNews();loadJobs();$('jq').value=F().q||'';
 if(!N&&S.settings.tracking)startTracking(false);
 if(N&&!N.permissionsOk())setTimeout(()=>N.requestPermissions(),600);
 }

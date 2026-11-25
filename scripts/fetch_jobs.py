@@ -12,6 +12,7 @@ import json
 import os
 import re
 import sys
+import urllib.parse
 import urllib.request
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "web", "jobs.json")
@@ -52,7 +53,8 @@ def iso(v):
 def remotive():
     seen = set()
     raw = []
-    for q in ("category=qa", "search=qa", "search=test%20automation", "search=sdet"):
+    for q in ("category=qa", "search=qa%20engineer", "search=quality%20assurance", "search=test%20automation",
+              "search=sdet", "search=playwright", "search=selenium", "search=software%20tester"):
         try:
             raw += get(f"https://remotive.com/api/remote-jobs?{q}&limit=100").get("jobs", [])
         except Exception as e:
@@ -147,11 +149,56 @@ def weworkremotely():
                    desc=clean(it.findtext("description")), url=(it.findtext("link") or "").strip(), posted=posted, source="We Work Remotely")
 
 
+def himalayas():
+    raw = []
+    for q in ("qa", "quality assurance", "test automation", "sdet"):
+        try:
+            d = get("https://himalayas.app/jobs/api/search?q=" + urllib.parse.quote(q) + "&limit=50")
+            raw += d.get("jobs", []) if isinstance(d, dict) else []
+        except Exception as e:
+            print(f"himalayas '{q}' failed: {e}", file=sys.stderr)
+    print(f"himalayas raw: {len(raw)}")
+    for j in raw:
+        locs = j.get("locationRestrictions") or []
+        loc = ", ".join(l if isinstance(l, str) else str(l.get("name", "")) for l in locs) or "Remote"
+        sal = ""
+        if j.get("minSalary"):
+            sal = f"{j.get('currency', 'USD')} {int(j['minSalary']):,}–{int(j.get('maxSalary') or j['minSalary']):,} / year"
+        yield dict(id="hm" + re.sub(r"\W", "", str(j.get("guid") or j.get("applicationLink") or j.get("title")))[-40:],
+                   title=j.get("title"), company=j.get("companyName"), logo="", loc=loc, remote=True, salary=sal,
+                   type=j.get("employmentType") or "", tags=j.get("categories") or [], desc=clean(j.get("description") or j.get("excerpt")),
+                   url=j.get("applicationLink") or j.get("guid"), posted=iso(j.get("pubDate")), source="Himalayas")
+
+
+def jooble():
+    """UAE office jobs. Needs a free API key from jooble.org/api/about saved as the JOOBLE_API_KEY secret."""
+    key = os.environ.get("JOOBLE_API_KEY", "").strip()
+    if not key:
+        print("jooble: skipped (add the free JOOBLE_API_KEY secret for UAE office jobs)")
+        return
+    raw = []
+    for kw in ("QA engineer", "test automation engineer", "quality assurance", "SDET", "software tester", "QA lead"):
+        for loc in ("Dubai", "Abu Dhabi", "Sharjah"):
+            try:
+                body = json.dumps({"keywords": kw, "location": loc, "page": "1"}).encode()
+                req = urllib.request.Request("https://jooble.org/api/" + urllib.parse.quote(key), data=body,
+                                             headers={"Content-Type": "application/json", "User-Agent": UA})
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    raw += json.loads(r.read(5_000_001)).get("jobs", [])
+            except Exception as e:
+                print(f"jooble '{kw}' {loc} failed: {type(e).__name__}", file=sys.stderr)
+    print(f"jooble raw: {len(raw)}")
+    for j in raw:
+        yield dict(id="jb" + str(j.get("id")), title=clean(j.get("title"), 160), company=j.get("company") or "", logo="",
+                   loc=j.get("location") or "UAE", remote=False, salary=j.get("salary") or "", type=j.get("type") or "",
+                   tags=[], desc=clean(j.get("snippet")), url=j.get("link"), posted=iso(j.get("updated")), source="Jooble")
+
+
 def main():
     now = dt.datetime.now(dt.timezone.utc)
     cutoff = now - dt.timedelta(days=30)
     jobs, seen = [], set()
-    for src in (remotive, jobicy, arbeitnow, remoteok, workingnomads, weworkremotely):
+    for src in (jooble, remotive, himalayas, jobicy, arbeitnow, remoteok, workingnomads, weworkremotely):
         n, dropped = 0, {"not QA": 0, "not software": 0, "too old": 0, "duplicate": 0}
         try:
             for j in src():
@@ -185,7 +232,7 @@ def main():
             print(f"{src.__name__} failed: {e}", file=sys.stderr)
         print(f"{src.__name__}: kept {n} | dropped {dropped}")
     jobs.sort(key=lambda j: j["posted"], reverse=True)
-    jobs = jobs[:150]
+    jobs = jobs[:250]
     if not jobs:
         print("No jobs fetched; keeping previous file", file=sys.stderr)
         return
