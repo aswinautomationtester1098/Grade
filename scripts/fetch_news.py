@@ -53,13 +53,10 @@ SECTIONS = [
     ], False, "qa"),
     ("qablogs", "QA Reads", 5, 2, [
         "https://testing.googleblog.com/feeds/posts/default",
-        "https://playwright.dev/blog/atom.xml",
         "https://www.cypress.io/blog/rss.xml",
-        "https://www.selenium.dev/blog/index.xml",
         "https://testguild.com/feed/",
         "https://automationpanda.com/feed/",
         "https://applitools.com/blog/feed/",
-        "https://www.ministryoftesting.com/feed",
         "https://www.softwaretestinghelp.com/feed/",
     ], False, None),
     ("tools", "QA Tool Releases", 5, 1, [
