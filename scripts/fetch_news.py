@@ -53,9 +53,9 @@ SECTIONS = [
     ], False, "qa"),
     ("qablogs", "QA Reads", 5, 2, [
         "https://testing.googleblog.com/feeds/posts/default",
-        "https://playwright.dev/blog/rss.xml",
+        "https://playwright.dev/blog/atom.xml",
         "https://www.cypress.io/blog/rss.xml",
-        "https://www.selenium.dev/feed.xml",
+        "https://www.selenium.dev/blog/index.xml",
         "https://testguild.com/feed/",
         "https://automationpanda.com/feed/",
         "https://applitools.com/blog/feed/",
@@ -133,7 +133,13 @@ def parse_atom(root, now):
 
 def parse(xml_bytes, now):
     items = []
-    root = ET.fromstring(xml_bytes)
+    try:
+        root = ET.fromstring(xml_bytes)
+    except ET.ParseError:                       # sloppy feeds: drop control chars and fix bare ampersands
+        txt = xml_bytes.decode("utf-8", "ignore")
+        txt = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", txt)
+        txt = re.sub(r"&(?!#?\w+;)", "&amp;", txt)
+        root = ET.fromstring(txt.encode("utf-8"))
     if root.tag == ATOM + "feed":
         return parse_atom(root, now)
     channel_title = clean(root.findtext("channel/title"))
