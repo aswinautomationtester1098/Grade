@@ -230,8 +230,8 @@ def main():
                 print(f"[{sid}] feed returned {len(got)}")
                 pool += got
             except Exception as e:
-                print(f"[{sid}] feed failed: {e}", file=sys.stderr)
-        days = {"qa": 7, "uaeindia": 7, "qablogs": 10, "tools": 14}.get(sid)
+                print(f"[{sid}] feed failed: {url[:70]}: {e}", file=sys.stderr)
+        days = {"qa": 7, "uaeindia": 7, "qablogs": 21, "tools": 14}.get(sid)
         window = now - dt.timedelta(days=days) if days else cutoff
         pool = [p for p in pool if dt.datetime.fromisoformat(p["ts"]) >= window and p["t"]]
         if filt == "qa":
