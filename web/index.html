@@ -398,6 +398,12 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 .chip.on{background:var(--green);color:#fff;border-color:var(--green)}
 .colinks.sk{max-height:34vh;overflow:auto;margin-top:12px}
 #skDlg{max-height:90vh;overflow:auto;width:min(440px,calc(100% - 24px))}#skFind{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--elev2);color:var(--ink);font-size:16px}
+
+#chkTxt{width:100%;box-sizing:border-box;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--elev2);color:var(--ink);font:inherit;font-size:15px;resize:vertical}
+#chkDlg{max-height:90vh;overflow:auto;width:min(440px,calc(100% - 24px))}
+.chkres{border-radius:14px;padding:12px 14px;margin-top:12px}.chkres b{font-size:17px}.chkres p{margin:4px 0 0;line-height:1.4}
+.tag.old{background:var(--ybg);color:var(--ink)}
+.nudge .sm{margin-left:6px;padding:5px 11px;min-height:0;font-size:12px}
 </style>
 </head>
 <body>
@@ -499,6 +505,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     </div>
     <div class="fchips" id="jChips" aria-label="Filters"></div>
   </div>
+  <button class="li plan" data-check type="button"><span class="pic">🛡️</span><div><b>Check a job post or offer message</b><span class="mute">Scam red flags and your skill match, in seconds</span></div><span class="tick">›</span></button>
   <div class="panel" id="jobProfile"></div>
   <div class="row" style="justify-content:space-between"><div class="segs" id="jobTabs"></div><span class="mute" id="jSummary"></span></div>
   <div id="jobList" style="display:grid;gap:14px"></div>
@@ -539,7 +546,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <h2><span>Today's briefing</span><small id="newsDate"></small></h2>
     <p class="mute" id="newsStatus" style="margin:-4px 0 0"></p>
   </div>
-  <div class="hub" id="hub"><button id="codeOpen" type="button"><i>💻</i><b>കോഡിംഗ് പഠിക്കാം</b><small>Python · JS · Java · SQL</small></button><button id="ivOpen" type="button"><i>🎯</i><b>Interview quick reference</b><small>Top questions by topic</small></button><button id="xpOpen" type="button"><i>🧭</i><b>Experience Grade</b><small>Advice from the industry</small></button></div>
+  <div class="hub" id="hub"><button data-check type="button"><i>🛡️</i><b>Job post checker</b><small>Spot scams and see your match</small></button><button id="codeOpen" type="button"><i>💻</i><b>കോഡിംഗ് പഠിക്കാം</b><small>Python · JS · Java · SQL</small></button><button id="ivOpen" type="button"><i>🎯</i><b>Interview quick reference</b><small>Top questions by topic</small></button><button id="xpOpen" type="button"><i>🧭</i><b>Experience Grade</b><small>Advice from the industry</small></button></div>
   <div class="panel lv" id="lvBox"></div>
   <div class="panel lv" id="qBox"></div>
   <div class="panel lv" id="tipBox"></div>
@@ -645,6 +652,14 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <div class="row" style="justify-content:space-between;margin-top:16px"><button type="button" class="ghost" id="fReset">Reset</button><button value="ok">Show jobs</button></div>
   </form>
 </dialog>
+<dialog id="chkDlg">
+  <h2>Job post checker</h2>
+  <p class="mute" style="margin:0 0 10px">Paste a job post, WhatsApp or email offer. It is checked on this phone only.</p>
+  <textarea id="chkTxt" rows="6" maxlength="6000" placeholder="Paste the job description or the message here" aria-label="Job post text"></textarea>
+  <div id="chkOut"></div>
+  <div style="display:grid;gap:10px;margin-top:12px"><button id="chkGo" type="button">Check it</button><button class="ghost" id="chkClose" type="button">Close</button></div>
+</dialog>
+
 <dialog id="skDlg">
   <h2>Pick your skills</h2>
   <p class="mute" style="margin:0 0 10px">No resume needed. Tap what you know and I will rank jobs for you. Nothing leaves this phone.</p>
@@ -1244,7 +1259,7 @@ function renderJobs(){
       <div class="job-h"><div class="logo" style="background:hsl(${hue(j.company)} 55% 42%)">${esc((j.company||'?').trim()[0]||'?')}</div>
         <div class="job-t"><h3>${hl(j.title,f.q)}</h3><span>${esc(j.company||'')} · ${esc(j.loc||'')}</span></div>
         ${p?`<div class="match"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="21" fill="none" stroke="#333" stroke-width="5"/><circle cx="25" cy="25" r="21" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-j.score/100)}" transform="rotate(-90 25 25)"/></svg><b>${j.score}%</b><small>match</small></div>`:''}</div>
-      <div class="tags">${isNew?'<span class="tag new">New</span>':''}${j.remote?'<span class="tag">Remote</span>':''}${j.salary?`<span class="tag money">${esc(j.salary)}</span>`:''}${j.req?`<span class="tag">${j.req}+ yrs</span>`:''}${j.type?`<span class="tag">${esc(j.type)}</span>`:''}<span class="tag">${esc(ago(j.posted))}</span></div>
+      <div class="tags">${isNew?'<span class="tag new">New</span>':''}${Date.now()-Date.parse(j.posted)>21*864e5?'<span class="tag old">May be filled</span>':''}${j.remote?'<span class="tag">Remote</span>':''}${j.salary?`<span class="tag money">${esc(j.salary)}</span>`:''}${j.req?`<span class="tag">${j.req}+ yrs</span>`:''}${j.type?`<span class="tag">${esc(j.type)}</span>`:''}<span class="tag">${esc(ago(j.posted))}</span></div>
       ${j.matched.length||(j.why&&Object.values(j.why).some(Boolean))?`<p class="fit"><b>Why you fit</b>${j.why&&j.why.title?'<span>✓ Title fits your role</span>':''}${j.why&&j.why.level?'<span>✓ Right seniority</span>':''}${j.matched.slice(0,6).map(s=>`<span>✓ ${esc(s)}</span>`).join('')}${j.why&&j.why.liked?'<span>★ Like jobs you saved</span>':''}</p>`:''}
       ${j.missing.length?`<p class="gap"><b>Brush up</b>${j.missing.map(s=>`<span>${esc(s)}</span>`).join('')}</p>`:''}
       ${j.status==='opened'?`<div class="asked"><span>Did you apply?</span><button class="sm" data-st="applied">Yes, applied</button><button class="ghost sm" data-st="">Not yet</button></div>`:''}
@@ -1329,7 +1344,7 @@ function renderApps(){
         <div class="job-t"><h3>${hl(x.title,apQ)}</h3><span>${hl(x.company||'Company not listed',apQ)}${x.loc?' · '+esc(x.loc):''}</span></div></div>
       <div class="when">Applied ${when} · ${d===0?'today':d===1?'yesterday':d+' days ago'}${x.score?' · '+x.score+'% match':''}${x.source?' · via '+esc(x.source):''}</div>
       ${x.kw.length?`<div class="kws">${x.kw.map(k=>`<span class="${mset.has(k)?'hit':''}">${mset.has(k)?'✓ ':''}${hl(k,apQ)}</span>`).join('')}</div>`:''}
-      ${x.stage==='applied'&&d>=7?`<div class="nudge">No update for ${d} days. Consider a polite follow-up.</div>`:''}
+      ${x.stage==='applied'&&d>=7?`<div class="nudge">No update for ${d} days. A polite follow-up often gets a reply. <button class="sm" data-msg="follow" type="button">Copy follow-up</button></div>`:''}${x.stage==='interview'?`<div class="nudge">Send a thank-you within 24 hours. <button class="sm" data-msg="thanks" type="button">Copy thank-you</button></div>`:''}${x.stage==='rejected'?`<div class="nudge">Rejection is part of the process. Asking for feedback helps. <button class="sm" data-msg="feedback" type="button">Copy request</button></div>`:''}
       <div class="row"><select data-stage aria-label="Status">${STAGES.map(s=>`<option value="${s}" ${x.stage===s?'selected':''}>${s[0].toUpperCase()+s.slice(1)}</option>`).join('')}</select>
         ${x.url?`<a class="btn ghost sm" href="${esc(safeUrl(x.url))}" target="_blank" rel="noopener">View job</a>`:''}
         <button class="ghost sm" data-del>Remove</button></div>
@@ -1501,6 +1516,43 @@ function cqAnswer(k){const d=CD(),qi=cq.list[cq.i],q=d.quiz[qi];if(cq.sel!==-1)r
   cq.sel=k===-2?-2:k;if(k===q[2]){cq.score++;cdXp(10)}else cq.wrong.push(qi);cqShow()}
 function renderCdProj(){const d=CD(),l=S.code.lang;
   $('cdBody').innerHTML=`<p class="mute" style="margin:0 0 10px">Try each one on paper or in an editor first. Open the hint if stuck, the solution last.</p>`+d.projects.map((p,i)=>`<div class="cdp ${S.code.proj[l+':'+i]?'done':''}"><h3>${esc(p[0])}<span class="lvl">${esc(p[1])}</span></h3><div>${esc(p[2])}</div><div class="lbl" style="font-size:12px;font-weight:800;color:#8a8a8a">EXAMPLE</div><pre>${esc(p[3])}</pre><details><summary>Hint</summary><div class="mute">${esc(p[4])}</div></details><details><summary>Solution</summary><pre>${esc(p[5])}</pre><div class="row" style="margin-top:8px"><button class="ghost sm" data-copy="${i}">Copy code</button></div></details><div class="row"><button class="btn sm" data-solved="${i}">${S.code.proj[l+':'+i]?'Solved ✓':'I solved it'}</button></div></div>`).join('')}
+/* ---------- job post checker: scam flags + skill match ---------- */
+const SCAM=[
+ [3,/(registration|processing|training|security|visa|medical|document|application|joining|interview|admin|agent|kit|uniform|laptop)\s*(fee|fees|charge|charges|deposit|payment)|pay\s+(us\s+)?(a\s+)?(small\s+)?(fee|deposit|amount)|refundable|send\s+(the\s+)?money|transfer\s+(the\s+)?(fee|amount)|deposit\s+(first|before)/i,'Asks you to pay money. Real employers never charge to hire you.'],
+ [3,/(gift\s?cards?|crypto|bitcoin|usdt|western union|moneygram|cheque|check)\s+(payment|to buy|for equipment)|buy\s+(equipment|gift)/i,'Asks for gift cards, crypto or cheque handling. A classic scam.'],
+ [3,/(passport|emirates id|aadhaar|aadhar|pan card|ssn|social security|bank (account|details)|card number|otp|cvv|password)/i,'Asks for ID, bank details or an OTP before any real interview.'],
+ [2,/(whatsapp|telegram|signal|wa\.me|t\.me)\b/i,'Moves the chat to WhatsApp or Telegram. Companies normally use official email or their careers site.'],
+ [2,/(no interview|without (an )?interview|instant (selection|joining|offer)|guaranteed (job|placement|selection)|100%\s*(job|placement)|selected for the job)/i,'Promises a job with no real interview.'],
+ [2,/(earn|make)\s+(up to\s+)?[$₹£€]?\s?\d[\d,]{2,}\s*(\/|per|a)\s*(day|hour|week)|work from home.{0,40}earn|easy money|part.?time.{0,30}(huge|high) (salary|income)/i,'Pay sounds too good for the work.'],
+ [2,/@(gmail|yahoo|hotmail|outlook|rediffmail|proton)\.[a-z.]+/i,'Recruiter uses a free email address instead of a company address.'],
+ [1,/(urgent(ly)? hiring|limited (seats|slots|vacanc)|apply (immediately|today only)|last chance|act now|hurry)/i,'Pressure to act fast.'],
+ [1,/(bit\.ly|tinyurl|cutt\.ly|rb\.gy|goo\.gl|is\.gd)\//i,'Uses a shortened link that hides the real site.'],
+ [1,/(offer letter|appointment letter).{0,60}(before|without|pay)/i,'Sends an offer letter before any proper selection.'],
+ [1,/(no experience (needed|required)).{0,80}(high|lakh|\d{4,})/i,'High salary with no experience needed.']];
+function scamScan(t){const hits=SCAM.filter(r=>r[1].test(t));const pts=hits.reduce((a,r)=>a+r[0],0);
+  return{hits,level:pts>=4||hits.some(r=>r[0]===3)?'high':pts>=2?'caution':'none'}}
+function chkRun(){const t=$('chkTxt').value.trim().slice(0,6000);if(t.length<25){$('chkOut').innerHTML='<p class="mute">Paste a bit more text so I can check it.</p>';return}
+  const sc=scamScan(t),p=J().profile,need=skillsIn(t),have=new Set(p?p.skills:[]);
+  const yrs=[...t.matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)].map(m=>+m[1]).filter(y=>y<=30).sort((a,b)=>b-a)[0];
+  const ok=need.filter(k=>have.has(k)),miss=need.filter(k=>!have.has(k));
+  const lv={high:['High risk','Do not pay, share ID or bank details. Verify on the company\'s own website first.','var(--rbg)'],caution:['Be careful','Some warning signs. Confirm the company and the recruiter before you go further.','var(--ybg)'],none:['No common scam signs found','This is not a guarantee. Still check the company and never pay to get a job.','var(--gbg)']}[sc.level];
+  let h=`<div class="chkres" style="background:${lv[2]}"><b>${lv[0]}</b><p>${lv[1]}</p></div>`;
+  if(sc.hits.length)h+=`<ul class="terms" style="margin-top:10px">${sc.hits.map(r=>`<li>${esc(r[2])}</li>`).join('')}</ul>`;
+  h+='<div class="cosec"><b>Skill match</b>';
+  if(!need.length)h+='<p class="mute">I could not find known skills in this text.</p>';
+  else if(!p)h+=`<p>This post asks for: ${need.map(esc).join(', ')}.${yrs?' It mentions up to '+yrs+' years.':''}</p><p class="mute">Add your resume or skills on the Jobs page to see how well you match.</p>`;
+  else h+=`<p><b>${Math.round(ok.length/need.length*100)}% of the skills it asks for are on your profile.</b>${yrs?' It mentions up to '+yrs+' years of experience'+(p.years&&p.years<yrs?' (you have '+p.years+').':'.'):''}</p>${ok.length?`<p class="fit" style="margin:6px 0 0"><b>You have</b>${ok.map(k=>`<span>✓ ${esc(k)}</span>`).join('')}</p>`:''}${miss.length?`<p class="gap" style="margin:6px 0 0"><b>Brush up</b>${miss.map(k=>`<span>${esc(k)}</span>`).join('')}</p>`:''}<p class="mute">Put the skills you really have into your resume using the same words as the post.</p>`;
+  $('chkOut').innerHTML=h+'</div>'}
+document.addEventListener('click',e=>{if(e.target.closest('[data-check]')){$('chkTxt').value='';$('chkOut').innerHTML='';$('chkDlg').showModal()}});
+$('chkGo').onclick=chkRun;$('chkClose').onclick=()=>$('chkDlg').close();
+/* ---------- follow-up messages ---------- */
+function followMsg(kind,x){const co=x.company||'your company',role=x.title||'the role',me=S.settings.name||'';
+  const T={follow:`Subject: Following up on my ${role} application\n\nHello,\n\nI applied for the ${role} position at ${co} on ${x.applied} and I am still very interested. I would be glad to share anything else you need. Could you tell me where my application stands?\n\nThank you for your time.\n${me}`,
+   thanks:`Subject: Thank you, ${role} interview\n\nHello,\n\nThank you for taking the time to speak with me about the ${role} role at ${co}. I enjoyed learning more about the team and I am excited about the work. Please let me know if you need anything further from me.\n\nBest regards,\n${me}`,
+   feedback:`Subject: Feedback on my ${role} application\n\nHello,\n\nThank you for considering me for the ${role} role at ${co}. If you can, I would really value one or two points on how I can improve for future roles. I would also be glad to be considered for other openings.\n\nThank you,\n${me}`};return T[kind]}
+async function copyText(t){try{await navigator.clipboard.writeText(t);return true}catch(e){const a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();let ok=false;try{ok=document.execCommand('copy')}catch(x){}a.remove();return ok}}
+$('v-apps').addEventListener('click',async e=>{const b=e.target.closest('[data-msg]');if(!b)return;const x=S.apps.find(a=>a.id===b.closest('.apc').dataset.id);if(!x)return;
+  toast(await copyText(followMsg(b.dataset.msg,x))?'Message copied. Paste it in your email.':'Could not copy. Please try again.')});
 /* ---------- build a profile without a resume ---------- */
 const SKFIELD={qa:/^(Playwright|Selenium|Cypress|Appium|WebdriverIO|Puppeteer|TestCafe|Robot Framework|Katalon|UFT\/QTP|TestNG|JUnit|PyTest|Jest|Mocha|Cucumber|BDD|TDD|Java|JavaScript|TypeScript|Python|SQL|API testing|Postman|REST Assured|Karate|Performance testing|JMeter|k6|Security testing|Accessibility|Mobile testing|CI\/CD|Jenkins|GitHub Actions|Docker|Git|Jira|TestRail|Agile\/Scrum|ISTQB|Test strategy|Framework design|Manual testing|Exploratory testing|Regression testing|Test automation|AI testing)$/,
  dev:/^(Java|JavaScript|TypeScript|Python|C#|Kotlin|Swift|Go|Rust|PHP|Ruby|C\+\+|SQL|React|Angular|Vue|Node\.js|Next\.js|Spring|Django|Flutter|MongoDB|Redis|Docker|Kubernetes|AWS|Azure|GCP|Git|CI\/CD|Linux|Terraform|REST APIs|GraphQL|Microservices|Kafka|System design|HTML\/CSS|Agile\/Scrum)$/,
