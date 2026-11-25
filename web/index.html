@@ -350,7 +350,7 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
     <ul class="shelf tips" id="tips" style="margin:0 -16px;padding:0 16px 4px"></ul>
   </div>
 
-  <button class="q brief" id="briefLink"><img src="art-mind.jpg" alt=""><div><span>Today's briefing</span><small id="briefTxt">QA, tech, UAE and India news</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
+  <button class="q brief" id="briefLink"><img src="art-mind.jpg" alt=""><div><span>Today's briefing</span><small id="briefTxt">News for your field and country</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
 
   <button class="q brief" id="jobsLink"><img src="art-money.jpg" alt=""><div><span id="jobsTitle">Jobs for you</span><small id="jobsTxt">Upload your resume to get matches</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
 
@@ -465,7 +465,7 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
   <div class="card">
     <div class="ch"><h2>Add expense</h2><span class="mute" id="expFor"></span></div>
     <form id="expForm" autocomplete="off">
-      <div class="amt"><span id="curLbl">AED</span><input id="expAmt" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000" placeholder="0.00" required aria-label="Amount"></div>
+      <div class="amt"><span id="curLbl">USD</span><input id="expAmt" type="number" inputmode="decimal" step="0.01" min="0.01" max="1000000" placeholder="0.00" required aria-label="Amount"></div>
       <div class="cats" id="cats" role="radiogroup" aria-label="Category"></div>
       <input id="expNote" maxlength="60" placeholder="Note (optional), e.g. lunch with team" aria-label="Note">
       <div class="row" style="margin-top:12px"><input id="expDate" type="date" aria-label="Date" style="flex:1" max="2100-01-01"><button class="gold" id="expSave" style="flex:1.4">Add</button></div>
@@ -541,7 +541,7 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
   <div class="card">
     <h2 style="margin-bottom:6px">Your data</h2>
     <p class="mute" style="margin:0 0 12px">Everything stays on this phone. Nothing is sent anywhere.</p>
-    <div class="row"><button class="ghost sm" id="exportBtn">Back up</button><label class="btn ghost sm" style="display:inline-flex;align-items:center;color:var(--ink)">Restore<input type="file" id="importFile" accept="application/json" hidden></label><button class="ghost sm" id="resetBtn">Reset today</button></div>
+    <div class="row"><button class="ghost sm" id="exportBtn">Back up</button><label class="btn ghost sm" style="display:inline-flex;align-items:center;color:var(--ink)">Restore<input type="file" id="importFile" accept="application/json" hidden></label><button class="ghost sm" id="resetBtn">Reset today</button><button class="ghost sm" id="eraseBtn" style="color:#ff6b8a">Erase all my data</button></div>
   </div>
   <p class="mute" style="padding:0 8px">General wellness guidance, not medical advice. If you have kidney, heart or other conditions, or take medication, ask your doctor about water and supplements.</p>
 </section>
@@ -697,7 +697,7 @@ function sanitize(src){
   if(Array.isArray(src.exp))for(const e of src.exp.slice(0,20000)){if(!isObj(e)||!DAYRE.test(e.day))continue;const amt=num(e.amt,0.01,1e6,0);if(!amt)continue;
     o.exp.push({id:num(e.id,0,1e16,0)||Date.now()+Math.random(),ts:num(e.ts,0,1e14,0),day:e.day,amt:Math.round(amt*100)/100,cat:CAT_KEYS.includes(e.cat)?e.cat:'other',note:str(e.note,60)})}
   if(isObj(src.jobs)){const j=src.jobs,p=isObj(j.profile)?j.profile:null;
-    o.jobs={profile:p?{role:str(p.role,60).trim()||'QA Engineer',skills:(Array.isArray(p.skills)?p.skills:[]).filter(x=>typeof x==='string').map(x=>x.slice(0,40)).slice(0,80),
+    o.jobs={profile:p?{role:str(p.role,60).trim()||'Professional',skills:(Array.isArray(p.skills)?p.skills:[]).filter(x=>typeof x==='string').map(x=>x.slice(0,40)).slice(0,80),
       years:num(p.years,0,50,0),terms:(Array.isArray(p.terms)?p.terms:[]).filter(t=>Array.isArray(t)&&typeof t[0]==='string'&&t[0].length<=30&&Number.isFinite(t[1])).slice(0,80).map(t=>[t[0],Math.min(500,Math.max(1,t[1]))]),level:Math.round(num(p.level,1,5,3)),updated:num(p.updated,0,1e14,0)}:null,status:{},minMatch:[50,60,70,80].includes(j.minMatch)?j.minMatch:60,
       tab:['for','saved','applied'].includes(j.tab)?j.tab:'for',locs:{uae:!isObj(j.locs)||j.locs.uae!==false,remote:!isObj(j.locs)||j.locs.remote!==false,india:isObj(j.locs)&&j.locs.india===true}};
     if(isObj(j.status))for(const[k,v]of Object.entries(j.status))if(/^[\w.-]{1,80}$/.test(k)&&['saved','applied','opened','hidden'].includes(v))o.jobs.status[k]=v;
@@ -733,7 +733,8 @@ function syncNative(){
   const s=S.settings,d=today();
   try{N.syncState(JSON.stringify({day:dkey(),name:s.name,water:d.water,waterGoal:waterGoal(),glassMl:s.glassMl,vit:d.vit,vitTime:s.vitTime,wake:s.wake,sleep:s.sleep,every:s.every,stepGoal:s.stepGoal,manual:d.manual,lastStretch:S.last.stretch||0,lastWater:S.last.water||0,expTime:s.expTime,expLogged:expLoggedToday()}))}catch(e){}
 }
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}syncNative()};
+let erasing=false;
+const save=()=>{if(erasing)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}syncNative()};
 
 function waterGoal(){
   const s=S.settings;if(+s.waterGoal>0)return +s.waterGoal;
@@ -979,6 +980,11 @@ fields.forEach(f=>$('s-'+f).addEventListener('change',e=>{
   save();render();
 }));
 $('s-hot').onchange=e=>{S.settings.hot=e.target.checked;save();render()};
+$('eraseBtn').onclick=()=>{
+  if(!confirm('Erase everything on this phone (steps history, expenses, applications, resume, settings)? This cannot be undone. Tip: tap Back up first.'))return;
+  erasing=true;try{localStorage.removeItem(KEY);localStorage.removeItem('grade-news')}catch(e){}
+  location.reload();
+};
 $('exportBtn').onclick=()=>{
   const json=JSON.stringify(S);
   if(N){toast(N.shareBackup(json));return}
@@ -1150,7 +1156,7 @@ function marketGaps(){const p=J().profile,jobs=JOBS?JOBS.jobs:[],kc={};for(const
   return {p,n:jobs.length,list:all.filter(([k,n])=>!mine.has(k)&&n/Math.max(1,jobs.length)>=.08).slice(0,3).map(([k,n])=>[k,Math.round(n/jobs.length*100)])}}
 function renderLearnExtra(){
   const g=marketGaps(),link=k=>`https://www.google.com/search?q=${encodeURIComponent('learn '+k+' tutorial for '+FIELDS[fieldKey()].name)}`;
-  $('lvBox').innerHTML=g.n&&g.list.length?`<h2>${g.p?'Level up for your next job':'Skills in demand today'}</h2><p class="mute" style="margin:0">${g.p?'Skills employers ask for that are not on your resume yet.':'Upload your resume on the Jobs page to see which ones you are missing.'}</p>${g.list.map(([k,pc])=>`<a class="lvl" href="${esc(link(k))}" target="_blank" rel="noopener"><b>${esc(k)}</b><span>In ${pc}% of today's QA jobs</span><em>Learn</em></a>`).join('')}`:'';
+  $('lvBox').innerHTML=g.n&&g.list.length?`<h2>${g.p?'Level up for your next job':'Skills in demand today'}</h2><p class="mute" style="margin:0">${g.p?'Skills employers ask for that are not on your resume yet.':'Upload your resume on the Jobs page to see which ones you are missing.'}</p>${g.list.map(([k,pc])=>`<a class="lvl" href="${esc(link(k))}" target="_blank" rel="noopener"><b>${esc(k)}</b><span>In ${pc}% of today's ${esc(FIELDS[fieldKey()].name)} jobs</span><em>Learn</em></a>`).join('')}`:'';
   $('lvBox').hidden=!$('lvBox').innerHTML;
   const isQA=fieldKey()==='qa',Q=(isQA?window.QA_QUESTIONS:window.GEN_QUESTIONS)||[],T=(isQA?window.QA_TIPS:window.GEN_TIPS)||[];
   if(Q.length){if(qIdx==null)qIdx=dayOfYear()%Q.length;const q=Q[qIdx%Q.length];
@@ -1593,9 +1599,10 @@ function renderInsights(){
   if(apps.length){const all=kw(apps),w=kw(win);out.push(`<div class="insp"><h3>Keywords in your applications</h3><div class="sub">What you apply for most${win.length?', and what got replies':''}.</div><div class="kws">${all.map(([k,n])=>`<span>${esc(k)} · ${n}</span>`).join('')}</div>${win.length?`<div class="sub" style="margin-top:2px">Got interviews or offers</div><div class="kws">${w.map(([k,n])=>`<span class="hit">${esc(k)} · ${n}</span>`).join('')}</div>`:''}</div>`);
     if(w.length)tips.push(`Your replies came from jobs about ${w.slice(0,3).map(x=>x[0]).join(', ')}. Look for more like these.`)}
   // 6 where
-  const loc={UAE:0,Remote:0,Europe:0,India:0};const ls={UAE:0,Remote:0,Europe:0,India:0};
-  for(const j of sc){for(const[n,k]of[['UAE','uae'],['Europe','europe'],['India','india']])if(LOCRE[k]&&LOCRE[k].test(j.loc||'')){loc[n]++;ls[n]+=j.score}if(j.remote){loc.Remote++;ls.Remote+=j.score}}
-  const lt=Object.entries(loc).filter(([,n])=>n);if(lt.length)out.push(`<div class="insp"><h3>Where the jobs are</h3>${lt.map(([k,n])=>`<div class="hbar"><b>${k}</b><span>${n} job${n===1?'':'s'}${p?' · avg '+Math.round(ls[k]/n)+'%':''}</span><div class="bar"><i style="width:${Math.round(n/jobs.length*100)}%"></i></div></div>`).join('')}</div>`);
+  const regs=COUNTRY_KEYS.filter(k=>k!=='other').map(k=>[COUNTRIES[k].name,COUNTRIES[k].w]).concat([['Europe','europe']]);
+  const loc={},ls={};regs.forEach(([n])=>{loc[n]=0;ls[n]=0});loc.Remote=0;ls.Remote=0;
+  for(const j of sc){for(const[n,k]of regs)if(LOCRE[k]&&LOCRE[k].test(j.loc||'')){loc[n]++;ls[n]+=j.score}if(j.remote){loc.Remote++;ls.Remote+=j.score}}
+  const lt=Object.entries(loc).filter(([,n])=>n).sort((a,b)=>b[1]-a[1]).slice(0,6);if(lt.length)out.push(`<div class="insp"><h3>Where the jobs are</h3>${lt.map(([k,n])=>`<div class="hbar"><b>${k}</b><span>${n} job${n===1?'':'s'}${p?' · avg '+Math.round(ls[k]/n)+'%':''}</span><div class="bar"><i style="width:${Math.round(n/jobs.length*100)}%"></i></div></div>`).join('')}</div>`);
   if(tips.length)out.splice(p?1:0,0,`<div class="insp"><h3>What to do next</h3>${tips.slice(0,5).map(t=>`<div class="tip"><i>→</i><span>${esc(t)}</span></div>`).join('')}</div>`);
   $('inBody').innerHTML=out.join('')||`<div class="panel empty"><b>No data yet</b><span class="mute">Jobs load every morning.</span></div>`}
 $('inBody').addEventListener('click',e=>{if(e.target.closest('#inGoJobs')){document.querySelector('nav button[data-v=jobs]').click();return}const a=e.target.closest('[data-iapply]');if(!a)return;const id=a.closest('.jl').dataset.id,st=J();if(st.status[id]!=='applied'){st.status[id]='opened';queueApply(id);save()}});

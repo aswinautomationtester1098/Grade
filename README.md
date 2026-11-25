@@ -1,10 +1,10 @@
 # Grade
 
-Aswin's personal coach: walking, water, multivitamin, habits, daily expenses, a daily QA/tech/UAE/India briefing, and QA jobs matched to your resume.
+A personal coach for anyone: walking, water, multivitamin, habits, daily expenses, a daily news briefing and job openings for your career field and country, matched to your resume. On first launch you choose your name, career field and country; everything stays on your phone.
 
 - **Online web app** on GitHub Pages: works on any phone and keeps working offline after the first visit.
 - **Android app (APK)**: always-on step counting using the phone's step-counter chip, plus background reminders.
-- **Daily refresh** at 05:30 Dubai time: a new briefing and new job openings. Yesterday's briefing disappears automatically.
+- **Daily refresh** at about 05:30 Dubai time (01:30 UTC): a new briefing and new job openings. Yesterday's briefing disappears automatically.
 
 ## Go live (one time, about 5 minutes)
 
@@ -45,7 +45,7 @@ Steps, water, habits, expenses and your resume stay on your phone (browser stora
 | --- | --- |
 | `web/` | The app itself (HTML, offline cache, artwork) |
 | `scripts/fetch_news.py` | Builds the daily briefing (`news.json`) |
-| `scripts/fetch_jobs.py` | Collects QA openings (`jobs.json`) from Remotive, Jobicy, Arbeitnow and Remote OK |
+| `scripts/fetch_jobs.py` | Collects openings per field (`jobs-<field>.json`; `jobs.json` is the QA copy) from Remotive, Jobicy, Arbeitnow and Remote OK |
 | `android/` | Native Android app: WebView, step-counter service, reminders, boot restart |
 | `.github/workflows/` | Daily publish to GitHub Pages and the automatic APK build |
 
