@@ -376,10 +376,16 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 .lseg3{display:grid;grid-template-columns:auto 1fr;gap:6px;background:var(--elev);border-radius:999px;padding:4px}.lseg3 button{padding:10px 16px}
 .cd-hero.sub{padding:18px}.cd-hero.sub h2{margin:0 0 4px}
 #ivSearch{width:100%;padding:13px 16px;border-radius:14px;border:1px solid var(--line);background:var(--elev);color:var(--ink);font-size:16px}
-.ck{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:15px;line-height:1.35}.ck input{margin-top:3px;width:18px;height:18px;accent-color:var(--green)}.ck input:checked+span{color:var(--mute);text-decoration:line-through}
+.ck{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:15px;line-height:1.35}.ck input{flex:none;margin-top:3px;width:18px;height:18px;accent-color:var(--green)}.ck input:checked+span{color:var(--mute);text-decoration:line-through}
 .xcard{background:var(--elev);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 6px 18px rgba(var(--shd),.06);animation:rise .4s var(--ease) both}
 .xcard h3{margin:6px 0 4px;font-size:17px}.xcard p{margin:0;color:var(--sub);line-height:1.45}.xt{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--gtxt);background:var(--gbg);border-radius:999px;padding:3px 9px}
 .xnews{display:grid;gap:3px;background:var(--elev);border:1px solid var(--line);border-radius:14px;padding:12px 14px;color:var(--ink);text-decoration:none}.xnews small{color:var(--mute)}
+
+.srcrow{display:flex;justify-content:space-between;align-items:center;gap:8px}.srcrow .sm{padding:6px 12px;font-size:12px;min-height:0}
+#coDlg{max-height:88vh;overflow:auto;width:min(440px,calc(100% - 24px))}
+.cosec{display:grid;gap:6px;margin-top:14px}.cosec>b{font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:var(--sub)}.cosec p{margin:0;line-height:1.45}
+.coflags{display:flex;flex-wrap:wrap;gap:6px}.coflags span{background:var(--ybg);color:var(--ink);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
+.colinks{display:flex;flex-wrap:wrap;gap:8px}.colinks a{background:var(--elev2);color:var(--ink);text-decoration:none;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700}
 </style>
 </head>
 <body>
@@ -625,6 +631,10 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <div class="row" style="justify-content:space-between;margin-top:16px"><button type="button" class="ghost" id="fReset">Reset</button><button value="ok">Show jobs</button></div>
   </form>
 </dialog>
+<dialog id="coDlg">
+  <div id="coBody"></div>
+</dialog>
+
 <dialog id="onbDlg">
   <form method="dialog" id="onbForm">
     <h2>Welcome to Grade</h2>
@@ -1199,7 +1209,7 @@ function renderJobs(){
       <div class="job-a"><a class="apply" href="${esc(safeUrl(j.url))}" target="_blank" rel="noopener" data-open>${j.status==='applied'?'Applied ✓ · View':'Apply now'} <svg><use href="#i-arrow"/></svg></a>
         <button class="icon ${j.status==='saved'?'on':''}" data-st="${j.status==='saved'?'':'saved'}" aria-label="Save job"><svg><use href="#i-heart"/></svg></button>
         <button class="icon" data-st="hidden" aria-label="Not interested"><svg><use href="#i-x"/></svg></button></div>
-      <small class="src">via ${esc(j.source)}</small></article>`}).join('');
+      <div class="srcrow"><small class="src">via ${esc(j.source)}</small><button class="ghost sm" data-co type="button">🔎 Company check</button></div></article>`}).join('');
 }
 $('v-jobs').addEventListener('change',async e=>{
   if(!e.target.matches('[data-resume]'))return;const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
@@ -1211,7 +1221,9 @@ $('v-jobs').addEventListener('change',async e=>{
 $('v-jobs').addEventListener('click',async e=>{
   if(e.target.closest('#skMore')){skOpen=!skOpen;renderJobs();return}
   if(e.target.closest('#profToggle')){profOpen=!profOpen;renderJobs();return}
-  const st=J(),el=e.target.closest('[data-tab],[data-loc],[data-st],[data-rm],#addSkill,[data-open]');if(!el)return;
+  const st=J(),el=e.target.closest('[data-tab],[data-loc],[data-st],[data-rm],#addSkill,[data-open],[data-co]');if(!el)return;
+  if(el.hasAttribute('data-co')){openCompany(el.closest('.job').dataset.id,false);return}
+  if(el.hasAttribute('data-open')&&!coSeen.has(el.closest('.job').dataset.id)&&(JOBS&&JOBS.jobs||[]).some(x=>x.id===el.closest('.job').dataset.id&&x.company)&&J().status[el.closest('.job').dataset.id]!=='applied'){e.preventDefault();openCompany(el.closest('.job').dataset.id,true);return}
   if(el.dataset.tab){st.tab=el.dataset.tab}
   else if(el.dataset.loc){st.locs[el.dataset.loc]=!st.locs[el.dataset.loc]}
   else if(el.dataset.rm){st.profile.skills=st.profile.skills.filter(s=>s!==el.dataset.rm)}
@@ -1439,6 +1451,35 @@ function cqAnswer(k){const d=CD(),qi=cq.list[cq.i],q=d.quiz[qi];if(cq.sel!==-1)r
   cq.sel=k===-2?-2:k;if(k===q[2]){cq.score++;cdXp(10)}else cq.wrong.push(qi);cqShow()}
 function renderCdProj(){const d=CD(),l=S.code.lang;
   $('cdBody').innerHTML=`<p class="mute" style="margin:0 0 10px">Try each one on paper or in an editor first. Open the hint if stuck, the solution last.</p>`+d.projects.map((p,i)=>`<div class="cdp ${S.code.proj[l+':'+i]?'done':''}"><h3>${esc(p[0])}<span class="lvl">${esc(p[1])}</span></h3><div>${esc(p[2])}</div><div class="lbl" style="font-size:12px;font-weight:800;color:#8a8a8a">EXAMPLE</div><pre>${esc(p[3])}</pre><details><summary>Hint</summary><div class="mute">${esc(p[4])}</div></details><details><summary>Solution</summary><pre>${esc(p[5])}</pre><div class="row" style="margin-top:8px"><button class="ghost sm" data-copy="${i}">Copy code</button></div></details><div class="row"><button class="btn sm" data-solved="${i}">${S.code.proj[l+':'+i]?'Solved ✓':'I solved it'}</button></div></div>`).join('')}
+/* ---------- company check ---------- */
+const coSeen=new Set();let COMP=null,compTried=false;
+const normCo=n=>String(n||'').toLowerCase().replace(/\b(inc|llc|ltd|limited|pvt|private|plc|gmbh|corp|corporation|co|company|sa|ag|bv|the)\b\.?/g,' ').replace(/[^a-z0-9]+/g,'');
+async function loadCompanies(){if(compTried)return;compTried=true;
+  try{const r=await fetch((window.GRADE_BASE||'')+'companies.json?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&isObj(j.companies))COMP=j.companies}}catch(e){}}
+const FLAGTXT={layoffs:'Recent layoff news',legal:'Legal or regulatory news',scam:'Scam warnings in the news',trouble:'Financial or security trouble in the news'};
+async function openCompany(id,gate){
+  const j=(JOBS&&JOBS.jobs||[]).find(x=>x.id===id);if(!j)return;
+  const name=j.company||'This company',q=encodeURIComponent(name);
+  const draw=()=>{const c=COMP&&COMP[normCo(name)];
+    const links=[['Glassdoor reviews',`https://www.google.com/search?q=${encodeURIComponent('site:glassdoor.com "'+name+'" reviews')}`],
+      ['AmbitionBox reviews',`https://www.google.com/search?q=${encodeURIComponent('site:ambitionbox.com "'+name+'" reviews')}`],
+      ['Indeed reviews',`https://www.google.com/search?q=${encodeURIComponent('site:indeed.com/cmp "'+name+'" reviews')}`],
+      ['Reddit talk',`https://www.reddit.com/search/?q=${encodeURIComponent('"'+name+'" working at')}`],
+      ['Blind (tech staff)',`https://www.google.com/search?q=${encodeURIComponent('site:teamblind.com "'+name+'"')}`],
+      ['LinkedIn page',`https://www.linkedin.com/search/results/companies/?keywords=${q}`],
+      ['Scam check',`https://www.google.com/search?q=${encodeURIComponent('"'+name+'" scam OR fake OR fraud interview')}`]];
+    const flags=c&&c.flags||[];
+    $('coBody').innerHTML=`<h2>${esc(name)}</h2><p class="mute" style="margin:0 0 10px">${gate?'Take a minute to check this company before you apply.':'Public information in one place.'}</p>
+     ${flags.length?`<div class="coflags">${flags.map(f=>`<span>⚠ ${esc(FLAGTXT[f]||f)}</span>`).join('')}</div>`:''}
+     <div class="cosec"><b>About</b>${c&&c.about?`<p>${esc(c.about.text)}</p><small class="mute">From <a href="${esc(safeUrl(c.about.url))}" target="_blank" rel="noopener noreferrer">Wikipedia</a> (CC BY-SA)</small>`:`<p class="mute">${COMP?'No clear public summary found for this name. It may be a small or new company, so check the links below.':'Company facts load once you are online.'}</p>`}</div>
+     <div class="cosec"><b>In the news (last 90 days)</b>${c&&c.news&&c.news.length?c.news.map(n=>`<a class="xnews" href="${esc(safeUrl(n.u))}" target="_blank" rel="noopener noreferrer"><b>${esc(n.t)}</b><small>${esc(n.src||'')}</small></a>`).join(''):'<p class="mute">No recent headlines found.</p>'}</div>
+     <div class="cosec"><b>What people say</b><p class="mute" style="margin:0">Open reviews written by current and former staff. Read the newest ones and look for patterns, not single rants.</p><div class="colinks">${links.map(l=>`<a href="${esc(l[1])}" target="_blank" rel="noopener noreferrer">${esc(l[0])}</a>`).join('')}</div></div>
+     <div class="cosec"><b>Before you apply</b>${['The job is on the company\'s own careers page','They never ask you to pay money or share bank or ID details','Salary, location and role match what you want','Reviews do not show repeated serious problems'].map((t,i)=>`<label class="ck"><input type="checkbox"><span>${esc(t)}</span></label>`).join('')}</div>
+     <div style="display:grid;gap:10px;margin-top:14px">${gate?`<a class="apply" id="coGo" href="${esc(safeUrl(j.url))}" target="_blank" rel="noopener noreferrer">Continue to apply <svg><use href="#i-arrow"/></svg></a>`:''}<button class="ghost" id="coClose" type="button">${gate?'Not now':'Close'}</button></div>`;
+    $('coClose').onclick=()=>$('coDlg').close();
+    const go=$('coGo');if(go)go.onclick=()=>{coSeen.add(id);const st=J();if(st.status[id]!=='applied'){st.status[id]='opened';queueApply(id)}save();$('coDlg').close();setTimeout(renderJobs,800)}};
+  draw();if(!$('coDlg').open)$('coDlg').showModal();
+  if(!COMP&&!compTried){await loadCompanies();draw()}}
 /* ---------- Interview quick reference + Experience Grade ---------- */
 function openSub(id){clearInterval(cqTimer);clearInterval(cdTyper);document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.v==='learn'));
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id===id));document.querySelector('.hero').classList.add('compact');window.scrollTo(0,0)}
