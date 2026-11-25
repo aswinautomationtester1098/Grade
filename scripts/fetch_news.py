@@ -91,6 +91,13 @@ SECTIONS = [
     ("f_marketing", "Marketing & Sales", 6, 2, [
         gnews('"digital marketing" OR SEO OR "content marketing" OR "growth marketing" OR "B2B sales" OR "social media marketing" when:3d', "US"),
     ], False, None),
+    ("f_voices", "Industry voices", 12, 2, [
+        "https://martinfowler.com/feed.atom",
+        "https://stackoverflow.blog/feed/",
+        "https://newsletter.pragmaticengineer.com/feed",
+        "https://www.freecodecamp.org/news/rss/",
+        "https://dev.to/feed/tag/career",
+    ], False, None),
     ("us", "United States", 5, 1, [gtopic("NATION", "US"), gnews('US economy OR jobs OR hiring OR policy when:1d', "US")], True, None),
     ("uk", "United Kingdom", 5, 1, [gtopic("NATION", "GB"), gnews('UK economy OR jobs OR hiring OR government when:1d', "GB")], True, None),
     ("ca", "Canada", 5, 1, [gtopic("NATION", "CA"), gnews('Canada economy OR jobs OR hiring OR government when:1d', "CA")], True, None),
@@ -277,7 +284,7 @@ def main():
                 pool += got
             except Exception as e:
                 print(f"[{sid}] feed failed: {url[:70]}: {e}", file=sys.stderr)
-        days = {"qa": 7, "uaeindia": 7, "qablogs": 21, "tools": 14, "f_product": 5, "f_design": 5}.get(sid)
+        days = {"qa": 7, "uaeindia": 7, "qablogs": 21, "tools": 14, "f_product": 5, "f_design": 5, "f_voices": 30}.get(sid)
         window = now - dt.timedelta(days=days) if days else cutoff
         pool = [p for p in pool if dt.datetime.fromisoformat(p["ts"]) >= window and p["t"]]
         if filt == "qa":

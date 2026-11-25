@@ -1,22 +1,16 @@
 package com.aswin.grade;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Insets;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PowerManager;
 import android.provider.MediaStore;
-import android.provider.Settings;
 import android.view.View;
 import android.view.WindowInsets;
 import android.webkit.JavascriptInterface;
@@ -39,14 +33,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-/** Hosts the Grade web app and gives it native step counting, reminders and backups. */
+/** Hosts the Grade career web app: jobs, learning, resume upload and backups. */
 public class MainActivity extends Activity {
     private static final String ASSET_URL = "file:///android_asset/index.html";
-    private static final int REQ_PERMS = 1, REQ_FILE = 2;
+    private static final int REQ_FILE = 2;
 
     private WebView web;
+    private FrameLayout rootView;
     private ValueCallback<Uri[]> fileCallback;
-    private String pendingOpen;
     private boolean pageReady;
     private int bottomInsetCss = 0;   // navigation bar height in CSS px, handed to the page
     private volatile String currentUrl = "";   // checked by the bridge so only Grade's own pages can use it
@@ -55,23 +49,19 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle state) {
         super.onCreate(state);
-        Notifs.channels(this);
-        getWindow().setStatusBarColor(Color.BLACK);
         if (Build.VERSION.SDK_INT >= 30) {
             // Same layout on every Android version: the app draws to the screen edges and handles the bars itself.
             getWindow().setDecorFitsSystemWindows(false);
             getWindow().setNavigationBarColor(Color.TRANSPARENT);
             getWindow().setNavigationBarContrastEnforced(false);
-        } else {
-            getWindow().setNavigationBarColor(Color.BLACK);
         }
 
         web = new WebView(this);
-        web.setBackgroundColor(Color.parseColor("#121212"));
         FrameLayout root = new FrameLayout(this);
-        root.setBackgroundColor(Color.BLACK);
+        rootView = root;
         root.addView(web, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
         setContentView(root);
+        applyBars(false);
         // Android 15 draws apps edge to edge: keep content clear of the status and navigation bars.
         root.setOnApplyWindowInsetsListener((View v, WindowInsets wi) -> {
             if (Build.VERSION.SDK_INT >= 30) {
@@ -178,12 +168,31 @@ public class MainActivity extends Activity {
             }
         });
 
-        pendingOpen = getIntent().getStringExtra("open");
         String site = BuildConfig.SITE_URL;
         web.loadUrl(site.isEmpty() ? ASSET_URL : site);
 
-        if (permissionsOk()) startBackground();
-        ReminderReceiver.schedule(this);
+    }
+
+    /** Light or dark system bars to match the page theme. */
+    private void applyBars(boolean dark) {
+        int bg = Color.parseColor(dark ? "#121212" : "#F4F7FB");
+        getWindow().setStatusBarColor(bg);
+        if (Build.VERSION.SDK_INT < 30) getWindow().setNavigationBarColor(bg);
+        if (rootView != null) rootView.setBackgroundColor(bg);
+        if (web != null) web.setBackgroundColor(bg);
+        if (Build.VERSION.SDK_INT >= 30) {
+            android.view.WindowInsetsController c = getWindow().getInsetsController();
+            if (c != null) {
+                int mask = android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+                        | android.view.WindowInsetsController.APPEARANCE_LIGHT_NAVIGATION_BARS;
+                c.setSystemBarsAppearance(dark ? 0 : mask, mask);
+            }
+        } else {
+            View d = getWindow().getDecorView();
+            int f = d.getSystemUiVisibility();
+            if (dark) f &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR; else f |= View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+            d.setSystemUiVisibility(f);
+        }
     }
 
     private void pushInsets() {
@@ -202,61 +211,6 @@ public class MainActivity extends Activity {
         return isOwn(currentUrl);
     }
 
-    private boolean permissionsOk() {
-        boolean act = Build.VERSION.SDK_INT < 29
-                || checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_GRANTED;
-        boolean notif = Build.VERSION.SDK_INT < 33
-                || checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED;
-        return act && notif;
-    }
-
-    private void askPermissions() {
-        List<String> need = new ArrayList<>();
-        if (Build.VERSION.SDK_INT >= 29
-                && checkSelfPermission(Manifest.permission.ACTIVITY_RECOGNITION) != PackageManager.PERMISSION_GRANTED) {
-            need.add(Manifest.permission.ACTIVITY_RECOGNITION);
-        }
-        if (Build.VERSION.SDK_INT >= 33
-                && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            need.add(Manifest.permission.POST_NOTIFICATIONS);
-        }
-        if (need.isEmpty()) {
-            startBackground();
-            refreshPage();
-            return;
-        }
-        boolean blocked = false;
-        for (String p : need) {
-            if (getSharedPreferences("app", MODE_PRIVATE).getBoolean("asked_" + p, false)
-                    && !shouldShowRequestPermissionRationale(p)) blocked = true;
-        }
-        if (blocked) {   // the user chose "Don't ask again": send them to the app's settings page
-            startActivity(new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName())));
-            return;
-        }
-        for (String p : need) getSharedPreferences("app", MODE_PRIVATE).edit().putBoolean("asked_" + p, true).apply();
-        requestPermissions(need.toArray(new String[0]), REQ_PERMS);
-    }
-
-    private void startBackground() {
-        StepService.start(this);
-        ReminderReceiver.schedule(this);
-    }
-
-    private void refreshPage() {
-        if (web != null) web.evaluateJavascript("window.aswinRefresh&&aswinRefresh()", null);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQ_PERMS) {
-            if (StepService.canRun(this)) StepService.start(this);
-            ReminderReceiver.schedule(this);
-            refreshPage();
-        }
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -264,29 +218,6 @@ public class MainActivity extends Activity {
             fileCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
             fileCallback = null;
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (permissionsOk()) StepService.start(this);
-        refreshPage();
-        if (pendingOpen != null && pageReady) openSection();
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        pendingOpen = intent.getStringExtra("open");
-        if (pageReady) openSection();
-    }
-
-    private void openSection() {
-        if (pendingOpen == null) return;
-        String js = "setTimeout(function(){window.aswinOpen&&aswinOpen(" + JSONObject.quote(pendingOpen) + ")},400)";
-        pendingOpen = null;
-        web.evaluateJavascript(js, null);
     }
 
     @SuppressWarnings("deprecation")
@@ -299,88 +230,10 @@ public class MainActivity extends Activity {
     /** Methods the web app calls as window.AswinNative.* (they run on a background thread). */
     class Bridge {
         @JavascriptInterface
-        public boolean hasStepSensor() {
-            if (!trusted()) return false;
-            SensorManager sm = (SensorManager) getSystemService(SENSOR_SERVICE);
-            return sm != null && sm.getDefaultSensor(Sensor.TYPE_STEP_COUNTER) != null;
-        }
-
-        @JavascriptInterface
-        public boolean permissionsOk() {
-            if (!trusted()) return false;
-            return MainActivity.this.permissionsOk();
-        }
-
-        @JavascriptInterface
-        public void requestPermissions() {
+        public void setTheme(String mode) {
             if (!trusted()) return;
-            runOnUiThread(MainActivity.this::askPermissions);
-        }
-
-        @JavascriptInterface
-        public int getTodaySteps() {
-            if (!trusted()) return -1;
-            return (int) StepStore.today(MainActivity.this);
-        }
-
-        @JavascriptInterface
-        public int getSteps(String day) {
-            if (!trusted() || day == null || !day.matches("\\d{4}-\\d{2}-\\d{2}")) return 0;
-            return (int) StepStore.forDay(MainActivity.this, day);
-        }
-
-        @JavascriptInterface
-        public void syncState(String json) {
-            if (!trusted() || json == null || json.length() > 20_000) return;
-            long goal = 8000;
-            try { goal = new JSONObject(json).optLong("stepGoal", 8000); } catch (Exception ignored) {}
-            getSharedPreferences("app", MODE_PRIVATE).edit().putString("state", json).putLong("stepGoal", goal).apply();
-        }
-
-        @JavascriptInterface
-        public String takePending() {
-            if (!trusted()) return "{}";
-            android.content.SharedPreferences p = getSharedPreferences("app", MODE_PRIVATE);
-            JSONObject o = new JSONObject();
-            try {
-                o.put("day", p.getString("pendingDay", ""));
-                o.put("water", p.getInt("pendingWater", 0));
-                o.put("vit", p.getBoolean("pendingVit", false));
-                o.put("vitAt", p.getString("pendingVitAt", ""));
-            } catch (Exception ignored) {
-            }
-            p.edit().putInt("pendingWater", 0).putBoolean("pendingVit", false).apply();
-            return o.toString();
-        }
-
-        @JavascriptInterface
-        public boolean isIgnoringBattery() {
-            if (!trusted()) return true;
-            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-            return pm == null || pm.isIgnoringBatteryOptimizations(getPackageName());
-        }
-
-        @JavascriptInterface
-        public void openBatterySettings() {
-            if (!trusted()) return;
-            runOnUiThread(() -> {
-                try {
-                    startActivity(new Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                            Uri.parse("package:" + getPackageName())));
-                } catch (Exception e) {
-                    try {
-                        startActivity(new Intent(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS));
-                    } catch (Exception ignored) {
-                    }
-                }
-            });
-        }
-
-        @JavascriptInterface
-        public void testNotification() {
-            if (!trusted()) return;
-            Notifs.reminder(MainActivity.this, Notifs.ID_TEST, "Grade",
-                    "Reminders are on. This is how they will look.", null, null, null);
+            final boolean dark = "dark".equals(mode);
+            runOnUiThread(() -> applyBars(dark));
         }
 
         @JavascriptInterface
