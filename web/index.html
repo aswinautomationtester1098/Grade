@@ -687,8 +687,8 @@ function sanitize(src){
     else if(['wake','sleep','vitTime','expTime'].includes(k))o.settings[k]=TIMERE.test(si[k])?si[k]:d;
     else o.settings[k]=d;}
   o.settings.name=str(si.name,24).trim();
-  o.settings.field=FIELD_KEYS.includes(si.field)?si.field:(si.onboarded===true?'qa':'');
-  o.settings.country=COUNTRY_KEYS.includes(si.country)?si.country:(si.onboarded===true?'ae':'');
+  o.settings.field=FIELD_KEYS.includes(si.field)?si.field:'';
+  o.settings.country=COUNTRY_KEYS.includes(si.country)?si.country:'';
   o.settings.currency=/^[A-Za-z]{1,4}$/.test(si.currency||'')?si.currency.toUpperCase():DEF.currency;
   if(isObj(src.days))for(const[k,v]of Object.entries(src.days)){if(!DAYRE.test(k)||!isObj(v))continue;
     o.days[k]={steps:num(v.steps,0,500000,0),manual:num(v.manual,0,500000,0),water:num(v.water,0,30000,0),vit:v.vit===true,vitAt:str(v.vitAt,20,null)||null,
@@ -1601,10 +1601,11 @@ function renderInsights(){
 $('inBody').addEventListener('click',e=>{if(e.target.closest('#inGoJobs')){document.querySelector('nav button[data-v=jobs]').click();return}const a=e.target.closest('[data-iapply]');if(!a)return;const id=a.closest('.jl').dataset.id,st=J();if(st.status[id]!=='applied'){st.status[id]='opened';queueApply(id);save()}});
 /* ---------- first-run setup ---------- */
 function onboard(){
-  const s=S.settings;if(s.onboarded)return;
-  if(Object.keys(S.days).length>1||S.exp.length){s.onboarded=true;if(!s.field)s.field='qa';if(!s.country)s.country='ae';save();return}   // existing user
+  const s=S.settings;if(s.onboarded&&s.field&&s.country)return;
+  // data from an older build (or none): ask once. The old build pre-filled someone's own name, so never reuse it.
+  if(!s.field&&s.name==='Aswin')s.name='';
   const dl=$('onbDlg');if(!dl.showModal)return;
-  $('o-name').value=s.name||'';$('o-field').value='';$('o-country').value=guessCountry();$('o-cur').value=COUNTRIES[$('o-country').value].cur;$('o-weight').value=s.weight;$('o-height').value=s.height;$('o-goal').value=String(s.stepGoal);$('o-wake').value=s.wake;
+  $('o-name').value=s.name||'';$('o-field').value=s.field||'';$('o-country').value=s.country||guessCountry();$('o-cur').value=COUNTRIES[$('o-country').value].cur;$('o-weight').value=s.weight;$('o-height').value=s.height;$('o-goal').value=String(s.stepGoal);$('o-wake').value=s.wake;
   dl.addEventListener('cancel',e=>e.preventDefault());
   dl.showModal();
   dl.onclose=()=>{
