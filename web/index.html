@@ -386,6 +386,9 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 .cosec{display:grid;gap:6px;margin-top:14px}.cosec>b{font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:var(--sub)}.cosec p{margin:0;line-height:1.45}
 .coflags{display:flex;flex-wrap:wrap;gap:6px}.coflags span{background:var(--ybg);color:var(--ink);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
 .colinks{display:flex;flex-wrap:wrap;gap:8px}.colinks a{background:var(--elev2);color:var(--ink);text-decoration:none;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700}
+
+.terms{margin:0;padding-left:18px;display:grid;gap:7px;line-height:1.4;font-size:14px;color:var(--ink2)}
+#termsDlg{max-height:90vh;overflow:auto;width:min(440px,calc(100% - 24px))}
 </style>
 </head>
 <body>
@@ -585,6 +588,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
   <div class="card">
     <h2 style="margin-bottom:6px">Your data</h2>
     <p class="mute" style="margin:0 0 12px">Your resume, applications and progress stay on this phone. Nothing is uploaded and there is no account.</p>
+    <div class="row"><button class="ghost sm" id="termsView" type="button">Terms of use</button></div>
     <div class="row"><button class="ghost sm" id="exportBtn">Back up</button><label class="btn ghost sm" style="display:inline-flex;align-items:center;color:var(--ink)">Restore<input type="file" id="importFile" accept="application/json" hidden></label><button class="ghost sm" id="eraseBtn" style="color:#ff6b8a">Erase all my data</button></div>
   </div>
 </section>
@@ -635,6 +639,22 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
   <div id="coBody"></div>
 </dialog>
 
+<dialog id="termsDlg">
+  <h2>Welcome to Grade 👋</h2>
+  <p class="mute" style="margin:0 0 10px">Grade helps you <b>improve your skills</b>, <b>search jobs</b>, check companies, prepare for interviews and track your applications. Your data stays on your phone.</p>
+  <div class="cosec"><b>Please use it responsibly</b>
+    <ul class="terms">
+      <li>Do not use Grade for anything illegal, fraudulent or harmful.</li>
+      <li>Do not submit fake information, fake experience or fake documents when you apply for jobs.</li>
+      <li>Do not use it to scam, harass, spam or mislead job seekers, employers or recruiters.</li>
+      <li>Do not copy, resell or misuse the content, or try to break, overload or reverse-engineer the app or its data sources.</li>
+      <li>Job listings and company facts come from public sources and may be wrong or out of date. Check everything yourself and never pay money to get a job.</li>
+      <li>Grade gives learning help only. It does not guarantee a job, an interview or a result.</li>
+    </ul></div>
+  <label class="ck" id="termsRow"><input type="checkbox" id="termsOk"><span>I understand and agree to use Grade only for lawful, honest purposes.</span></label>
+  <div style="display:grid;gap:10px;margin-top:14px"><button id="termsGo" type="button" disabled>I agree and continue</button><button class="ghost" id="termsClose" type="button" hidden>Close</button></div>
+</dialog>
+
 <dialog id="onbDlg">
   <form method="dialog" id="onbForm">
     <h2>Welcome to Grade</h2>
@@ -664,7 +684,7 @@ if(window.top!==window.self){try{window.top.location.replace(window.self.locatio
 const $ = id => document.getElementById(id);
 const N = window.AswinNative || null;           // present only inside the Android app
 const KEY = 'aswin-v1';
-const DEF = {name:'',field:'',country:'',theme:'light',onboarded:false};
+const DEF = {name:'',field:'',country:'',theme:'light',onboarded:false,agreed:false};
 const FIELDS={qa:{name:'QA & Testing',role:'QA Engineer',re:/(senior|lead|principal|staff)?\s*(qa|quality assurance|test|sdet|automation|quality)[a-z\s/]{0,30}(engineer|architect|lead|manager|analyst|specialist|tester)/i},
  dev:{name:'Software Development',role:'Software Engineer',re:/(senior|lead|principal|staff|junior)?\s*(software|front.?end|back.?end|full.?stack|devops|mobile|web|cloud|platform|java|python|react|data)?\s*(engineer|developer|architect|programmer)/i},
  data:{name:'Data & AI',role:'Data Analyst',re:/(senior|lead|principal|staff|junior)?\s*(data|machine learning|ml|ai|bi|analytics|business intelligence)\s*(scientist|analyst|engineer|architect|manager)/i},
@@ -717,6 +737,7 @@ function sanitize(src){
     else if(['wake','sleep','vitTime','expTime'].includes(k))o.settings[k]=TIMERE.test(si[k])?si[k]:d;
     else o.settings[k]=d;}
   o.settings.name=str(si.name,24).trim();
+  o.settings.agreed=si.agreed===true;
   o.settings.theme=['light','dark','auto'].includes(si.theme)?si.theme:'light';
   o.settings.field=FIELD_KEYS.includes(si.field)?si.field:'';
   o.settings.country=COUNTRY_KEYS.includes(si.country)?si.country:'';
@@ -1370,7 +1391,15 @@ function renderInsights(){
   $('inBody').innerHTML=out.join('')||`<div class="panel empty"><b>No data yet</b><span class="mute">Jobs load every morning.</span></div>`}
 $('inBody').addEventListener('click',e=>{if(e.target.closest('#inGoJobs')){document.querySelector('nav button[data-v=jobs]').click();return}const a=e.target.closest('[data-iapply]');if(!a)return;const id=a.closest('.jl').dataset.id,st=J();if(st.status[id]!=='applied'){st.status[id]='opened';queueApply(id);save()}});
 /* ---------- first-run setup ---------- */
+function showTerms(readOnly){const d=$('termsDlg');if(!d.showModal||d.open)return;
+  $('termsRow').hidden=!!readOnly;$('termsGo').hidden=!!readOnly;$('termsClose').hidden=!readOnly;$('termsOk').checked=!!readOnly;$('termsGo').disabled=!readOnly;
+  d.oncancel=e=>{if(!readOnly)e.preventDefault()};d.showModal()}
+$('termsOk').onchange=e=>{$('termsGo').disabled=!e.target.checked};
+$('termsView').onclick=()=>showTerms(true);
+$('termsClose').onclick=()=>$('termsDlg').close();
+$('termsGo').onclick=()=>{if(!$('termsOk').checked)return;S.settings.agreed=true;save();$('termsDlg').close();onboard();renderCodeBanner()};
 function onboard(){
+  if(!S.settings.agreed){showTerms(false);return}
   const s=S.settings;if(s.onboarded&&s.field&&s.country)return;
   // data from an older build (or none): ask once. The old build pre-filled someone's own name, so never reuse it.
   if(!s.field&&s.name==='Aswin')s.name='';
@@ -1421,7 +1450,7 @@ function cdProg(){const[n,t]=cdCount(),l=S.code.lang,b=S.code.best[l];
 function openCode(){clearInterval(cqTimer);document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on',x.dataset.v==='learn'));
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-code'));document.querySelector('.hero').classList.add('compact');cdTab='cards';cq=null;fc=null;renderCode();window.scrollTo(0,0)}
 function renderCodeBanner(){const s=S.settings,el=$('codeBanner');if(!el)return;
-  el.hidden=!(s.onboarded&&s.field&&s.country&&new Date().getHours()>=5&&S.code.ask!==dkey()&&!$('onbDlg').open)}
+  el.hidden=!(s.agreed&&s.onboarded&&s.field&&s.country&&new Date().getHours()>=5&&S.code.ask!==dkey()&&!$('onbDlg').open)}
 $('cbYes').onclick=()=>{S.code.ask=dkey();save();openCode()};
 $('cbLater').onclick=()=>{S.code.ask=dkey();save();renderCodeBanner()};
 function renderCode(){
