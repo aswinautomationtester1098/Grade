@@ -230,6 +230,21 @@ public class MainActivity extends Activity {
     /** Methods the web app calls as window.AswinNative.* (they run on a background thread). */
     class Bridge {
         @JavascriptInterface
+        public void setReminder(boolean on) {
+            if (!trusted()) return;
+            getSharedPreferences("grade", MODE_PRIVATE).edit().putBoolean("remind", on).apply();
+            if (on) {
+                if (Build.VERSION.SDK_INT >= 33
+                        && checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    runOnUiThread(() -> requestPermissions(new String[]{android.Manifest.permission.POST_NOTIFICATIONS}, 3));
+                }
+                ReminderReceiver.schedule(MainActivity.this);
+            } else {
+                ReminderReceiver.cancel(MainActivity.this);
+            }
+        }
+
+        @JavascriptInterface
         public void setTheme(String mode) {
             if (!trusted()) return;
             final boolean dark = "dark".equals(mode);

@@ -393,6 +393,11 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 .q.brief .qi{font-style:normal;font-size:26px;width:64px;align-self:stretch;display:grid;place-items:center;background:var(--gbg);flex:none}
 .hero:not(.compact) .ringwrap{width:min(170px,46vw);margin-top:10px}
 .hero:not(.compact) .ringc .big{font-size:38px}
+
+.chip{background:var(--elev2);color:var(--ink);border:1px solid var(--line);border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700;min-height:0;box-shadow:none}
+.chip.on{background:var(--green);color:#fff;border-color:var(--green)}
+.colinks.sk{max-height:34vh;overflow:auto;margin-top:12px}
+#skDlg{max-height:90vh;overflow:auto;width:min(440px,calc(100% - 24px))}#skFind{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:var(--elev2);color:var(--ink);font-size:16px}
 </style>
 </head>
 <body>
@@ -592,6 +597,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
   <div class="card">
     <h2 style="margin-bottom:6px">Your data</h2>
     <p class="mute" style="margin:0 0 12px">Your resume, applications and progress stay on this phone. Nothing is uploaded and there is no account.</p>
+    <label class="ck" id="remRow" hidden><input type="checkbox" id="remOn"><span>Remind me every morning at 8 to do my plan</span></label>
     <div class="row"><button class="ghost sm" id="termsView" type="button">Terms of use</button></div>
     <div class="row"><button class="ghost sm" id="exportBtn">Back up</button><label class="btn ghost sm" style="display:inline-flex;align-items:center;color:var(--ink)">Restore<input type="file" id="importFile" accept="application/json" hidden></label><button class="ghost sm" id="eraseBtn" style="color:#ff6b8a">Erase all my data</button></div>
   </div>
@@ -639,6 +645,15 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <div class="row" style="justify-content:space-between;margin-top:16px"><button type="button" class="ghost" id="fReset">Reset</button><button value="ok">Show jobs</button></div>
   </form>
 </dialog>
+<dialog id="skDlg">
+  <h2>Pick your skills</h2>
+  <p class="mute" style="margin:0 0 10px">No resume needed. Tap what you know and I will rank jobs for you. Nothing leaves this phone.</p>
+  <label>Experience<select id="skYears"><option value="0">Fresher or student</option><option value="1">1 year</option><option value="2">2 years</option><option value="4">3 to 5 years</option><option value="7">6 to 9 years</option><option value="10">10+ years</option></select></label>
+  <input type="search" id="skFind" placeholder="Find a skill" aria-label="Find a skill" style="margin-top:10px">
+  <div class="colinks sk" id="skChips"></div>
+  <div style="display:grid;gap:10px;margin-top:14px"><button id="skGo" type="button" disabled>Show my matches</button><button class="ghost" id="skClose" type="button">Cancel</button></div>
+</dialog>
+
 <dialog id="coDlg">
   <div id="coBody"></div>
 </dialog>
@@ -688,7 +703,7 @@ if(window.top!==window.self){try{window.top.location.replace(window.self.locatio
 const $ = id => document.getElementById(id);
 const N = window.AswinNative || null;           // present only inside the Android app
 const KEY = 'aswin-v1';
-const DEF = {name:'',field:'',country:'',theme:'light',onboarded:false,agreed:false};
+const DEF = {name:'',field:'',country:'',theme:'light',onboarded:false,agreed:false,remind:false};
 const FIELDS={qa:{name:'QA & Testing',role:'QA Engineer',re:/(senior|lead|principal|staff)?\s*(qa|quality assurance|test|sdet|automation|quality)[a-z\s/]{0,30}(engineer|architect|lead|manager|analyst|specialist|tester)/i},
  dev:{name:'Software Development',role:'Software Engineer',re:/(senior|lead|principal|staff|junior)?\s*(software|front.?end|back.?end|full.?stack|devops|mobile|web|cloud|platform|java|python|react|data)?\s*(engineer|developer|architect|programmer)/i},
  data:{name:'Data & AI',role:'Data Analyst',re:/(senior|lead|principal|staff|junior)?\s*(data|machine learning|ml|ai|bi|analytics|business intelligence)\s*(scientist|analyst|engineer|architect|manager)/i},
@@ -741,7 +756,7 @@ function sanitize(src){
     else if(['wake','sleep','vitTime','expTime'].includes(k))o.settings[k]=TIMERE.test(si[k])?si[k]:d;
     else o.settings[k]=d;}
   o.settings.name=str(si.name,24).trim();
-  o.settings.agreed=si.agreed===true;
+  o.settings.agreed=si.agreed===true;o.settings.remind=si.remind===true;
   o.settings.theme=['light','dark','auto'].includes(si.theme)?si.theme:'light';
   o.settings.field=FIELD_KEYS.includes(si.field)?si.field:'';
   o.settings.country=COUNTRY_KEYS.includes(si.country)?si.country:'';
@@ -805,7 +820,7 @@ function renderHome(){
   setH('planList',tasks.map(x=>`<button class="li plan ${x.v>=x.n?'done':''}" data-plan="${x.k}" type="button"><span class="pic"><svg><use href="#${x.ic}"/></svg></span><div><b>${esc(x.t)}</b><span class="mute">${x.v>=x.n?'Done':x.v+' of '+x.n}</span></div><span class="tick">${x.v>=x.n?'✓':'›'}</span></button>`).join(''));
   // best matches
   let hm='';
-  if(!p)hm=`<div class="panel empty"><b>Upload your resume</b><span class="mute">I rank every job against your skills, level and experience. Your resume never leaves this phone.</span><button class="btn sm" data-plan="resume" type="button">Choose resume</button></div>`;
+  if(!p)hm=`<div class="panel empty"><b>Upload your resume</b><span class="mute">I rank every job against your skills, level and experience. Your resume never leaves this phone.</span><button class="btn sm" data-plan="resume" type="button">Choose resume</button><button class="ghost sm" data-skills type="button">No resume? Pick your skills</button></div>`;
   else if(!JOBS)hm=`<div class="panel empty"><b>${navigator.onLine?'Loading jobs…':'You are offline'}</b><span class="mute">New openings arrive every morning.</span></div>`;
   else{const top=JOBS.jobs.filter(j=>st.status[j.id]!=='hidden'&&st.status[j.id]!=='applied').map(j=>({j,r:scoreJob(j,p)})).sort((a,b)=>b.r.score-a.r.score).slice(0,3);
     hm=top.length?top.map(({j,r})=>`<button class="li mrow" data-plan="jobs" type="button"><span class="pic sc">${r.score}%</span><div><b>${esc(j.title)}</b><span class="mute">${esc(j.company||'')}${j.loc?' · '+esc(j.loc):''}</span></div><span class="tick">›</span></button>`).join(''):`<div class="panel empty"><b>No jobs yet</b><span class="mute">Check back after the morning update.</span></div>`}
@@ -845,6 +860,8 @@ function ask({title,text,input,ok,type}){
 }
 
 /* ---------- theme ---------- */
+if(N&&N.setReminder){$('remRow').hidden=false;$('remOn').onchange=e=>{S.settings.remind=e.target.checked;save();try{N.setReminder(S.settings.remind)}catch(x){}}}
+function syncRemind(){if(N&&N.setReminder){$('remOn').checked=!!S.settings.remind;try{N.setReminder(!!S.settings.remind)}catch(x){}}}
 function applyTheme(){let m=S.settings.theme||'light';if(m==='auto')m=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
   document.documentElement.dataset.theme=m;
   const mt=document.querySelector('meta[name=theme-color]');if(mt)mt.content=m==='dark'?'#121212':'#f4f7fb';
@@ -1201,7 +1218,7 @@ function renderJobs(){
   renderChips();
   $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills</span></div><button class="ghost sm" id="profToggle" aria-expanded="${profOpen}">${profOpen?'Done':'Edit'}</button></div>
     ${profOpen?`<div class="row" style="margin-top:10px"><label class="btn ghost sm">Upload new resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div><div class="chips">${(skOpen?p.skills:p.skills.slice(0,6)).map(s=>`<button class="chip-s" data-rm="${esc(s)}" aria-label="Remove ${esc(s)}">${esc(s)} ×</button>`).join('')}${p.skills.length>6?`<button class="chip-s add" id="skMore">${skOpen?'Show less':'+'+(p.skills.length-6)+' more'}</button>`:''}<button class="chip-s add" id="addSkill">+ Add skill</button></div>`:''}`
-   :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Every job is then ranked against your skills, seniority and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>`;
+   :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Every job is then ranked against your skills, seniority and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label><button class="ghost" data-skills type="button" style="margin-top:10px">No resume? Pick your skills instead</button></div>`;
   $('boardsTitle').textContent='More on '+(countryKey()==='other'?'job':COUNTRIES[countryKey()].name)+' boards';$('jobBoards').innerHTML=boards(p?p.role:FIELDS[fieldKey()].role).map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · ${COUNTRIES[countryKey()].name==='Other country'?'Worldwide':COUNTRIES[countryKey()].name}</small></a>`).join('');
   const tabs={for:'For you',saved:'Saved',applied:'Applied'};let list=[],counts={for:0,saved:0,applied:0},total=0;
   if(JOBS){
@@ -1484,11 +1501,32 @@ function cqAnswer(k){const d=CD(),qi=cq.list[cq.i],q=d.quiz[qi];if(cq.sel!==-1)r
   cq.sel=k===-2?-2:k;if(k===q[2]){cq.score++;cdXp(10)}else cq.wrong.push(qi);cqShow()}
 function renderCdProj(){const d=CD(),l=S.code.lang;
   $('cdBody').innerHTML=`<p class="mute" style="margin:0 0 10px">Try each one on paper or in an editor first. Open the hint if stuck, the solution last.</p>`+d.projects.map((p,i)=>`<div class="cdp ${S.code.proj[l+':'+i]?'done':''}"><h3>${esc(p[0])}<span class="lvl">${esc(p[1])}</span></h3><div>${esc(p[2])}</div><div class="lbl" style="font-size:12px;font-weight:800;color:#8a8a8a">EXAMPLE</div><pre>${esc(p[3])}</pre><details><summary>Hint</summary><div class="mute">${esc(p[4])}</div></details><details><summary>Solution</summary><pre>${esc(p[5])}</pre><div class="row" style="margin-top:8px"><button class="ghost sm" data-copy="${i}">Copy code</button></div></details><div class="row"><button class="btn sm" data-solved="${i}">${S.code.proj[l+':'+i]?'Solved ✓':'I solved it'}</button></div></div>`).join('')}
+/* ---------- build a profile without a resume ---------- */
+const SKFIELD={qa:/^(Playwright|Selenium|Cypress|Appium|WebdriverIO|Puppeteer|TestCafe|Robot Framework|Katalon|UFT\/QTP|TestNG|JUnit|PyTest|Jest|Mocha|Cucumber|BDD|TDD|Java|JavaScript|TypeScript|Python|SQL|API testing|Postman|REST Assured|Karate|Performance testing|JMeter|k6|Security testing|Accessibility|Mobile testing|CI\/CD|Jenkins|GitHub Actions|Docker|Git|Jira|TestRail|Agile\/Scrum|ISTQB|Test strategy|Framework design|Manual testing|Exploratory testing|Regression testing|Test automation|AI testing)$/,
+ dev:/^(Java|JavaScript|TypeScript|Python|C#|Kotlin|Swift|Go|Rust|PHP|Ruby|C\+\+|SQL|React|Angular|Vue|Node\.js|Next\.js|Spring|Django|Flutter|MongoDB|Redis|Docker|Kubernetes|AWS|Azure|GCP|Git|CI\/CD|Linux|Terraform|REST APIs|GraphQL|Microservices|Kafka|System design|HTML\/CSS|Agile\/Scrum)$/,
+ data:/^(Python|SQL|R|Pandas|Spark|Airflow|Snowflake|Power BI|Tableau|Excel|TensorFlow|PyTorch|scikit-learn|NLP|Statistics|ETL|Data visualization|MLOps|AWS|Azure|GCP|Git|Docker|Kafka|A\/B testing)$/,
+ product:/^(Roadmap|Stakeholder management|User stories|OKRs|A\/B testing|Product analytics|Prioritization|Jira|Confluence|Agile\/Scrum|Market research|Risk management|PMP|SQL|Figma|User research|Leadership|Excel)$/,
+ design:/^(Figma|Sketch|Photoshop|Prototyping|User research|Wireframing|Design systems|Motion design|Branding|Accessibility|HTML\/CSS|A\/B testing|User stories)$/,
+ marketing:/^(SEO|Google Ads|Meta Ads|Google Analytics|HubSpot|Email marketing|Content marketing|Social media|Lead generation|Marketing automation|Account management|B2B|Excel|A\/B testing|Market research|Leadership)$/};
+let skSel=new Set();
+function skDraw(){const q=$('skFind').value.trim().toLowerCase(),all=SKILLS.map(x=>x[0]),pref=SKFIELD[fieldKey()]||/./;
+  const names=q?all.filter(n=>n.toLowerCase().includes(q)).slice(0,40):all.filter(n=>pref.test(n));
+  const shown=[...new Set([...skSel,...names])];
+  $('skChips').innerHTML=shown.map(n=>`<button type="button" class="chip ${skSel.has(n)?'on':''}" data-sk="${esc(n)}">${esc(n)}</button>`).join('')||'<span class="mute">No match. Try another word.</span>';
+  $('skGo').disabled=!skSel.size;$('skGo').textContent=skSel.size?`Show my matches (${skSel.size})`:'Pick at least one skill'}
+function openSkills(){skSel=new Set();$('skFind').value='';$('skYears').value='2';skDraw();$('skDlg').showModal()}
+$('skChips').addEventListener('click',e=>{const b=e.target.closest('[data-sk]');if(!b)return;const n=b.dataset.sk;if(skSel.has(n))skSel.delete(n);else if(skSel.size<30)skSel.add(n);skDraw()});
+$('skFind').addEventListener('input',skDraw);
+$('skClose').onclick=()=>$('skDlg').close();
+$('skGo').onclick=()=>{if(!skSel.size)return;const y=+$('skYears').value||0,fd=FIELDS[fieldKey()],names=[...skSel].filter(n=>SKILLS.some(x=>x[0]===n)),
+  p=parseResume(`${fd.role} ${y} years experience ${names.join(' ')}`);p.skills=names;p.years=y;p.level=levelOf('',y);p.role=fd.role;p.updated=Date.now();
+  const st=J();st.profile=p;st.f=null;st.minMatch=40;st.tab='for';jPage=1;$('jq').value='';save();$('skDlg').close();renderJobs();renderHome();document.querySelector('nav button[data-v=jobs]').click();toast(`Matching jobs for ${names.length} skills`)};
+document.addEventListener('click',e=>{if(e.target.closest('[data-skills]'))openSkills()});
 /* ---------- company check ---------- */
-const coSeen=new Set();let COMP=null,compTried=false;
+const coSeen=new Set();let COMP=null,compTried=false,compGen='';
 const normCo=n=>String(n||'').toLowerCase().replace(/\b(inc|llc|ltd|limited|pvt|private|plc|gmbh|corp|corporation|co|company|sa|ag|bv|the)\b\.?/g,' ').replace(/[^a-z0-9]+/g,'');
 async function loadCompanies(){if(compTried)return;compTried=true;
-  try{const r=await fetch((window.GRADE_BASE||'')+'companies.json?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&isObj(j.companies))COMP=j.companies}}catch(e){}}
+  try{const r=await fetch((window.GRADE_BASE||'')+'companies.json?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(j&&isObj(j.companies)){COMP=j.companies;compGen=String(j.generated||'')}}}catch(e){}}
 const FLAGTXT={layoffs:'Recent layoff news',legal:'Legal or regulatory news',scam:'Scam warnings in the news',trouble:'Financial or security trouble in the news'};
 async function openCompany(id,gate){
   const j=(JOBS&&JOBS.jobs||[]).find(x=>x.id===id);if(!j)return;
@@ -1502,7 +1540,7 @@ async function openCompany(id,gate){
       ['LinkedIn page',`https://www.linkedin.com/search/results/companies/?keywords=${q}`],
       ['Scam check',`https://www.google.com/search?q=${encodeURIComponent('"'+name+'" scam OR fake OR fraud interview')}`]];
     const flags=c&&c.flags||[];
-    $('coBody').innerHTML=`<h2>${esc(name)}</h2><p class="mute" style="margin:0 0 10px">${gate?'Take a minute to check this company before you apply.':'Public information in one place.'}</p>
+    $('coBody').innerHTML=`<h2>${esc(name)}</h2><p class="mute" style="margin:0 0 10px">${gate?'Take a minute to check this company before you apply.':'Public information in one place.'}${compGen&&!isNaN(Date.parse(compGen))?' Facts updated '+esc(ago(compGen))+'.':''}</p>
      ${flags.length?`<div class="coflags">${flags.map(f=>`<span>⚠ ${esc(FLAGTXT[f]||f)}</span>`).join('')}</div>`:''}
      <div class="cosec"><b>About</b>${c&&c.about?`<p>${esc(c.about.text)}</p><small class="mute">From <a href="${esc(safeUrl(c.about.url))}" target="_blank" rel="noopener noreferrer">Wikipedia</a> (CC BY-SA)</small>`:`<p class="mute">${COMP?'No clear public summary found for this name. It may be a small or new company, so check the links below.':'Company facts load once you are online.'}</p>`}</div>
      <div class="cosec"><b>In the news (last 90 days)</b>${c&&c.news&&c.news.length?c.news.map(n=>`<a class="xnews" href="${esc(safeUrl(n.u))}" target="_blank" rel="noopener noreferrer"><b>${esc(n.t)}</b><small>${esc(n.src||'')}</small></a>`).join(''):'<p class="mute">No recent headlines found.</p>'}</div>
@@ -1581,7 +1619,7 @@ window.addEventListener('pagehide',save);
 window.aswinReload=()=>{loadNews();loadJobs()};
 window.aswinRefresh=()=>{};
 if(!N&&'serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
-loadSettings();applyTheme();
+loadSettings();applyTheme();syncRemind();
 render();save();
 setTimeout(()=>{onboard();setTimeout(checkApplyPrompt,800)},1200);
 loadNews();loadJobs();$('jq').value=F().q||'';
