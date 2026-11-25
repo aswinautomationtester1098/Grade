@@ -389,6 +389,10 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 
 .terms{margin:0;padding-left:18px;display:grid;gap:7px;line-height:1.4;font-size:14px;color:var(--ink2)}
 #termsDlg{max-height:90vh;overflow:auto;width:min(440px,calc(100% - 24px))}
+
+.q.brief .qi{font-style:normal;font-size:26px;width:64px;align-self:stretch;display:grid;place-items:center;background:var(--gbg);flex:none}
+.hero:not(.compact) .ringwrap{width:min(170px,46vw);margin-top:10px}
+.hero:not(.compact) .ringc .big{font-size:38px}
 </style>
 </head>
 <body>
@@ -465,7 +469,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <div class="list" id="planList"></div>
   </div>
   <div class="sec" id="hmSec">
-    <h2>Best matches for you <small>on this phone only</small></h2>
+    <h2>Best matches for you</h2>
     <div class="list" id="hmList"></div>
   </div>
   <div class="sec" id="gapSec" hidden>
@@ -476,8 +480,8 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <h2>Your applications</h2>
     <button class="panel pipe" id="pipeBtn" type="button"></button>
   </div>
-  <button class="q brief" id="jobsLink"><img src="art-money.jpg" alt=""><div><span id="jobsTitle">Jobs for you</span><small id="jobsTxt">Upload your resume to get matches</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
-  <button class="q brief" id="briefLink"><img src="art-mind.jpg" alt=""><div><span>Today's briefing</span><small id="briefTxt">News for your field and country</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
+  <button class="q brief" id="jobsLink"><i class="qi">💼</i><div><span id="jobsTitle">Jobs for you</span><small id="jobsTxt">Upload your resume to get matches</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
+  <button class="q brief" id="briefLink"><i class="qi">📰</i><div><span>Today's briefing</span><small id="briefTxt">News for your field and country</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
 </section>
 
 <section class="view" id="v-jobs">
@@ -485,7 +489,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
     <div class="sec"><h2><span>Job search</span><small id="jobCount"></small></h2></div>
     <div class="search">
       <svg aria-hidden="true"><use href="#i-search"/></svg>
-      <input id="jq" type="search" placeholder="Search title, company or skill" enterkeyhint="search" autocomplete="off" aria-label="Search jobs">
+      <input id="jq" type="search" placeholder="Search jobs" enterkeyhint="search" autocomplete="off" aria-label="Search jobs">
       <button class="icon" id="jRefresh" aria-label="Get the latest jobs"><svg><use href="#i-refresh"/></svg></button>
     </div>
     <div class="fchips" id="jChips" aria-label="Filters"></div>

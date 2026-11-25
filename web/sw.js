@@ -1,5 +1,5 @@
 // Grade offline cache
-const CACHE = 'grade-v9';
+const CACHE = 'grade-v10';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './icon-maskable-512.png',
   './art-walk.jpg', './art-water.jpg', './art-vit.jpg', './art-money.jpg', './art-mind.jpg', './art-sun.jpg', './learn-data.js', './interview-data.js', './experience-data.js', './code-py.js', './code-js.js', './code-java.js', './code-sql.js'];
 
