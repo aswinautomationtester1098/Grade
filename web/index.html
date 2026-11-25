@@ -222,7 +222,7 @@ dialog h2{margin:0 0 6px;font-size:22px;font-weight:800}
 .fit span{color:var(--green);font-weight:700;background:rgba(30,215,96,.1);padding:3px 8px;border-radius:6px}
 .gap span{color:#cfcfcf;font-weight:600;background:#262626;padding:3px 8px;border-radius:6px}
 nav button{position:relative}.nb{position:absolute;top:4px;left:calc(50% + 6px);min-width:16px;height:16px;border-radius:9px;background:#ff4d4d;color:#fff;font:800 10px/16px system-ui;text-align:center;padding:0 4px;font-style:normal}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.stat{background:var(--elev);border-radius:12px;padding:12px 6px;text-align:center}.stat b{display:block;font-size:24px}.stat span{font-size:12px;color:var(--sub);font-weight:700}
+.astats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.astat{background:var(--elev);border-radius:12px;padding:12px 6px;text-align:center}.astat b{display:block;font-size:24px}.astat span{font-size:12px;color:var(--sub);font-weight:700}
 .apc{background:linear-gradient(180deg,#1d1d1d,#161616);border:1px solid #2a2a2a;border-radius:14px;padding:16px;display:grid;gap:10px}
 .apc .when{font-size:13px;color:var(--sub)}.kws{display:flex;flex-wrap:wrap;gap:6px}.kws span{font-size:12px;font-weight:700;padding:4px 9px;border-radius:99px;background:#2a2a2a;color:#e6e6e6}.kws span.hit{background:#1f3b2a;color:#7dffa8}
 .apc .row{gap:8px}.apc select,.apc input{min-height:40px;font-size:14px}.stage-applied{border-left:4px solid #3b82f6}.stage-interview{border-left:4px solid #ffc23d}.stage-offer{border-left:4px solid #1ed760}.stage-rejected{border-left:4px solid #ff4d4d;opacity:.8}
@@ -231,7 +231,7 @@ nav button{position:relative}.nb{position:absolute;top:4px;left:calc(50% + 6px);
 .insp{background:var(--elev);border-radius:14px;padding:16px;display:grid;gap:12px}.insp h3{font-size:17px}.insp .sub{font-size:13px;color:var(--sub);margin-top:-8px}
 .jl{display:grid;grid-template-columns:auto 1fr auto auto;gap:10px;align-items:center}.jl .logo{width:38px;height:38px;font-size:17px}.jl h3{font-size:14px;line-height:1.25}.jl .job-t span{font-size:12px}.jl .pct{font-size:15px;color:var(--green)}.jl .apply{min-height:36px;padding:0 12px;font-size:13px}
 .tip{display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.4}.tip i{flex:none;width:24px;height:24px;border-radius:50%;background:#1f3b2a;color:#7dffa8;display:grid;place-items:center;font-style:normal;font-weight:900;font-size:13px}
-.nudge{font-size:13px;font-weight:700;color:#ffc23d}
+.apc a.btn{text-decoration:none}.nudge{font-size:13px;font-weight:700;color:#ffc23d}
 .asked{display:flex;align-items:center;gap:8px;flex-wrap:wrap;background:#1f3b2a;border-radius:10px;padding:10px}.asked span{font-weight:800;flex:1}
 .job-a{display:grid;grid-template-columns:minmax(0,1fr) 48px 48px;gap:8px}
 .apply{display:flex;align-items:center;justify-content:center;gap:6px;min-height:50px;border-radius:99px;background:var(--green);color:#000;font-weight:900;font-size:16px;text-decoration:none;transition:transform .12s}
@@ -425,12 +425,12 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
     <div class="segs" id="apSeg"></div>
     <div class="search">
       <svg aria-hidden="true"><use href="#i-search"/></svg>
-      <input id="apq" type="search" placeholder="Search company, role or keyword" autocomplete="off" aria-label="Search applications">
+      <input id="apq" type="search" placeholder="Search applications" autocomplete="off" aria-label="Search applications">
       <button class="icon" id="apAdd" aria-label="Add an application manually"><svg><use href="#i-plus"/></svg></button>
     </div>
     <div class="fchips" id="apStages" aria-label="Status"></div>
   </div>
-  <div class="stats" id="apStats"></div>
+  <div class="astats" id="apStats"></div>
   <div id="apList" style="display:grid;gap:14px"></div>
   <button class="ghost" id="apExport" hidden style="justify-self:center">Copy all as spreadsheet (CSV)</button>
 </section>
@@ -1419,7 +1419,7 @@ function renderApps(){
   const a=S.apps,cnt=s=>a.filter(x=>x.stage===s).length,weekN=a.filter(x=>dayAgo(x.applied)<7).length;
   $('apCount').textContent=a.length?`${a.length} total`:'';$('apSeg').innerHTML=viewSeg('apps');
   const bd=$('apBadge'),n=cnt('interview');bd.hidden=!n;bd.textContent=n;
-  $('apStats').innerHTML=[['Applied',a.length],['This week',weekN],['Interviews',cnt('interview')],['Offers',cnt('offer')]].map(([l,v])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('');
+  $('apStats').innerHTML=[['Applied',a.length],['This week',weekN],['Interviews',cnt('interview')],['Offers',cnt('offer')]].map(([l,v])=>`<div class="astat"><b>${v}</b><span>${l}</span></div>`).join('');
   $('apStages').innerHTML=[['all','All',a.length],...STAGES.map(s=>[s,s[0].toUpperCase()+s.slice(1),cnt(s)])].map(([k,l,c])=>`<button class="fchip ${apStage===k?'on':''}" data-stage-f="${k}" style="${apStage===k?'background:var(--green);color:#000':''}">${l} ${c}</button>`).join('');
   $('apExport').hidden=!a.length;
   const q=apQ.toLowerCase().split(/\s+/).filter(Boolean);
@@ -1441,7 +1441,7 @@ function renderApps(){
 $('apStages').addEventListener('click',e=>{const c=e.target.closest('[data-stage-f]');if(!c)return;apStage=c.dataset.stageF;renderApps()});
 let apT;$('apq').addEventListener('input',e=>{clearTimeout(apT);apT=setTimeout(()=>{apQ=e.target.value.trim().slice(0,60);renderApps()},200)});
 $('apList').addEventListener('change',e=>{const card=e.target.closest('.apc');if(!card)return;const x=S.apps.find(a=>a.id===card.dataset.id);if(!x)return;
-  if(e.target.matches('[data-stage]')){x.stage=STAGES.includes(e.target.value)?e.target.value:'applied';save();renderApps();if(x.stage==='interview')toast('Interview! Good luck');if(x.stage==='offer')toast('Congratulations!')}
+  if(e.target.matches('[data-stage]')){const was=x.stage;x.stage=STAGES.includes(e.target.value)?e.target.value:'applied';if((x.stage==='interview'||x.stage==='offer')&&was!=='interview'&&was!=='offer'){const pj={title:x.title,tags:x.kw,desc:''};learn(pj,1);learn(pj,1)}save();renderApps();if(x.stage==='interview')toast('Interview! Good luck');if(x.stage==='offer')toast('Congratulations!')}
   else if(e.target.matches('[data-note]')){x.note=e.target.value.slice(0,200);save()}});
 $('apList').addEventListener('click',async e=>{if(!e.target.closest('[data-del]'))return;const card=e.target.closest('.apc'),i=S.apps.findIndex(a=>a.id===card.dataset.id);if(i<0)return;
   const ok=await ask({title:'Remove this application?',text:S.apps[i].title,ok:'Remove'});if(ok){S.apps.splice(i,1);save();renderApps()}});
@@ -1492,7 +1492,7 @@ function renderInsights(){
   const mx=Math.max(1,...wk),cnt=s=>apps.filter(a=>a.stage===s).length,replied=cnt('interview')+cnt('offer');
   out.push(`<div class="insp"><h3>Your application trend</h3><div class="sub">${apps.length?`${apps.length} applied · ${replied} interview${replied===1?'':'s'}/offer${cnt('offer')===1?'':'s'} · ${apps.length?Math.round(replied/apps.length*100):0}% response`:'Applications you save will appear here.'}</div>
     <div class="bars" role="img" aria-label="Applications per week">${wk.slice().reverse().map((n,i)=>`<div><b>${n||''}</b><i style="height:${Math.round(n/mx*70)}%"></i><small>${weekLabel(7-i)}</small></div>`).join('')}</div>
-    ${apps.length?`<div class="stats">${STAGES.map(x=>`<div class="stat"><b>${cnt(x)}</b><span>${x[0].toUpperCase()+x.slice(1)}</span></div>`).join('')}</div>`:''}</div>`);
+    ${apps.length?`<div class="astats">${STAGES.map(x=>`<div class="astat"><b>${cnt(x)}</b><span>${x[0].toUpperCase()+x.slice(1)}</span></div>`).join('')}</div>`:''}</div>`);
   const stale=apps.filter(a=>a.stage==='applied'&&dayAgo(a.applied)>=7).length;
   if(stale)tips.push(`${stale} application${stale===1?' has':'s have'} had no update for 7+ days. Send a polite follow-up.`);
   const scored=apps.filter(a=>a.score>0);if(scored.length>=3){const low=scored.filter(a=>a.score<60).length;if(low/scored.length>=.4)tips.push(`${low} of ${scored.length} applications were below 60% match. Focus on 70%+ roles for better replies.`)}
