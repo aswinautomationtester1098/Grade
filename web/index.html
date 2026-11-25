@@ -970,7 +970,7 @@ const FSK={dev:['React','Angular','Vue','Node.js','TypeScript','JavaScript','Pyt
  design:['Figma','Sketch','Photoshop','Prototyping','User research','Wireframing','Design systems','Motion design','Branding','Accessibility','HTML/CSS','Agile/Scrum'],
  marketing:['SEO','Google Ads','Meta Ads','Google Analytics','HubSpot','Email marketing','Content marketing','Social media','Lead generation','Marketing automation','Account management','B2B','Excel','A/B testing']};
 const fieldSkills=()=>{const f=fieldKey();return f==='qa'?null:new Set(FSK[f])};
-function marketGaps(){const p=J().profile,jobs=JOBS?JOBS.jobs:[],kc={};for(const j of jobs)for(const k of new Set(skillsIn(`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`)))kc[k]=(kc[k]||0)+1;
+function marketGaps(){const p=J().profile,jobs=JOBS?JOBS.jobs:[],kc={};for(const j of jobs)for(const k of new Set(jobSkills(j)))kc[k]=(kc[k]||0)+1;
   const mine=new Set(p?p.skills:[]),all=Object.entries(kc).filter(([k])=>{const fs=fieldSkills();return fs?fs.has(k):(TESTSK.has(k)||['CI/CD','Docker','Python','Java','TypeScript','JavaScript','SQL','Git','Kubernetes','AWS'].includes(k))}).sort((a,b)=>b[1]-a[1]);
   return {p,n:jobs.length,list:all.filter(([k,n])=>!mine.has(k)&&n/Math.max(1,jobs.length)>=.08).slice(0,3).map(([k,n])=>[k,Math.round(n/jobs.length*100)])}}
 function renderLearnExtra(){
@@ -1112,17 +1112,23 @@ function bm25(j,p){const C=corpus(),key=(p.updated||0)+':'+(p.terms?p.terms.leng
   if(C.mx[key]==null){let m=0;for(const x of (JOBS.jobs||[]))m=Math.max(m,bm25raw(x,p));C.mx[key]=m||1}
   return Math.min(1,bm25raw(j,p)/C.mx[key])}
 /* personal feedback: terms of jobs you saved/applied (+) and hid (-) */
-const fbTerms=j=>[...new Set([...toks(j.title).filter(w=>!['remote','senior','junior','engineer'].includes(w)),...skillsIn(`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`).map(x=>'sk:'+x)])];
-function learn(job,sign){if(!job)return;const fb=J().fb||(J().fb={pos:{},neg:{}}),side=sign>0?fb.pos:fb.neg,other=sign>0?fb.neg:fb.pos;
+const fbTerms=j=>[...new Set([...toks(j.title).filter(w=>!['remote','senior','junior','engineer'].includes(w)),...jobSkills(j).map(x=>'sk:'+x)])];
+function learn(job,sign){if(!job)return;SCV++;const fb=J().fb||(J().fb={pos:{},neg:{}}),side=sign>0?fb.pos:fb.neg,other=sign>0?fb.neg:fb.pos;
   for(const t of fbTerms(job)){side[t]=Math.min(5,(side[t]||0)+1);if(other[t]){other[t]=Math.max(0,other[t]-.5);if(!other[t])delete other[t]}}
   for(const m of[fb.pos,fb.neg]){const e=Object.entries(m);if(e.length>120){e.sort((a,b)=>b[1]-a[1]);for(const[k]of e.slice(120))delete m[k]}}}
 function personal(j){const fb=J().fb;if(!fb)return 0;const ts=fbTerms(j);if(!ts.length)return 0;let v=0;
   for(const t of ts)v+=(fb.pos[t]||0)-.8*(fb.neg[t]||0);return Math.max(-1,Math.min(1,v/(ts.length*1.5)*2))}
 const JUNIOR=/junior|\bjr\b|intern\b|internship|trainee|entry|graduate|working student|apprentic/i;
 const jobLvl=t=>JUNIOR.test(t)?1:/semi.?sr|semi.?senior|\bmid\b/i.test(t)?2:/senior|\bsr\b|lead|architect|principal|manager|head|staff/i.test(t)?levelOf(t,0):0;
-function scoreJob(j,p){
-  const text=`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`;
-  const js=skillsIn(text),mine=new Set(p.skills);
+const JSK=new Map();
+function jobSkills(j){let r=JSK.get(j.id);if(!r){r=skillsIn(`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`);if(JSK.size>6000)JSK.clear();JSK.set(j.id,r)}return r}
+let SCV=0;const SCC={sig:'',m:new Map()};
+function scoreJob(j,p){   // memoised: scoring thousands of jobs on every screen change was far too slow on phones
+  const sig=[p.updated,p.skills.join(','),p.years,p.level,p.role,(p.terms||[]).length,F().where.join(','),fieldKey(),SCV,JOBS&&JOBS.generated].join('|');
+  if(SCC.sig!==sig){SCC.sig=sig;SCC.m=new Map()}
+  let r=SCC.m.get(j.id);if(!r){r=scoreRaw(j,p);SCC.m.set(j.id,r)}return r}
+function scoreRaw(j,p){
+  const js=jobSkills(j),mine=new Set(p.skills);
   const matched=js.filter(s=>mine.has(s)),missing=js.filter(s=>!mine.has(s));
   const conf=Math.min(1,js.length/6);
   const skill=js.length?(matched.length/js.length)*conf+.3*(1-conf):.25;
@@ -1400,7 +1406,7 @@ function renderInsights(){
   if(fl.length){out.push(`<div class="insp"><h3>Roles to target</h3><div class="sub">${p?'Ranked by how well each role type fits you.':'Most common role types today.'}</div>${fl.map(f=>`<div class="hbar"><b>${esc(f.k)}</b><span>${f.n} job${f.n===1?'':'s'}${p?' · best '+f.best+'%':''}</span><div class="bar"><i style="width:${p?f.avg:Math.round(f.n/jobs.length*100)}%"></i></div></div>`).join('')}</div>`);
     if(p&&fl[0].avg&&fl[0].n>1)tips.push(`${fl[0].k} roles fit you best (average ${fl[0].avg}% match across ${fl[0].n}).`)}
   // 3 keywords in demand
-  const kc={};for(const j of sc)for(const k of new Set(skillsIn(j.text)))kc[k]=(kc[k]||0)+1;
+  const kc={};for(const j of sc)for(const k of new Set(jobSkills(j)))kc[k]=(kc[k]||0)+1;
   const kl=Object.entries(kc).sort((a,b)=>b[1]-a[1]).slice(0,10),mine=new Set(p?p.skills:[]);
   if(kl.length){out.push(`<div class="insp"><h3>Keywords employers want</h3><div class="sub">${p?'Green: on your resume. Amber: not on your resume yet.':'Share of today\'s jobs that mention each skill.'}</div>${kl.map(([k,n])=>{const pc=Math.round(n/jobs.length*100),have=mine.has(k);return `<div class="hbar"><b>${p?(have?'✓ ':''):''}${esc(k)}</b><span>${pc}% of jobs</span><div class="bar ${p&&!have?'gap':''}"><i style="width:${pc}%"></i></div></div>`}).join('')}</div>`);
     if(p){const miss=kl.filter(([k,n])=>!mine.has(k)&&n/jobs.length>=.15).slice(0,3);if(miss.length)tips.push(`Add or learn: ${miss.map(([k,n])=>`${k} (${Math.round(n/jobs.length*100)}% of jobs)`).join(', ')}. If you already know them, add them to your resume.`)}}
