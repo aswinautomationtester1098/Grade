@@ -671,12 +671,13 @@ function sanitize(src){
     o.exp.push({id:num(e.id,0,1e16,0)||Date.now()+Math.random(),ts:num(e.ts,0,1e14,0),day:e.day,amt:Math.round(amt*100)/100,cat:CAT_KEYS.includes(e.cat)?e.cat:'other',note:str(e.note,60)})}
   if(isObj(src.jobs)){const j=src.jobs,p=isObj(j.profile)?j.profile:null;
     o.jobs={profile:p?{role:str(p.role,60).trim()||'QA Engineer',skills:(Array.isArray(p.skills)?p.skills:[]).filter(x=>typeof x==='string').map(x=>x.slice(0,40)).slice(0,80),
-      years:num(p.years,0,50,0),level:Math.round(num(p.level,1,5,3)),updated:num(p.updated,0,1e14,0)}:null,status:{},minMatch:[50,60,70,80].includes(j.minMatch)?j.minMatch:60,
+      years:num(p.years,0,50,0),terms:(Array.isArray(p.terms)?p.terms:[]).filter(t=>Array.isArray(t)&&typeof t[0]==='string'&&t[0].length<=30&&Number.isFinite(t[1])).slice(0,80).map(t=>[t[0],Math.min(500,Math.max(1,t[1]))]),level:Math.round(num(p.level,1,5,3)),updated:num(p.updated,0,1e14,0)}:null,status:{},minMatch:[50,60,70,80].includes(j.minMatch)?j.minMatch:60,
       tab:['for','saved','applied'].includes(j.tab)?j.tab:'for',locs:{uae:!isObj(j.locs)||j.locs.uae!==false,remote:!isObj(j.locs)||j.locs.remote!==false,india:isObj(j.locs)&&j.locs.india===true}};
     if(isObj(j.status))for(const[k,v]of Object.entries(j.status))if(/^[\w.-]{1,80}$/.test(k)&&['saved','applied','opened','hidden'].includes(v))o.jobs.status[k]=v;
     if(isObj(j.f)){const f=j.f;o.jobs.f={q:str(f.q,60),posted:['1','3','7','30'].includes(f.posted)?f.posted:'30',level:['fit','any','2','3','4','5'].includes(f.level)?f.level:'fit',
       type:['any','full','contract','part'].includes(f.type)?f.type:'any',salary:f.salary===true,sort:['match','new','salary'].includes(f.sort)?f.sort:'match',
       where:(Array.isArray(f.where)?f.where:[]).filter(w=>['uae','remote','india','europe','any'].includes(w))}}}
+  if(o.jobs&&isObj(src.jobs)&&isObj(src.jobs.fb)){const j0=src.jobs,cl=m=>{const r={};if(isObj(m))for(const[k,v]of Object.entries(m).slice(0,160))if(typeof k==='string'&&k.length<=40&&Number.isFinite(v))r[k]=Math.min(5,Math.max(0,v));return r};o.jobs.fb={pos:cl(j0.fb.pos),neg:cl(j0.fb.neg)}}
   o.apps=cleanApps(src.apps);
   if(o.jobs){o.jobs.pending=cleanApps(isObj(src.jobs)?src.jobs.pending:null,true).slice(0,20)}
   return o;
@@ -1147,7 +1148,7 @@ function parseResume(text){
   let years=0;for(const m of t.matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)){const y=+m[1];if(y<=40&&y>years)years=y}
   const head=t.slice(0,600);const lvl=levelOf(head,years);
   const roleM=head.match(/(senior|lead|principal|staff)?\s*(qa|quality assurance|test|sdet|automation|quality)[a-z\s/]{0,30}(engineer|architect|lead|manager|analyst|specialist|tester)/i);
-  return {skills:skillsIn(t),years,level:lvl,role:roleM?roleM[0].trim().replace(/\s+/g,' '):'QA Automation Engineer',updated:Date.now()};
+  return {skills:skillsIn(t),terms:topTerms(t),years,level:lvl,role:roleM?roleM[0].trim().replace(/\s+/g,' '):'QA Automation Engineer',updated:Date.now()};
 }
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('load'));document.head.appendChild(s)})}
 /* Word (.docx) text without any outside library: a .docx file is a zip; read word/document.xml with the browser's own unzip. */
@@ -1187,17 +1188,55 @@ async function readResume(file){
   if(type.startsWith('text/')||name.endsWith('.txt')||!/[\x00-\x08]/.test(new TextDecoder().decode(buf.slice(0,2000))))return new TextDecoder().decode(buf);
   throw new Error('type');
 }
+/* ---------- matching engine ----------
+   Hybrid ranking, all on-device: skill coverage + BM25 text relevance (resume terms vs job text)
+   + title similarity + seniority + experience + location, then a small personal adjustment learned
+   from the jobs you save, apply to or hide (Rocchio-style term feedback). */
+const TOK=t=>String(t).toLowerCase().match(/[a-z][a-z0-9+#]{1,}/g)||[];
+const STOP=new Set('the and for with you our are will this that from have has your all can not but who what their they work team role job years year experience including etc via per able any new more such use using used within across also well been were was its into out about over than then them these those which while where when would should could may must'.split(' '));
+const toks=t=>TOK(t).filter(w=>w.length>2&&!STOP.has(w));
+function topTerms(text){const m=new Map();for(const w of toks(text))m.set(w,(m.get(w)||0)+1);return [...m].sort((a,b)=>b[1]-a[1]).slice(0,80)}
+const TESTSK=new Set(['Playwright','Selenium','Cypress','Appium','WebdriverIO','Puppeteer','TestCafe','Robot Framework','Katalon','UFT/QTP','TestNG','JUnit','PyTest','Cucumber','BDD','TDD','Postman','REST Assured','SoapUI','Karate','Contract testing','Performance testing','JMeter','k6','Gatling','LoadRunner','Security testing','Accessibility','Mobile testing','TestRail','Zephyr','Xray','ISTQB','Test strategy','Framework design','Manual testing','Exploratory testing','Regression testing','Test automation','AI testing']);
+const ROLESYN={tester:'qa',testing:'qa',test:'qa',quality:'qa',assurance:'qa',qa:'qa',sdet:'qa auto eng',automation:'auto',automated:'auto',autom:'auto',engineer:'eng',engineering:'eng',developer:'eng',analyst:'ana',lead:'lead',manager:'lead'};
+const roleSet=t=>{const o=new Set();for(const w of TOK(t))for(const x of (ROLESYN[w]||'').split(' '))if(x)o.add(x);return o};
+let CORP=null;
+function docOf(j){const c=CORP.docs;let d=c.get(j.id);if(!d){const tf=new Map(),ws=toks(`${j.title} ${j.title} ${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`);for(const w of ws)tf.set(w,(tf.get(w)||0)+1);d={tf,len:ws.length||1};c.set(j.id,d)}return d}
+function corpus(){
+  if(CORP&&CORP.src===JOBS)return CORP;
+  CORP={src:JOBS,docs:new Map(),df:new Map(),N:0,avg:1,mx:{}};
+  const jobs=(JOBS&&JOBS.jobs)||[];let tot=0;
+  for(const j of jobs){const d=docOf(j);tot+=d.len;for(const w of d.tf.keys())CORP.df.set(w,(CORP.df.get(w)||0)+1)}
+  CORP.N=jobs.length;CORP.avg=tot/Math.max(1,jobs.length)||1;return CORP}
+function bm25raw(j,p){
+  const C=corpus(),d=docOf(j),q=p.terms&&p.terms.length?p.terms:[...p.skills.flatMap(x=>toks(x)).map(w=>[w,3]),...toks(p.role).map(w=>[w,3])];
+  let sc=0;for(const[w,qtf]of q){const tf=d.tf.get(w);if(!tf)continue;const df=C.df.get(w)||0,idf=Math.log(1+(C.N-df+.5)/(df+.5));
+    sc+=Math.log(1+qtf)*idf*(tf*2.2)/(tf+1.2*(.25+.75*d.len/C.avg))}
+  return sc}
+function bm25(j,p){const C=corpus(),key=(p.updated||0)+':'+(p.terms?p.terms.length:0)+':'+p.skills.length;
+  if(C.mx[key]==null){let m=0;for(const x of (JOBS.jobs||[]))m=Math.max(m,bm25raw(x,p));C.mx[key]=m||1}
+  return Math.min(1,bm25raw(j,p)/C.mx[key])}
+/* personal feedback: terms of jobs you saved/applied (+) and hid (-) */
+const fbTerms=j=>[...new Set([...toks(j.title).filter(w=>!['remote','senior','junior','engineer'].includes(w)),...skillsIn(`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`).map(x=>'sk:'+x)])];
+function learn(job,sign){if(!job)return;const fb=J().fb||(J().fb={pos:{},neg:{}}),side=sign>0?fb.pos:fb.neg,other=sign>0?fb.neg:fb.pos;
+  for(const t of fbTerms(job)){side[t]=Math.min(5,(side[t]||0)+1);if(other[t]){other[t]=Math.max(0,other[t]-.5);if(!other[t])delete other[t]}}
+  for(const m of[fb.pos,fb.neg]){const e=Object.entries(m);if(e.length>120){e.sort((a,b)=>b[1]-a[1]);for(const[k]of e.slice(120))delete m[k]}}}
+function personal(j){const fb=J().fb;if(!fb)return 0;const ts=fbTerms(j);if(!ts.length)return 0;let v=0;
+  for(const t of ts)v+=(fb.pos[t]||0)-.8*(fb.neg[t]||0);return Math.max(-1,Math.min(1,v/(ts.length*1.5)*2))}
+const JUNIOR=/junior|\bjr\b|intern\b|internship|trainee|entry|graduate|working student|apprentic/i;
+const jobLvl=t=>JUNIOR.test(t)?1:/semi.?sr|semi.?senior|\bmid\b/i.test(t)?2:/senior|\bsr\b|lead|architect|principal|manager|head|staff/i.test(t)?levelOf(t,0):0;
 function scoreJob(j,p){
   const text=`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`;
   const js=skillsIn(text),mine=new Set(p.skills);
   const matched=js.filter(s=>mine.has(s)),missing=js.filter(s=>!mine.has(s));
-  // Confidence: a job that names only 1-2 skills cannot be a near-perfect match on skills alone
   const conf=Math.min(1,js.length/6);
   const skill=js.length?(matched.length/js.length)*conf+.3*(1-conf):.25;
-  // Software-testing title? Hardware/mechanical "test engineer" roles are pushed down
-  const swTitle=/\b(qa|q\.a\.|sdet|tester|quality assurance|software (test|quality)|test automation|automation (engineer|tester)|quality engineer)/i.test(j.title);
+  const qaSk=js.filter(x=>TESTSK.has(x)).length;
+  const explicit=/\b(qa|q\.a\.|sdet|tester|quality assurance|software (test|quality)|test automation|testautomatisierung|testing)\b/i.test(j.title);
+  const swTitle=explicit||(/\b(quality engineer|test engineer)\b/i.test(j.title)&&qaSk>=1)||(/\bautomation engineer\b/i.test(j.title)&&qaSk>=3);
   const hwTitle=/thermal|propulsion|mechatronic|mechanical|electrical|electronics|hardware|hil\b|firmware|embedded|sensor|vision|industrial|technician|manufactur|robot/i.test(j.title);
-  const jl=levelOf(j.title,0),pl=p.level,dl=Math.abs((/senior|lead|architect|principal|manager|head|junior|staff/i.test(j.title)?jl:3)-pl);
+  const bm=bm25(j,p);
+  const A=roleSet(p.role),B=roleSet(j.title);let ts=0;if(A.size){let h=0;for(const x of A)if(B.has(x))h++;ts=h/A.size;if(A.has('qa')&&!B.has('qa'))ts*=.3}
+  const jl=jobLvl(j.title),dl=Math.abs((jl||3)-p.level);
   const lvl=[1,.75,.35,.1,0][Math.min(4,dl)];
   let req=0;for(const m of (j.desc||'').matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)){const y=+m[1];if(y<=20&&y>req)req=y}
   const exp=!req||p.years>=req?1:Math.max(0,1-(req-p.years)/4);
@@ -1205,15 +1244,18 @@ function scoreJob(j,p){
   const uae=/uae|dubai|abu dhabi|sharjah|emirates|middle east|mena|gcc/.test(loc),india=/india|bangalore|bengaluru|pune|hyderabad|chennai|mumbai|delhi/.test(loc);
   const anywhere=j.remote&&(/worldwide|anywhere|global|remote$|^remote|emea|asia/.test(loc)||!loc);
   const europe=LOCRE.europe.test(loc);const locS=W.includes('any')||(L.uae&&uae)||(L.india&&india)||(L.remote&&anywhere)||(W.includes('europe')&&europe)?1:(L.remote&&j.remote?.45:.1);
-  let score=100*(.5*skill+.2*lvl+.15*exp+.15*locS);
-  if(hwTitle&&!/software/i.test(j.title))score*=.55;else if(!swTitle)score*=.8;
-  score=Math.min(99,Math.round(score));   // never claim a perfect 100% from a text match
-  return {score,matched,missing:missing.slice(0,3),req};
+  const pers=personal(j);
+  let score=100*(.28*skill+.22*bm+.12*ts+.14*lvl+.08*exp+.16*locS);
+  if(hwTitle&&!/software/i.test(j.title))score*=.5;else if(!swTitle)score*=qaSk>=3?.75:.5;
+  score+=6*pers;
+  score=Math.max(0,Math.min(99,Math.round(score)));
+  return {score,matched,missing:missing.slice(0,3),req,why:{title:ts>=.66,level:lvl>=.75&&jl>0,text:bm>=.6,liked:pers>.25}};
 }
 async function loadJobs(){
   try{const r=await fetch((window.GRADE_JOBS_URL||'jobs.json')+'?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(Array.isArray(j.jobs))JOBS=j}}catch(e){}
   renderJobs();
 }
+if(location.hash==='#eval')window.__e={scoreJob,J:()=>J(),jobs:()=>JOBS,learn};   // test hook, only with #eval in the address
 const safeUrl=u=>/^https?:\/\/[^\s]+$/i.test(String(u||''))?String(u):'#';
 const hue=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h};
 function boards(role){
@@ -1284,7 +1326,8 @@ function renderJobs(){
   $('jobBoards').innerHTML=boards(p?p.role:'QA Engineer').map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · UAE</small></a>`).join('');
   const tabs={for:'For you',saved:'Saved',applied:'Applied'};let list=[],counts={for:0,saved:0,applied:0},total=0;
   if(JOBS){
-    const all=JOBS.jobs.map(j=>({...j,...(p?scoreJob(j,p):{score:0,matched:[],missing:[]}),status:st.status[j.id]||''}));total=all.length;
+    const seen=new Map();for(const j of JOBS.jobs){const k=(j.company||'').toLowerCase().replace(/[^a-z0-9]/g,'')+'|'+(j.title||'').toLowerCase().replace(/\((m|f|w|d|x|all|\/|\s)+\)|[^a-z0-9]/g,'');const o=seen.get(k);if(!o||(j.posted||'')>(o.posted||''))seen.set(k,j)}
+    const all=[...seen.values()].map(j=>({...j,...(p?scoreJob(j,p):{score:0,matched:[],missing:[]}),status:st.status[j.id]||''}));total=all.length;
     const filtered=all.filter(j=>jobMatchesFilters(j,f,p));
     const forYou=filtered.filter(j=>(!p||j.score>=st.minMatch)&&j.status!=='hidden'&&j.status!=='applied');
     counts={for:forYou.length,saved:all.filter(j=>j.status==='saved').length,applied:all.filter(j=>j.status==='applied').length};
@@ -1306,7 +1349,7 @@ function renderJobs(){
         <div class="job-t"><h3>${hl(j.title,f.q)}</h3><span>${esc(j.company||'')} · ${esc(j.loc||'')}</span></div>
         ${p?`<div class="match"><svg viewBox="0 0 50 50"><circle cx="25" cy="25" r="21" fill="none" stroke="#333" stroke-width="5"/><circle cx="25" cy="25" r="21" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-j.score/100)}" transform="rotate(-90 25 25)"/></svg><b>${j.score}%</b><small>match</small></div>`:''}</div>
       <div class="tags">${isNew?'<span class="tag new">New</span>':''}${j.remote?'<span class="tag">Remote</span>':''}${j.salary?`<span class="tag money">${esc(j.salary)}</span>`:''}${j.req?`<span class="tag">${j.req}+ yrs</span>`:''}${j.type?`<span class="tag">${esc(j.type)}</span>`:''}<span class="tag">${esc(ago(j.posted))}</span></div>
-      ${j.matched.length?`<p class="fit"><b>Why you fit</b>${j.matched.slice(0,6).map(s=>`<span>✓ ${esc(s)}</span>`).join('')}</p>`:''}
+      ${j.matched.length||(j.why&&Object.values(j.why).some(Boolean))?`<p class="fit"><b>Why you fit</b>${j.why&&j.why.title?'<span>✓ Title fits your role</span>':''}${j.why&&j.why.level?'<span>✓ Right seniority</span>':''}${j.matched.slice(0,6).map(s=>`<span>✓ ${esc(s)}</span>`).join('')}${j.why&&j.why.liked?'<span>★ Like jobs you saved</span>':''}</p>`:''}
       ${j.missing.length?`<p class="gap"><b>Brush up</b>${j.missing.map(s=>`<span>${esc(s)}</span>`).join('')}</p>`:''}
       ${j.status==='opened'?`<div class="asked"><span>Did you apply?</span><button class="sm" data-st="applied">Yes, applied</button><button class="ghost sm" data-st="">Not yet</button></div>`:''}
       <div class="job-a"><a class="apply" href="${esc(safeUrl(j.url))}" target="_blank" rel="noopener" data-open>${j.status==='applied'?'Applied ✓ · View':'Apply now'} <svg><use href="#i-arrow"/></svg></a>
@@ -1331,6 +1374,7 @@ $('v-jobs').addEventListener('click',async e=>{
   else if(el.id==='addSkill'){const v=await ask({title:'Add a skill',text:'For example: Playwright, API testing, JMeter',input:' ',ok:'Add',type:'text'});const s=(v||'').trim();if(s&&!st.profile.skills.includes(s)){const known=SKILLS.find(([n,re])=>re.test(s));st.profile.skills.push(known?known[0]:s.slice(0,30))}}
   else if(el.hasAttribute('data-open')){const id=el.closest('.job').dataset.id;if(st.status[id]!=='applied'){st.status[id]='opened';queueApply(id)}save();setTimeout(renderJobs,800);return}
   else if('st' in el.dataset){const id=el.closest('.job').dataset.id;if(el.dataset.st)st.status[id]=el.dataset.st;else delete st.status[id];
+    if(el.dataset.st==='saved'||el.dataset.st==='hidden'){const jj=(JOBS&&JOBS.jobs||[]).find(x=>x.id===id);learn(jj,el.dataset.st==='saved'?1:-1)}
     if(el.dataset.st==='applied'){addApp(jobSnap(id));toast('Saved to Applications. Good luck!')}if(el.dataset.st==='hidden')toast('Hidden. You will not see this job again.')}
   save();renderJobs();
 });
@@ -1357,7 +1401,7 @@ function jobSnap(id){
 function queueApply(id){const st=J(),snap=jobSnap(id);if(!snap||S.apps.some(a=>a.id===id))return;
   st.pending=(st.pending||[]).filter(x=>x.id!==id);st.pending.push({...snap,openedAt:Date.now(),asked:0});st.pending=st.pending.slice(-20)}
 function addApp(snap){if(!snap)return;const [c]=cleanApps([{...snap,applied:dkeyOf(Date.now()),ts:Date.now(),stage:'applied',note:'',manual:snap.manual}]);
-  if(!c)return;const old=S.apps.findIndex(a=>a.id===c.id);if(old>=0)return;S.apps.unshift(c);J().pending=(J().pending||[]).filter(x=>x.id!==c.id);save();renderApps();renderInsights()}
+  if(!c)return;const old=S.apps.findIndex(a=>a.id===c.id);if(old>=0)return;{const jj=(JOBS&&JOBS.jobs||[]).find(x=>x.id===c.id);if(jj)learn(jj,1)}S.apps.unshift(c);J().pending=(J().pending||[]).filter(x=>x.id!==c.id);save();renderApps();renderInsights()}
 let apAsking=false;
 function checkApplyPrompt(){
   if(apAsking||document.hidden||!S.jobs)return;
