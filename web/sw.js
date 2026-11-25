@@ -14,7 +14,7 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
-  if (url.pathname.endsWith('news.json') || url.pathname.endsWith('jobs.json')) {   // daily data: always fresh
+  if (/(news|jobs[\w-]*)\.json$/.test(url.pathname)) {   // daily data: always fresh
     e.respondWith(fetch(e.request).catch(() => new Response('{}', { headers: { 'Content-Type': 'application/json' } })));
     return;
   }

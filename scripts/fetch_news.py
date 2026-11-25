@@ -26,14 +26,17 @@ OUT = os.path.join(os.path.dirname(__file__), "..", "web", "news.json")
 UA = "Mozilla/5.0 (GradeBriefing/1.0; +https://github.com)"
 
 
+LANG = {"AE": "en-AE", "IN": "en-IN", "US": "en-US", "GB": "en-GB", "CA": "en-CA", "AU": "en-AU", "SA": "en-SA", "PK": "en-PK"}
+
+
 def gnews(query, region="AE"):
-    lang = {"AE": "en-AE", "IN": "en-IN", "US": "en-US"}[region]
+    lang = LANG[region]
     q = urllib.parse.quote(query)
     return f"https://news.google.com/rss/search?q={q}&hl={lang}&gl={region}&ceid={region}:en"
 
 
 def gtopic(topic, region):
-    lang = {"AE": "en-AE", "IN": "en-IN", "US": "en-US"}[region]
+    lang = LANG[region]
     return f"https://news.google.com/rss/headlines/section/topic/{topic}?hl={lang}&gl={region}&ceid={region}:en"
 
 
@@ -69,6 +72,30 @@ SECTIONS = [
                           gnews('UAE government OR law OR visa OR economy OR announces when:1d', "AE")], True, None),
     ("india", "India", 5, 1, [gtopic("NATION", "IN"),
                               gnews('India government OR economy OR RBI OR "Supreme Court" OR policy when:1d', "IN")], True, None),
+    ("f_dev", "Software Development", 6, 2, [
+        gnews('"software engineering" OR "software developer" OR programming OR "open source" OR "developer tools" when:3d', "US"),
+        gnews('(React OR Python OR TypeScript OR Kubernetes OR Rust OR "AI coding") release OR launch OR update when:3d', "US"),
+    ], False, None),
+    ("f_data", "Data & AI", 6, 2, [
+        gnews('"data science" OR "machine learning" OR "data engineering" OR "generative AI" OR "AI model" when:2d', "US"),
+        gnews('(Snowflake OR Databricks OR PyTorch OR "Power BI" OR "data analytics") when:5d', "US"),
+    ], False, None),
+    ("f_product", "Product & Project Management", 6, 2, [
+        gnews('"product management" OR "project management" OR "product manager" OR agile OR "product strategy" when:5d', "US"),
+    ], False, None),
+    ("f_design", "Design & UX", 6, 2, [
+        gnews('"UX design" OR "product design" OR "UI design" OR Figma OR "design systems" OR "user experience" when:5d', "US"),
+    ], False, None),
+    ("f_marketing", "Marketing & Sales", 6, 2, [
+        gnews('"digital marketing" OR SEO OR "content marketing" OR "growth marketing" OR "B2B sales" OR "social media marketing" when:3d', "US"),
+    ], False, None),
+    ("us", "United States", 5, 1, [gtopic("NATION", "US"), gnews('US economy OR jobs OR hiring OR policy when:1d', "US")], True, None),
+    ("uk", "United Kingdom", 5, 1, [gtopic("NATION", "GB"), gnews('UK economy OR jobs OR hiring OR government when:1d', "GB")], True, None),
+    ("ca", "Canada", 5, 1, [gtopic("NATION", "CA"), gnews('Canada economy OR jobs OR hiring OR government when:1d', "CA")], True, None),
+    ("au", "Australia", 5, 1, [gtopic("NATION", "AU"), gnews('Australia economy OR jobs OR hiring OR government when:1d', "AU")], True, None),
+    ("saudi", "Saudi Arabia", 5, 1, [gtopic("NATION", "SA"), gnews('Saudi Arabia economy OR jobs OR Vision 2030 OR government when:1d', "SA")], True, None),
+    ("pk", "Pakistan", 5, 1, [gtopic("NATION", "PK"), gnews('Pakistan economy OR jobs OR government when:1d', "PK")], True, None),
+    ("world", "World", 5, 1, [gtopic("WORLD", "US")], True, None),
     ("uaeindia", "UAE–India", 3, 1, [
         gnews('India UAE (visa OR remittance OR rupee OR dirham OR flights OR expats OR trade) when:3d', "AE"),
     ], False, None),
@@ -191,9 +218,9 @@ def ai_summaries(sections):
         return
     listing = "\n".join(f"{n}. [{sections[si]['title']}] {it['t']} ({it['src']})" for n, (si, ii, it) in enumerate(flat))
     prompt = (
-        "You write a daily briefing for a senior QA architect living in Dubai, originally from India. "
+        "You write a daily briefing for a busy working professional. "
         "For each headline below, write: s = one crisp, neutral sentence (max 22 words) explaining what happened "
-        "in plain English; w = why it matters to him (max 14 words). Do not invent facts beyond the headline; "
+        "in plain English; w = why it matters to a working professional (max 14 words). Do not invent facts beyond the headline; "
         "if unclear, describe it cautiously. Reply with only a JSON array of objects {\"n\":int,\"s\":str,\"w\":str}.\n\n"
         + listing
     )
@@ -234,7 +261,7 @@ def main():
                 pool += got
             except Exception as e:
                 print(f"[{sid}] feed failed: {url[:70]}: {e}", file=sys.stderr)
-        days = {"qa": 7, "uaeindia": 7, "qablogs": 21, "tools": 14}.get(sid)
+        days = {"qa": 7, "uaeindia": 7, "qablogs": 21, "tools": 14, "f_product": 5, "f_design": 5}.get(sid)
         window = now - dt.timedelta(days=days) if days else cutoff
         pool = [p for p in pool if dt.datetime.fromisoformat(p["ts"]) >= window and p["t"]]
         if filt == "qa":

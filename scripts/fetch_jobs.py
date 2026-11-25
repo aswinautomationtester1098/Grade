@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Collect fresh QA / test automation openings into web/jobs.json (runs daily in GitHub Actions).
+"""Collect fresh openings for several careers into web/jobs-<field>.json (runs daily in GitHub Actions).
+Fields: qa, dev, data, product, design, marketing. web/jobs.json is a copy of the QA file for older app versions.
 
 Sources are public job APIs that allow this kind of use with attribution and a link
 back to the original posting. Every job keeps its original "apply" URL, so the app
@@ -18,6 +19,25 @@ import urllib.request
 OUT = os.path.join(os.path.dirname(__file__), "..", "web", "jobs.json")
 UA = "Mozilla/5.0 (GradeJobs/1.0; personal job alerts)"
 QA = re.compile(r"\b(qa|q\.a\.|quality (assurance|engineer)|test(ing|er)?\b|sdet|automation engineer|test automation|quality engineering)", re.I)
+FIELD_RE = [   # checked in this order; the first match wins
+    ("qa", QA),
+    ("data", re.compile(r"\b(data (analyst|scientist|engineer|analytics)|machine learning|\bml\b|mlops|ai engineer|analytics engineer|business intelligence|bi (analyst|developer)|research scientist)", re.I)),
+    ("product", re.compile(r"\b(product (manager|owner|operations|lead)|project manager|program manager|business analyst|scrum master|delivery manager|head of product)", re.I)),
+    ("design", re.compile(r"\b(designer|ux|ui/ux|user experience|product design|graphic|creative|illustrat|motion design|brand design)", re.I)),
+    ("marketing", re.compile(r"\b(marketing|seo|growth|content (writer|strategist|manager)|copywriter|social media|sales|account executive|business development|customer success|community manager|sdr|bdr)", re.I)),
+    ("dev", re.compile(r"\b(software|developer|programmer|front.?end|back.?end|full.?stack|devops|site reliability|sre|cloud engineer|platform engineer|infrastructure engineer|mobile engineer|android|ios engineer|web developer|react|python|java|golang|node\.?js|\.net|ruby|php|rust|security engineer|engineering manager)", re.I)),
+]
+CAPS = {"qa": 250, "dev": 150, "data": 120, "product": 120, "design": 100, "marketing": 120}
+NOT_JOB = re.compile(r"\b(intern|internship|working student|werkstudent|praktik)\b", re.I)
+
+
+def field_of(title):
+    for f, rx in FIELD_RE:
+        if rx.search(title):
+            return f
+    return None
+
+
 TAG = re.compile(r"<[^>]+>")
 # "QA" jobs that are not software testing (language, audio, content, manufacturing...)
 NOT_SOFTWARE = re.compile(r"linguist|transcription|audio|video|translat|language|content (review|moderat)|annotat|"
@@ -54,7 +74,9 @@ def remotive():
     seen = set()
     raw = []
     for q in ("category=qa", "search=qa%20engineer", "search=quality%20assurance", "search=test%20automation",
-              "search=sdet", "search=playwright", "search=selenium", "search=software%20tester"):
+              "search=sdet", "search=playwright", "search=selenium", "search=software%20tester",
+              "category=software-dev", "category=data", "category=product", "category=design", "category=marketing",
+              "category=sales", "category=devops", "category=business", "category=customer-support"):
         try:
             raw += get(f"https://remotive.com/api/remote-jobs?{q}&limit=100").get("jobs", [])
         except Exception as e:
@@ -72,7 +94,7 @@ def remotive():
 
 def jobicy():
     raw, ids = [], set()
-    for tag in ("qa", "testing", "automation", "sdet", "quality"):
+    for tag in ("qa", "testing", "automation", "sdet", "quality", "developer", "engineer", "javascript", "python", "data", "analyst", "machine learning", "product", "project manager", "design", "marketing", "seo", "sales"):
         try:
             for j in get(f"https://jobicy.com/api/v2/remote-jobs?count=50&tag={tag}").get("jobs", []):
                 if j.get("id") not in ids:
@@ -101,8 +123,6 @@ def arbeitnow():
             break
     print(f"arbeitnow raw: {len(raw)}")
     for j in raw:
-        if not QA.search(j.get("title", "")):
-            continue
         yield dict(id="an" + str(j.get("slug")), title=j.get("title"), company=j.get("company_name"), logo="",
                    loc=j.get("location") or "", remote=bool(j.get("remote")), salary="", type=", ".join(j.get("job_types") or []),
                    tags=j.get("tags") or [], desc=clean(j.get("description")), url=j.get("url"), posted=iso(j.get("created_at")), source="Arbeitnow")
@@ -151,7 +171,7 @@ def weworkremotely():
 
 def himalayas():
     raw = []
-    for q in ("qa", "quality assurance", "test automation", "sdet"):
+    for q in ("qa", "quality assurance", "test automation", "sdet", "software engineer", "developer", "data analyst", "data scientist", "product manager", "designer", "marketing manager"):
         try:
             d = get("https://himalayas.app/jobs/api/search?q=" + urllib.parse.quote(q) + "&limit=50")
             raw += d.get("jobs", []) if isinstance(d, dict) else []
@@ -177,7 +197,8 @@ def jooble():
         print("jooble: skipped (add the free JOOBLE_API_KEY secret for UAE office jobs)")
         return
     raw = []
-    for kw in ("QA engineer", "test automation engineer", "quality assurance", "SDET", "software tester", "QA lead"):
+    for kw in ("QA engineer", "test automation engineer", "SDET", "software engineer", "developer", "data analyst", "product manager",
+               "ui ux designer", "digital marketing", "sales executive"):
         for loc in ("Dubai", "Abu Dhabi", "Sharjah"):
             try:
                 body = json.dumps({"keywords": kw, "location": loc, "page": "1"}).encode()
@@ -197,9 +218,10 @@ def jooble():
 def main():
     now = dt.datetime.now(dt.timezone.utc)
     cutoff = now - dt.timedelta(days=30)
-    jobs, seen = [], set()
+    by_field = {f: [] for f in CAPS}
+    seen = set()
     for src in (jooble, remotive, himalayas, jobicy, arbeitnow, remoteok, workingnomads, weworkremotely):
-        n, dropped = 0, {"not QA": 0, "not software": 0, "too old": 0, "duplicate": 0}
+        n, dropped = 0, {"no field": 0, "not software": 0, "intern": 0, "too old": 0, "duplicate": 0}
         try:
             for j in src():
                 if not j.get("title") or not re.match(r"^https?://\S+$", str(j.get("url") or "")):
@@ -211,11 +233,15 @@ def main():
                 j["type"] = clean(str(j.get("type") or ""), 40)
                 j["url"] = str(j["url"])[:1000]
                 j["logo"] = ""   # remote logos are not loaded (privacy, CSP)
-                if not QA.search(j["title"]):
-                    dropped["not QA"] += 1
+                f = field_of(j["title"])
+                if not f:
+                    dropped["no field"] += 1
                     continue
-                if NOT_SOFTWARE.search(j["title"]):
+                if f == "qa" and NOT_SOFTWARE.search(j["title"]):
                     dropped["not software"] += 1
+                    continue
+                if NOT_JOB.search(j["title"]):
+                    dropped["intern"] += 1
                     continue
                 if dt.datetime.fromisoformat(j["posted"]) < cutoff:
                     dropped["too old"] += 1
@@ -226,19 +252,29 @@ def main():
                     continue
                 seen.add(key)
                 j["tags"] = [str(t) for t in j.get("tags", []) if t][:12]
-                jobs.append(j)
+                j["field"] = f
+                j["desc"] = j["desc"][:2500] if f == "qa" else j["desc"][:1500]
+                by_field[f].append(j)
                 n += 1
         except Exception as e:
             print(f"{src.__name__} failed: {e}", file=sys.stderr)
         print(f"{src.__name__}: kept {n} | dropped {dropped}")
-    jobs.sort(key=lambda j: j["posted"], reverse=True)
-    jobs = jobs[:250]
-    if not jobs:
-        print("No jobs fetched; keeping previous file", file=sys.stderr)
-        return
-    with open(OUT, "w", encoding="utf-8") as f:
-        json.dump({"generated": now.isoformat(), "jobs": jobs}, f, ensure_ascii=False)
-    print(f"Wrote {len(jobs)} jobs")
+    wrote = 0
+    outdir = os.path.dirname(OUT)
+    for f, jobs in by_field.items():
+        jobs.sort(key=lambda j: j["posted"], reverse=True)
+        jobs = jobs[:CAPS[f]]
+        print(f"field {f}: {len(jobs)} jobs")
+        if not jobs:
+            continue
+        payload = {"generated": now.isoformat(), "field": f, "jobs": jobs}
+        for name in ([f"jobs-{f}.json"] + (["jobs.json"] if f == "qa" else [])):
+            with open(os.path.join(outdir, name), "w", encoding="utf-8") as fh:
+                json.dump(payload, fh, ensure_ascii=False)
+        wrote += len(jobs)
+    if not wrote:
+        print("No jobs fetched; keeping previous files", file=sys.stderr)
+    print(f"Wrote {wrote} jobs")
 
 
 if __name__ == "__main__":

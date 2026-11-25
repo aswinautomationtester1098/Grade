@@ -146,6 +146,7 @@ public class MainActivity extends Activity {
                 if (!url.startsWith("file:") || BuildConfig.SITE_URL.isEmpty()) return;
                 view.evaluateJavascript("window.GRADE_NEWS_URL=" + JSONObject.quote(BuildConfig.SITE_URL + "news.json")
                         + ";window.GRADE_JOBS_URL=" + JSONObject.quote(BuildConfig.SITE_URL + "jobs.json")
+                        + ";window.GRADE_BASE=" + JSONObject.quote(BuildConfig.SITE_URL)
                         + ";window.aswinReload&&aswinReload()", null);
             }
         });

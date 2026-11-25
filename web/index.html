@@ -308,7 +308,7 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
 <header class="hero" id="hero">
   <div class="top">
     <div class="avatar" id="avatar">A</div>
-    <div><h1 id="hello">Good evening, Aswin</h1><p id="date"></p></div>
+    <div><h1 id="hello">Hello</h1><p id="date"></p></div>
     <span class="brand">Grade</span>
   </div>
   <div class="ringwrap">
@@ -346,13 +346,13 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
   </div>
 
   <div class="sec">
-    <h2><span>Made for <span id="forName">Aswin</span></span><small id="tipTime"></small></h2>
+    <h2><span>Made for <span id="forName">you</span></span><small id="tipTime"></small></h2>
     <ul class="shelf tips" id="tips" style="margin:0 -16px;padding:0 16px 4px"></ul>
   </div>
 
   <button class="q brief" id="briefLink"><img src="art-mind.jpg" alt=""><div><span>Today's briefing</span><small id="briefTxt">QA, tech, UAE and India news</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
 
-  <button class="q brief" id="jobsLink"><img src="art-money.jpg" alt=""><div><span>QA jobs for you</span><small id="jobsTxt">Upload your resume to get matches</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
+  <button class="q brief" id="jobsLink"><img src="art-money.jpg" alt=""><div><span id="jobsTitle">Jobs for you</span><small id="jobsTxt">Upload your resume to get matches</small></div><svg style="width:22px;height:22px;margin:0 14px 0 auto;flex:none;color:var(--sub)"><use href="#i-play"/></svg></button>
 
   <div class="sec">
     <h2>Hydration <small id="glassTxt"></small></h2>
@@ -416,7 +416,7 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
   <div id="jobList" style="display:grid;gap:14px"></div>
   <button class="ghost" id="jMore" hidden style="justify-self:center">Show more jobs</button>
   <div class="sec">
-    <h2><span>More on UAE job boards</span><small>last 24h</small></h2>
+    <h2><span id="boardsTitle">More job boards</span><small>last 24h</small></h2>
     <div class="shelf" id="jobBoards"></div>
   </div>
   <p class="mute" style="font-size:12px">Jobs come from public job boards and are refreshed every morning. Match scores compare each job with your resume (skills, seniority, years, location); always read the full job description.</p>
@@ -490,6 +490,8 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
     <h2 style="margin-bottom:12px">About you</h2>
     <div class="grid2">
       <label>Name<input id="s-name" autocomplete="given-name"></label>
+      <label>Career field<select id="s-field"></select></label>
+      <label>Country<select id="s-country"></select></label>
       <label>Weight (kg)<input id="s-weight" type="number" inputmode="decimal"></label>
       <label>Height (cm)<input id="s-height" type="number" inputmode="decimal"></label>
       <label>Daily step goal<input id="s-stepGoal" type="number" inputmode="numeric"></label>
@@ -600,7 +602,9 @@ mark{background:rgba(30,215,96,.25);color:inherit;border-radius:3px;padding:0 1p
     <h2>Welcome to Grade</h2>
     <p class="mute">30 seconds to personalise your goals. You can change these anytime in Settings.</p>
     <div class="grid2" style="margin-top:14px">
-      <label>Your name<input id="o-name" maxlength="24" autocomplete="given-name"></label>
+      <label>Your name<input id="o-name" maxlength="24" autocomplete="given-name" placeholder="First name"></label>
+      <label>Career field<select id="o-field" required></select></label>
+      <label>Country<select id="o-country" required></select></label>
       <label>Weight (kg)<input id="o-weight" type="number" inputmode="decimal" min="25" max="300"></label>
       <label>Height (cm)<input id="o-height" type="number" inputmode="decimal" min="100" max="250"></label>
       <label>Daily step goal<select id="o-goal"><option>5000</option><option>6000</option><option selected>8000</option><option>10000</option><option>12000</option></select></label>
@@ -638,8 +642,22 @@ if(window.top!==window.self){try{window.top.location.replace(window.self.locatio
 const $ = id => document.getElementById(id);
 const N = window.AswinNative || null;           // present only inside the Android app
 const KEY = 'aswin-v1';
-const DEF = {name:'Aswin',weight:70,height:172,stepGoal:8000,glassMl:250,waterGoal:0,hot:true,
-  wake:'07:00',sleep:'23:00',vitTime:'09:00',every:60,sens:1.2,notify:false,tracking:false,currency:'AED',expTime:'21:00',budget:0,onboarded:false};
+const DEF = {name:'',field:'',country:'',weight:70,height:172,stepGoal:8000,glassMl:250,waterGoal:0,hot:true,
+  wake:'07:00',sleep:'23:00',vitTime:'09:00',every:60,sens:1.2,notify:false,tracking:false,currency:'USD',expTime:'21:00',budget:0,onboarded:false};
+const FIELDS={qa:{name:'QA & Testing',role:'QA Engineer',re:/(senior|lead|principal|staff)?\s*(qa|quality assurance|test|sdet|automation|quality)[a-z\s/]{0,30}(engineer|architect|lead|manager|analyst|specialist|tester)/i},
+ dev:{name:'Software Development',role:'Software Engineer',re:/(senior|lead|principal|staff|junior)?\s*(software|front.?end|back.?end|full.?stack|devops|mobile|web|cloud|platform|java|python|react|data)?\s*(engineer|developer|architect|programmer)/i},
+ data:{name:'Data & AI',role:'Data Analyst',re:/(senior|lead|principal|staff|junior)?\s*(data|machine learning|ml|ai|bi|analytics|business intelligence)\s*(scientist|analyst|engineer|architect|manager)/i},
+ product:{name:'Product & Project Management',role:'Product Manager',re:/(senior|lead|principal|associate|junior)?\s*(product|project|program|business|delivery)\s*(manager|owner|analyst|lead)|scrum master/i},
+ design:{name:'Design & UX',role:'Product Designer',re:/(senior|lead|principal|junior)?\s*(ux|ui|ui\/ux|product|graphic|visual|interaction|brand)?\s*(designer|researcher)/i},
+ marketing:{name:'Marketing & Sales',role:'Marketing Manager',re:/(senior|lead|head of|junior)?\s*(digital|content|growth|performance|social media|seo|marketing|sales|account|business development)\s*(marketing)?\s*(manager|executive|specialist|lead|strategist|representative|associate)/i}};
+const FIELD_KEYS=Object.keys(FIELDS);
+const COUNTRIES={ae:{name:'United Arab Emirates',w:'uae',cur:'AED'},in:{name:'India',w:'india',cur:'INR'},us:{name:'United States',w:'us',cur:'USD'},uk:{name:'United Kingdom',w:'uk',cur:'GBP'},
+ ca:{name:'Canada',w:'ca',cur:'CAD'},au:{name:'Australia',w:'au',cur:'AUD'},sa:{name:'Saudi Arabia',w:'saudi',cur:'SAR'},pk:{name:'Pakistan',w:'pk',cur:'PKR'},other:{name:'Other country',w:'',cur:'USD'}};
+const COUNTRY_KEYS=Object.keys(COUNTRIES);
+const fieldKey=()=>FIELD_KEYS.includes(S.settings.field)?S.settings.field:'qa';
+const countryKey=()=>COUNTRY_KEYS.includes(S.settings.country)?S.settings.country:'other';
+function guessCountry(){const tz=(Intl.DateTimeFormat().resolvedOptions().timeZone)||'';
+  return /Dubai|Muscat/.test(tz)?'ae':/Kolkata|Calcutta/.test(tz)?'in':/^America\/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax)/.test(tz)?'ca':/^America\//.test(tz)?'us':/London|Dublin/.test(tz)?'uk':/^Australia/.test(tz)?'au':/Riyadh/.test(tz)?'sa':/Karachi/.test(tz)?'pk':'other'}
 let S;
 try{S=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){S={}}
 /* Every value loaded from storage or a backup file is validated: wrong types are reset, text is length-limited. */
@@ -668,7 +686,9 @@ function sanitize(src){
     else if(typeof d==='boolean')o.settings[k]=typeof si[k]==='boolean'?si[k]:d;
     else if(['wake','sleep','vitTime','expTime'].includes(k))o.settings[k]=TIMERE.test(si[k])?si[k]:d;
     else o.settings[k]=d;}
-  o.settings.name=str(si.name,24).trim()||DEF.name;
+  o.settings.name=str(si.name,24).trim();
+  o.settings.field=FIELD_KEYS.includes(si.field)?si.field:(si.onboarded===true?'qa':'');
+  o.settings.country=COUNTRY_KEYS.includes(si.country)?si.country:(si.onboarded===true?'ae':'');
   o.settings.currency=/^[A-Za-z]{1,4}$/.test(si.currency||'')?si.currency.toUpperCase():DEF.currency;
   if(isObj(src.days))for(const[k,v]of Object.entries(src.days)){if(!DAYRE.test(k)||!isObj(v))continue;
     o.days[k]={steps:num(v.steps,0,500000,0),manual:num(v.manual,0,500000,0),water:num(v.water,0,30000,0),vit:v.vit===true,vitAt:str(v.vitAt,20,null)||null,
@@ -683,7 +703,7 @@ function sanitize(src){
     if(isObj(j.status))for(const[k,v]of Object.entries(j.status))if(/^[\w.-]{1,80}$/.test(k)&&['saved','applied','opened','hidden'].includes(v))o.jobs.status[k]=v;
     if(isObj(j.f)){const f=j.f;o.jobs.f={q:str(f.q,60),posted:['1','3','7','30'].includes(f.posted)?f.posted:'30',level:['fit','any','2','3','4','5'].includes(f.level)?f.level:'fit',
       type:['any','full','contract','part'].includes(f.type)?f.type:'any',salary:f.salary===true,sort:['match','new','salary'].includes(f.sort)?f.sort:'match',
-      where:(Array.isArray(f.where)?f.where:[]).filter(w=>['uae','remote','india','europe','any'].includes(w))}}}
+      where:(Array.isArray(f.where)?f.where:[]).filter(w=>['uae','india','us','uk','ca','au','saudi','pk','remote','europe','any'].includes(w))}}}
   if(o.jobs&&isObj(src.jobs)&&isObj(src.jobs.fb)){const j0=src.jobs,cl=m=>{const r={};if(isObj(m))for(const[k,v]of Object.entries(m).slice(0,160))if(typeof k==='string'&&k.length<=40&&Number.isFinite(v))r[k]=Math.min(5,Math.max(0,v));return r};o.jobs.fb={pos:cl(j0.fb.pos),neg:cl(j0.fb.neg)}}
   o.apps=cleanApps(src.apps);
   if(o.jobs){o.jobs.pending=cleanApps(isObj(src.jobs)?src.jobs.pending:null,true).slice(0,20)}
@@ -752,14 +772,14 @@ const GENERAL=[
  ['Add a fruit or vegetable to every meal to reach 5 servings easily.','g']];
 function advice(){
   const s=S.settings,d=today(),f=dayFrac(),out=[],wg=waterGoal(),awake=isAwake(),h=new Date().getHours();
-  if(!awake){out.push([`Rest well, ${s.name}. Good sleep makes tomorrow's walk easier.`,'g']);
+  if(!awake){out.push([`Rest well${s.name?', '+s.name:''}. Good sleep makes tomorrow's walk easier.`,'g']);
     out.push([d.steps>=s.stepGoal?`You hit your step goal today with ${fmt(d.steps)} steps.`:`${fmt(d.steps)} steps today. Tomorrow is a fresh start.`,'']);return out}
   const wExp=wg*f, sExp=s.stepGoal*Math.min(1,f*1.1);
   if(minsSinceWake()<90&&d.water<s.glassMl)out.push(['Good morning! Start with a glass of water before anything else.','w']);
   else if(d.water<wExp-s.glassMl){const behind=wExp-d.water;out.push([behind>s.glassMl*3?`You are about ${fmt(behind)} ml behind on water. Catch up gradually: one glass now and one every 30 minutes. Don't force it all at once.`:`You are about ${fmt(behind)} ml behind on water. Drink a glass now.`,'w'])}
   else if(d.water>=wg)out.push(['Water goal reached. Keep sipping when thirsty, especially after walking.','w']);
   if(!d.vit&&nowMin()>=mins(s.vitTime))out.push(['Multivitamin not taken yet. Take it with your next meal.','v']);
-  if(d.steps>=s.stepGoal)out.push([`Step goal smashed, ${s.name}! Every extra step is a bonus.`,'g']);
+  if(d.steps>=s.stepGoal)out.push([`Step goal smashed${s.name?', '+s.name:''}! Every extra step is a bonus.`,'g']);
   else if(d.steps<sExp-1000){const need=s.stepGoal-d.steps;out.push([`${fmt(need)} steps to go. A ${Math.max(10,Math.round(need/100/5)*5)}-minute walk gets you there.`,''])}
   const lastStep=S.last.step||0;
   if((N||S.settings.tracking)&&lastStep&&Date.now()-lastStep>60*60000&&minsSinceWake()>60)out.push(['No walking for over an hour. Stand up, stretch and take a short walk.','g']);
@@ -774,9 +794,9 @@ function advice(){
 /* ---------- render ---------- */
 function render(){
   const s=S.settings,d=today(),h=new Date().getHours();
-  $('hello').textContent=(h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':'Good evening')+', '+s.name;
+  $('hello').textContent=(h<5?'Good night':h<12?'Good morning':h<17?'Good afternoon':'Good evening')+(s.name?', '+s.name:'');
   $('date').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',day:'numeric',month:'long'});
-  document.title=s.name;
+  document.title=s.name||'Grade';
   $('steps').textContent=fmt(d.steps);$('goalTxt').textContent=fmt(s.stepGoal);
   $('arc').style.strokeDashoffset=314.16*(1-Math.min(1,d.steps/Math.max(1,s.stepGoal)));
   $('km').textContent=(d.steps*s.height*0.415/100000).toFixed(2);
@@ -787,9 +807,9 @@ function render(){
   const wp=Math.min(1,d.water/wg);$('wfill').style.transform=`translateY(${136-wp*128}px)`;
   $('wpct').textContent=Math.round(wp*100)+'% of daily goal';
   $('glassTxt').textContent=Math.floor(d.water/s.glassMl)+' of '+Math.ceil(wg/s.glassMl)+' glasses';
-  $('avatar').textContent=(String(s.name).trim()[0]||'A').toUpperCase();
+  $('avatar').textContent=(String(s.name).trim()[0]||'G').toUpperCase();
   $('qWaterTxt').textContent=fmt(d.water)+' / '+fmt(wg)+' ml';$('qVitTxt').textContent=d.vit?'Taken ✓':'Not taken yet';
-  $('forName').textContent=s.name;
+  $('forName').textContent=s.name||'you';
   const sp=Math.min(1,d.steps/Math.max(1,s.stepGoal));$('mpBar').style.width=sp*100+'%';
   $('mpSub').textContent=fmt(d.steps)+' of '+fmt(s.stepGoal)+' steps · '+Math.round(sp*100)+'%';
   $('tVit').classList.toggle('done',d.vit);$('tSun').classList.toggle('done',d.sun);$('tFruit').classList.toggle('done',d.fruit>=5);$('tStretch').classList.toggle('done',d.stretch>=6);
@@ -941,16 +961,22 @@ function notifUI(){
 }
 
 /* ---------- settings ---------- */
-const fields=['name','weight','height','stepGoal','glassMl','waterGoal','wake','sleep','vitTime','every','sens','currency','budget','expTime'];
+function fillSel(id,list,ph){const e=$(id);e.innerHTML=(ph?'<option value="" disabled>Choose…</option>':'')+list.map(([k,v])=>`<option value="${k}">${esc(v)}</option>`).join('')}
+for(const p of['o','s']){fillSel(p+'-field',FIELD_KEYS.map(k=>[k,FIELDS[k].name]),p==='o');fillSel(p+'-country',COUNTRY_KEYS.map(k=>[k,COUNTRIES[k].name]),false)}
+$('o-country').addEventListener('change',e=>{$('o-cur').value=(COUNTRIES[e.target.value]||COUNTRIES.other).cur});
+const fields=['name','field','country','weight','height','stepGoal','glassMl','waterGoal','wake','sleep','vitTime','every','sens','currency','budget','expTime'];
 const LIM={weight:[25,300],height:[100,250],stepGoal:[500,100000],glassMl:[50,1500],waterGoal:[0,8000],every:[15,240],sens:[0.5,3],budget:[0,10000000]};
 function loadSettings(){fields.forEach(f=>$('s-'+f).value=S.settings[f]);$('s-hot').checked=!!S.settings.hot}
 fields.forEach(f=>$('s-'+f).addEventListener('change',e=>{
   let v=e.target.value;
   if(LIM[f]){v=parseFloat(v);const[a,b]=LIM[f];if(!(v>=a&&v<=b)){toast(`Please enter a value between ${a} and ${b}.`);return loadSettings()}}
-  else if(f==='name'){v=v.trim().slice(0,24)||'Aswin'}
-  else if(f==='currency'){v=v.trim().toUpperCase().slice(0,4)||'AED'}
+  else if(f==='name'){v=v.trim().slice(0,24)}
+  else if(f==='currency'){v=v.trim().toUpperCase().slice(0,4)||'USD'}
+  else if(f==='field'||f==='country'){if(!(f==='field'?FIELD_KEYS:COUNTRY_KEYS).includes(v))return loadSettings()}
   else if(!v)return loadSettings();
-  S.settings[f]=v;save();render();
+  S.settings[f]=v;
+  if(f==='field'||f==='country'){const st=J();st.f=null;if(f==='field'){st.profile=null;st.status={};st.pending=[]}JOBS=null;NEWS=null;save();render();loadJobs();loadNews();if(f==='field')toast('Field changed. Upload your resume again to match jobs.');return}
+  save();render();
 }));
 $('s-hot').onchange=e=>{S.settings.hot=e.target.checked;save();render()};
 $('exportBtn').onclick=()=>{
@@ -963,7 +989,7 @@ $('importFile').onchange=async e=>{
   try{if(f.size>20*1024*1024)throw 0;const o=JSON.parse(await f.text());if(!o||typeof o.days!=='object')throw 0;
     const ok=await ask({title:'Restore backup?',text:'This replaces the data on this phone with the backup.',ok:'Restore'});
     if(ok){S=o;normalize();save();loadSettings();render();toast('Data restored')}}
-  catch(_){toast('That file is not an Aswin backup')}
+  catch(_){toast('That file is not a Grade backup')}
   e.target.value='';
 };
 $('resetBtn').onclick=async()=>{
@@ -1098,43 +1124,54 @@ const CONCEPTS=[
  ['Idempotency','Repeating the same request gives the same result, for example a retried payment is charged once. A key API test case.'],
  ['Definition of Done','A team checklist (tests pass, reviewed, documented) every story meets before it counts as done. It makes quality explicit.'],
  ['DORA metrics','Deployment frequency, lead time, change failure rate and time to restore: four numbers for delivery speed and stability.']];
-const NCOL={qablogs:'#7dffa8',tools:'#ff9f43',qa:'#1ed760',tech:'#4cc2ff',uae:'#ff6b8a',india:'#ffc23d',uaeindia:'#b49bff'};
+const NCOL={f_dev:'#1ed760',f_data:'#1ed760',f_product:'#1ed760',f_design:'#1ed760',f_marketing:'#1ed760',us:'#ff6b8a',uk:'#ff6b8a',ca:'#ff6b8a',au:'#ff6b8a',saudi:'#ff6b8a',pk:'#ff6b8a',world:'#ffc23d',qablogs:'#7dffa8',tools:'#ff9f43',qa:'#1ed760',tech:'#4cc2ff',uae:'#ff6b8a',india:'#ffc23d',uaeindia:'#b49bff'};
 let NEWS=null;
 function dayOfYear(){const n=new Date();return Math.floor((n-new Date(n.getFullYear(),0,0))/864e5)}
 function ago(ts){const m=Math.round((Date.now()-Date.parse(ts))/60000);if(!(m>=0))return'';return m<60?m+' min ago':m<1440?Math.round(m/60)+' h ago':Math.round(m/1440)+' d ago'}
+const newsFresh=d=>{const x=Date.parse(d),y=Date.parse(dkey());return Number.isFinite(x)&&Math.abs(x-y)<=864e5};   // briefing is dated in Dubai time; accept +-1 day for other time zones
 async function loadNews(){
-  try{const c=JSON.parse(localStorage.getItem('grade-news')||'null');if(c&&c.date===dkey()&&Array.isArray(c.sections))NEWS=c;else{NEWS=null;localStorage.removeItem('grade-news')}}catch(e){}
+  try{const c=JSON.parse(localStorage.getItem('grade-news')||'null');if(c&&newsFresh(c.date)&&Array.isArray(c.sections))NEWS=c;else{NEWS=null;localStorage.removeItem('grade-news')}}catch(e){}
   renderLearn();
   try{
     const r=await fetch((window.GRADE_NEWS_URL||'news.json')+'?d='+dkey()+'-'+new Date().getHours(),{cache:'no-store'});
-    if(r.ok){const j=await r.json();if(j&&j.date===dkey()&&Array.isArray(j.sections)){NEWS=j;try{localStorage.setItem('grade-news',JSON.stringify(j))}catch(e){}}}
+    if(r.ok){const j=await r.json();if(j&&newsFresh(j.date)&&Array.isArray(j.sections)){NEWS=j;try{localStorage.setItem('grade-news',JSON.stringify(j))}catch(e){}}}
   }catch(e){}
   renderLearn();
 }
 let qIdx=null,qShow=false;
+const FSK={dev:['React','Angular','Vue','Node.js','TypeScript','JavaScript','Python','Java','Go','Rust','C#','Kotlin','Swift','SQL','MongoDB','Docker','Kubernetes','AWS','Azure','GCP','Terraform','CI/CD','Git','System design','Microservices','Kafka','GraphQL','REST APIs','Next.js','Flutter','Linux','Django','Spring','PHP'],
+ data:['Python','SQL','R','Pandas','Spark','Airflow','Snowflake','Power BI','Tableau','Excel','TensorFlow','PyTorch','scikit-learn','NLP','Statistics','ETL','Data visualization','MLOps','AWS','Azure','GCP','Docker','Kafka','AI testing'],
+ product:['Roadmap','Stakeholder management','User stories','OKRs','A/B testing','Product analytics','Prioritization','Confluence','Jira','Agile/Scrum','Market research','Risk management','PMP','SQL','Figma','Leadership'],
+ design:['Figma','Sketch','Photoshop','Prototyping','User research','Wireframing','Design systems','Motion design','Branding','Accessibility','HTML/CSS','Agile/Scrum'],
+ marketing:['SEO','Google Ads','Meta Ads','Google Analytics','HubSpot','Email marketing','Content marketing','Social media','Lead generation','Marketing automation','Account management','B2B','Excel','A/B testing']};
+const fieldSkills=()=>{const f=fieldKey();return f==='qa'?null:new Set(FSK[f])};
 function marketGaps(){const p=J().profile,jobs=JOBS?JOBS.jobs:[],kc={};for(const j of jobs)for(const k of new Set(skillsIn(`${j.title} ${(j.tags||[]).join(' ')} ${j.desc||''}`)))kc[k]=(kc[k]||0)+1;
-  const mine=new Set(p?p.skills:[]),all=Object.entries(kc).filter(([k])=>TESTSK.has(k)||['CI/CD','Docker','Python','Java','TypeScript','JavaScript','SQL','Git','Kubernetes','AWS'].includes(k)).sort((a,b)=>b[1]-a[1]);
+  const mine=new Set(p?p.skills:[]),all=Object.entries(kc).filter(([k])=>{const fs=fieldSkills();return fs?fs.has(k):(TESTSK.has(k)||['CI/CD','Docker','Python','Java','TypeScript','JavaScript','SQL','Git','Kubernetes','AWS'].includes(k))}).sort((a,b)=>b[1]-a[1]);
   return {p,n:jobs.length,list:all.filter(([k,n])=>!mine.has(k)&&n/Math.max(1,jobs.length)>=.08).slice(0,3).map(([k,n])=>[k,Math.round(n/jobs.length*100)])}}
 function renderLearnExtra(){
-  const g=marketGaps(),link=k=>`https://www.google.com/search?q=${encodeURIComponent('learn '+k+' for QA engineers tutorial')}`;
+  const g=marketGaps(),link=k=>`https://www.google.com/search?q=${encodeURIComponent('learn '+k+' tutorial for '+FIELDS[fieldKey()].name)}`;
   $('lvBox').innerHTML=g.n&&g.list.length?`<h2>${g.p?'Level up for your next job':'Skills in demand today'}</h2><p class="mute" style="margin:0">${g.p?'Skills employers ask for that are not on your resume yet.':'Upload your resume on the Jobs page to see which ones you are missing.'}</p>${g.list.map(([k,pc])=>`<a class="lvl" href="${esc(link(k))}" target="_blank" rel="noopener"><b>${esc(k)}</b><span>In ${pc}% of today's QA jobs</span><em>Learn</em></a>`).join('')}`:'';
   $('lvBox').hidden=!$('lvBox').innerHTML;
-  const Q=window.QA_QUESTIONS||[],T=window.QA_TIPS||[];
+  const isQA=fieldKey()==='qa',Q=(isQA?window.QA_QUESTIONS:window.GEN_QUESTIONS)||[],T=(isQA?window.QA_TIPS:window.GEN_TIPS)||[];
   if(Q.length){if(qIdx==null)qIdx=dayOfYear()%Q.length;const q=Q[qIdx%Q.length];
     $('qBox').innerHTML=`<h2>Interview question</h2><div class="tagrow"><span>${esc(q[2])}</span></div><div class="qq">${esc(q[0])}</div>${qShow?`<div class="qa-a">${esc(q[1])}</div>`:''}<div class="row"><button class="ghost" id="qReveal">${qShow?'Hide answer':'Show answer'}</button><button id="qNext">Next question</button></div>`;
     $('qReveal').onclick=()=>{qShow=!qShow;renderLearnExtra()};$('qNext').onclick=()=>{qIdx=(qIdx+1)%Q.length;qShow=false;renderLearnExtra()}}
-  if(T.length){const t=T[dayOfYear()%T.length];$('tipBox').innerHTML=`<h2>QA tip of the day</h2><div class="qq">${esc(t[0])}</div><p style="margin:0;font-size:16px;line-height:1.5">${esc(t[1])}</p>`}}
+  if(T.length){const t=T[dayOfYear()%T.length];$('tipBox').innerHTML=`<h2>${isQA?'QA tip':'Career tip'} of the day</h2><div class="qq">${esc(t[0])}</div><p style="margin:0;font-size:16px;line-height:1.5">${esc(t[1])}</p>`}}
+const NEWS_FIELD={qa:['qa','qablogs','tools'],dev:['f_dev'],data:['f_data'],product:['f_product'],design:['f_design'],marketing:['f_marketing']};
+const NEWS_COUNTRY={ae:['uae','uaeindia'],in:['india','uaeindia'],us:['us'],uk:['uk'],ca:['ca'],au:['au'],sa:['saudi'],pk:['pk'],other:['world']};
+const newsOrder=()=>[...NEWS_FIELD[fieldKey()],'tech',...NEWS_COUNTRY[countryKey()]];
 function renderLearn(){
   renderLearnExtra();
-  const c=CONCEPTS[dayOfYear()%CONCEPTS.length];$('cTitle').textContent=c[0];$('cText').textContent=c[1];
+  const isQA=fieldKey()==='qa',cEl=document.querySelector('.concept');cEl.hidden=!isQA;if(isQA){const c=CONCEPTS[dayOfYear()%CONCEPTS.length];$('cTitle').textContent=c[0];$('cText').textContent=c[1]}
   $('newsDate').textContent=new Date().toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short'});
-  const ok=NEWS&&NEWS.date===dkey();
-  const n=ok?NEWS.sections.reduce((a,s)=>a+(s.items||[]).length,0):0;
-  $('briefTxt').textContent=ok?`${n} stories for today · tap to read`:'QA, tech, UAE and India news';
+  const ok=NEWS&&newsFresh(NEWS.date);
+  const order=newsOrder(),secs=ok?order.map(id=>NEWS.sections.find(x=>x.id===id)).filter(x=>x&&x.items&&x.items.length):[];
+  const n=secs.reduce((a,s)=>a+s.items.length,0);
+  $('briefTxt').textContent=ok&&n?`${n} stories for today · tap to read`:`${FIELDS[fieldKey()].name}, tech and ${countryKey()==='other'?'world':COUNTRIES[countryKey()].name} news`;
   if(!ok){$('newsStatus').textContent='';
-    $('newsBox').innerHTML=`<div class="panel empty"><b>${navigator.onLine?'Today\'s briefing is on its way':'You are offline'}</b><span class="mute">${navigator.onLine?'A fresh briefing is published every morning at 5:30 AM. Yesterday\'s news is removed automatically.':'Connect to the internet to load today\'s news.'}</span></div>`;return}
+    $('newsBox').innerHTML=`<div class="panel empty"><b>${navigator.onLine?'Today\'s briefing is on its way':'You are offline'}</b><span class="mute">${navigator.onLine?'A fresh briefing is published every morning. Yesterday\'s news is removed automatically.':'Connect to the internet to load today\'s news.'}</span></div>`;return}
   $('newsStatus').textContent='Updated '+ago(NEWS.generated)+' · removed automatically tomorrow';
-  $('newsBox').innerHTML=NEWS.sections.filter(s=>s.items&&s.items.length).map(s=>`<div class="nsec panel" style="--c:${NCOL[s.id]||'#1ed760'}"><h2><i></i>${esc(s.title)}</h2>${
+  $('newsBox').innerHTML=secs.map(s=>`<div class="nsec panel" style="--c:${NCOL[s.id]||'#1ed760'}"><h2><i></i>${esc(s.title)}</h2>${
     s.items.map((it,i)=>`<a class="news" href="${esc(safeUrl(it.u))}" target="_blank" rel="noopener"><span class="n">${i+1}</span><div><b>${esc(it.t)}</b>${it.s?`<p>${esc(it.s)}</p>`:''}${it.w?`<p class="why">Why it matters: ${esc(it.w)}</p>`:''}<small>${esc(it.src||'')}${it.ts?' · '+esc(ago(it.ts)):''}</small></div></a>`).join('')}</div>`).join('');
 }
 $('briefLink').onclick=()=>document.querySelector('nav button[data-v=learn]').click();
@@ -1158,9 +1195,22 @@ const SKILLS=[
  ['Test strategy',/test strateg|test plan|test architecture|quality strateg/i],['Framework design',/framework (design|development|architecture)|automation framework/i],
  ['Microservices',/microservice/i],['Kafka',/kafka/i],['Manual testing',/manual test/i],['Exploratory testing',/exploratory/i],['Regression testing',/regression/i],
  ['Test automation',/test automation|automation test|automated test/i],['AI testing',/ai (testing|test)|llm|machine learning|genai|generative ai/i],
+ ['React',/\breact(\.js)?\b/i],['Angular',/angular/i],['Vue',/\bvue(\.js)?\b/i],['Node.js',/node\.?js/i],['Go',/golang|\bgo (developer|programming|language)\b/i],['Rust',/\brust\b/i],
+ ['PHP',/\bphp\b|laravel/i],['Ruby',/ruby|rails/i],['C++',/c\+\+/i],['Spring',/spring ?boot|\bspring\b/i],['Django',/django|flask|fastapi/i],['MongoDB',/mongo ?db/i],['Redis',/\bredis\b/i],['Terraform',/terraform/i],
+ ['Linux',/linux|unix/i],['System design',/system design|distributed systems/i],['REST APIs',/rest(ful)? api|\bapis?\b/i],['HTML/CSS',/html5?|css3?|tailwind|sass/i],['Next.js',/next\.?js/i],['Flutter',/flutter|react native/i],
+ ['Pandas',/pandas|numpy/i],['Spark',/\bspark\b|hadoop|databricks/i],['Airflow',/airflow|\bdbt\b/i],['Snowflake',/snowflake|bigquery|redshift/i],['Power BI',/power ?bi/i],['Tableau',/tableau|looker/i],['Excel',/\bexcel\b/i],
+ ['R',/\br (programming|language|studio)\b|rstudio/i],['TensorFlow',/tensorflow|keras/i],['PyTorch',/pytorch/i],['scikit-learn',/scikit|sklearn/i],['NLP',/\bnlp\b|natural language/i],['Statistics',/statistic|regression analysis|hypothesis test/i],
+ ['ETL',/\betl\b|data pipeline|data warehous/i],['Data visualization',/data visuali[sz]ation|dashboard/i],['MLOps',/mlops|model deployment/i],
+ ['Roadmap',/roadmap/i],['Stakeholder management',/stakeholder/i],['User stories',/user stor(y|ies)|acceptance criteria/i],['OKRs',/\bokrs?\b|\bkpis?\b/i],['A/B testing',/a\/b test|experimentation/i],['Product analytics',/product analytics|mixpanel|amplitude/i],
+ ['Prioritization',/prioriti[sz]/i],['Confluence',/confluence|notion/i],['Market research',/market research|competitive analysis/i],['Risk management',/risk management|budget|resource planning/i],['PMP',/\bpmp\b|prince2/i],
+ ['Figma',/figma/i],['Sketch',/\bsketch\b|adobe xd/i],['Photoshop',/photoshop|illustrator|indesign/i],['Prototyping',/prototyp/i],['User research',/user research|usability|interviews/i],['Wireframing',/wireframe/i],['Design systems',/design system/i],
+ ['Motion design',/motion|after effects|animation/i],['Branding',/branding|brand identity|typography/i],
+ ['SEO',/\bseo\b|search engine optimi/i],['Google Ads',/google ads|adwords|\bppc\b|\bsem\b/i],['Meta Ads',/meta ads|facebook ads|paid social/i],['Google Analytics',/google analytics|\bga4\b/i],['HubSpot',/hubspot|salesforce|\bcrm\b/i],
+ ['Email marketing',/email marketing|mailchimp|klaviyo/i],['Content marketing',/content (marketing|strategy)|copywrit/i],['Social media',/social media|instagram|tiktok|linkedin/i],['Lead generation',/lead gen|outbound|cold (call|email)|prospecting/i],
+ ['Marketing automation',/marketing automation|growth hacking/i],['Account management',/account management|customer success|upsell|negotiat/i],['B2B',/\bb2b\b|\bsaas\b/i],
  ['Leadership',/lead(ing|ership)? (a |the )?team|mentor|people manag|head of qa|qa manager/i],['Banking/Fintech',/banking|fintech|payments?\b/i],['E-commerce',/e-?commerce|retail/i]];
 const LEVELS=[['Junior',/junior|graduate|intern|entry/i,1],['Mid-level',/\bmid\b|intermediate/i,2],['Senior',/senior|\bsr\.?\b/i,3],['Lead',/\blead\b|staff/i,4],['Architect / Manager',/architect|principal|manager|head of|director/i,5]];
-const J=()=>S.jobs||(S.jobs={profile:null,pending:[],status:{},minMatch:60,tab:'for',locs:{uae:true,remote:true,india:false}});
+const J=()=>S.jobs||(S.jobs={profile:null,pending:[],status:{},minMatch:60,tab:'for'});
 let JOBS=null,skOpen=false,profOpen=false;
 const skillsIn=t=>SKILLS.filter(([,re])=>re.test(t)).map(([n])=>n);
 function levelOf(t,years){for(const[,re,l] of [...LEVELS].reverse())if(re.test(t))return l;return years>=12?5:years>=8?4:years>=5?3:years>=2?2:1}
@@ -1168,8 +1218,8 @@ function parseResume(text){
   const t=text.replace(/\s+/g,' ');
   let years=0;for(const m of t.matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)){const y=+m[1];if(y<=40&&y>years)years=y}
   const head=t.slice(0,600);const lvl=levelOf(head,years);
-  const roleM=head.match(/(senior|lead|principal|staff)?\s*(qa|quality assurance|test|sdet|automation|quality)[a-z\s/]{0,30}(engineer|architect|lead|manager|analyst|specialist|tester)/i);
-  return {skills:skillsIn(t),terms:topTerms(t),years,level:lvl,role:roleM?roleM[0].trim().replace(/\s+/g,' '):'QA Automation Engineer',updated:Date.now()};
+  const fd=FIELDS[fieldKey()],roleM=head.match(fd.re);
+  return {skills:skillsIn(t),terms:topTerms(t),years,level:lvl,role:roleM&&roleM[0].trim().length>3?roleM[0].trim().replace(/\s+/g,' ').slice(0,60):fd.role,updated:Date.now()};
 }
 function loadScript(src){return new Promise((ok,no)=>{const s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=()=>no(new Error('load'));document.head.appendChild(s)})}
 /* Word (.docx) text without any outside library: a .docx file is a zip; read word/document.xml with the browser's own unzip. */
@@ -1251,51 +1301,66 @@ function scoreJob(j,p){
   const matched=js.filter(s=>mine.has(s)),missing=js.filter(s=>!mine.has(s));
   const conf=Math.min(1,js.length/6);
   const skill=js.length?(matched.length/js.length)*conf+.3*(1-conf):.25;
-  const qaSk=js.filter(x=>TESTSK.has(x)).length;
+  const isQA=fieldKey()==='qa',qaSk=js.filter(x=>TESTSK.has(x)).length;
   const explicit=/\b(qa|q\.a\.|sdet|tester|quality assurance|software (test|quality)|test automation|testautomatisierung|testing)\b/i.test(j.title);
   const swTitle=explicit||(/\b(quality engineer|test engineer)\b/i.test(j.title)&&qaSk>=1)||(/\bautomation engineer\b/i.test(j.title)&&qaSk>=3);
   const hwTitle=/thermal|propulsion|mechatronic|mechanical|electrical|electronics|hardware|hil\b|firmware|embedded|sensor|vision|industrial|technician|manufactur|robot/i.test(j.title);
   const bm=bm25(j,p);
-  const A=roleSet(p.role),B=roleSet(j.title);let ts=0;if(A.size){let h=0;for(const x of A)if(B.has(x))h++;ts=h/A.size;if(A.has('qa')&&!B.has('qa'))ts*=.3}
+  let ts=0;if(isQA){const A=roleSet(p.role),B=roleSet(j.title);if(A.size){let h=0;for(const x of A)if(B.has(x))h++;ts=h/A.size;if(A.has('qa')&&!B.has('qa'))ts*=.3}}
+  else{const g=t=>new Set(toks(t).map(w=>({developer:'engineer',programmer:'engineer',frontend:'front',backend:'back',fullstack:'full',analyst:'analyst'}[w]||w)).filter(w=>!['senior','junior','lead','staff','principal','remote','associate','head'].includes(w))),A=g(p.role),B=g(j.title);
+    if(A.size){let h=0;for(const x of A)if(B.has(x))h++;ts=h/A.size}}
   const jl=jobLvl(j.title),dl=Math.abs((jl||3)-p.level);
   const lvl=[1,.75,.35,.1,0][Math.min(4,dl)];
   let req=0;for(const m of (j.desc||'').matchAll(/(\d{1,2})\s*\+?\s*(?:years|yrs)/gi)){const y=+m[1];if(y<=20&&y>req)req=y}
   const exp=!req||p.years>=req?1:Math.max(0,1-(req-p.years)/4);
-  const W=F().where,L={uae:W.includes('uae')||W.includes('any'),remote:W.includes('remote')||W.includes('any'),india:W.includes('india')||W.includes('any')},loc=(j.loc||'').toLowerCase();
-  const uae=/uae|dubai|abu dhabi|sharjah|emirates|middle east|mena|gcc/.test(loc),india=/india|bangalore|bengaluru|pune|hyderabad|chennai|mumbai|delhi/.test(loc);
-  const anywhere=j.remote&&(/worldwide|anywhere|global|remote$|^remote|emea|asia/.test(loc)||!loc);
-  const europe=LOCRE.europe.test(loc);const locS=W.includes('any')||(L.uae&&uae)||(L.india&&india)||(L.remote&&anywhere)||(W.includes('europe')&&europe)?1:(L.remote&&j.remote?.45:.1);
+  const W=F().where,loc=(j.loc||'').toLowerCase();
+  const anywhere=j.remote&&(/worldwide|anywhere|global|remote$|^remote|emea|asia|apac|americas/.test(loc)||!loc);
+  const inWhere=W.includes('any')||W.some(k=>k!=='remote'&&LOCRE[k]&&LOCRE[k].test(loc))||(W.includes('remote')&&anywhere);
+  const locS=inWhere?1:(W.includes('remote')&&j.remote?.45:.1);
   const pers=personal(j);
   let score=100*(.28*skill+.22*bm+.12*ts+.14*lvl+.08*exp+.16*locS);
-  if(hwTitle&&!/software/i.test(j.title))score*=.5;else if(!swTitle)score*=qaSk>=3?.75:.5;
+  if(isQA){if(hwTitle&&!/software/i.test(j.title))score*=.5;else if(!swTitle)score*=qaSk>=3?.75:.5}else if(j.field&&j.field!==fieldKey())score*=.6;
   score+=6*pers;
   score=Math.max(0,Math.min(99,Math.round(score)));
   return {score,matched,missing:missing.slice(0,3),req,why:{title:ts>=.66,level:lvl>=.75&&jl>0,text:bm>=.6,liked:pers>.25}};
 }
 async function loadJobs(){
-  try{const r=await fetch((window.GRADE_JOBS_URL||'jobs.json')+'?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(Array.isArray(j.jobs))JOBS=j}}catch(e){}
+  if(!S.settings.field)return;   // setup not finished yet: avoid fetching a default field
+  const f=fieldKey(),base=window.GRADE_BASE||'';
+  for(const file of[`jobs-${f}.json`].concat(f==='qa'?['jobs.json']:[])){
+    try{const r=await fetch(base+file+'?d='+dkey(),{cache:'no-store'});if(r.ok){const j=await r.json();if(Array.isArray(j.jobs)){JOBS=j;break}}}catch(e){}}
   renderJobs();if(typeof renderLearnExtra==='function')renderLearnExtra();
 }
 if(location.hash==='#eval')window.__e={scoreJob,J:()=>J(),jobs:()=>JOBS,learn};   // test hook, only with #eval in the address
 const safeUrl=u=>/^https?:\/\/[^\s]+$/i.test(String(u||''))?String(u):'#';
 const hue=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))%360;return h};
 function boards(role){
-  const q=encodeURIComponent(role),slug=role.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
-  return [['LinkedIn',`https://www.linkedin.com/jobs/search/?keywords=${q}&location=United%20Arab%20Emirates&f_TPR=r86400`,'#0a66c2'],
-   ['Indeed UAE',`https://ae.indeed.com/jobs?q=${q}&l=United+Arab+Emirates&fromage=1`,'#2557a7'],
-   ['Bayt',`https://www.bayt.com/en/uae/jobs/${slug}-jobs/`,'#e8483b'],
-   ['Naukrigulf',`https://www.naukrigulf.com/${slug}-jobs-in-uae`,'#2a7de1'],
-   ['Google Jobs',`https://www.google.com/search?q=${q}+jobs+UAE&ibp=htl;jobs`,'#34a853']];
+  const q=encodeURIComponent(role),slug=role.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''),c=countryKey(),nm=encodeURIComponent(COUNTRIES[c].name==='Other country'?'':COUNTRIES[c].name);
+  const li=['LinkedIn',`https://www.linkedin.com/jobs/search/?keywords=${q}${nm?'&location='+nm:''}&f_TPR=r86400`,'#0a66c2'],
+    gj=['Google Jobs',`https://www.google.com/search?q=${q}+jobs${nm?'+'+nm:''}&ibp=htl;jobs`,'#34a853'],
+    ind=(d,n)=>[n,`https://${d}/jobs?q=${q}&fromage=1`,'#2557a7'];
+  const M={ae:[li,ind('ae.indeed.com','Indeed UAE'),['Bayt',`https://www.bayt.com/en/uae/jobs/${slug}-jobs/`,'#e8483b'],['Naukrigulf',`https://www.naukrigulf.com/${slug}-jobs-in-uae`,'#2a7de1'],gj],
+   in:[li,ind('in.indeed.com','Indeed India'),['Naukri',`https://www.naukri.com/${slug}-jobs`,'#275df5'],['Foundit',`https://www.foundit.in/srp/results?query=${q}`,'#7b3fe4'],gj],
+   us:[li,ind('www.indeed.com','Indeed'),['Glassdoor',`https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${q}`,'#0caa41'],['ZipRecruiter',`https://www.ziprecruiter.com/jobs-search?search=${q}`,'#2c6e49'],gj],
+   uk:[li,ind('uk.indeed.com','Indeed UK'),['Reed',`https://www.reed.co.uk/jobs/${slug}-jobs`,'#d6001c'],['Totaljobs',`https://www.totaljobs.com/jobs/${slug}`,'#0a6fb8'],gj],
+   ca:[li,ind('ca.indeed.com','Indeed Canada'),['Job Bank',`https://www.jobbank.gc.ca/jobsearch/jobsearch?searchstring=${q}`,'#26374a'],['Glassdoor',`https://www.glassdoor.ca/Job/jobs.htm?sc.keyword=${q}`,'#0caa41'],gj],
+   au:[li,ind('au.indeed.com','Indeed Australia'),['SEEK',`https://www.seek.com.au/${slug}-jobs`,'#e60278'],gj],
+   sa:[li,ind('sa.indeed.com','Indeed Saudi'),['Bayt',`https://www.bayt.com/en/saudi-arabia/jobs/${slug}-jobs/`,'#e8483b'],gj],
+   pk:[li,ind('pk.indeed.com','Indeed Pakistan'),['Rozee',`https://www.rozee.pk/job/jsearch/q/${q}`,'#00a859'],gj],
+   other:[li,ind('www.indeed.com','Indeed'),['Glassdoor',`https://www.glassdoor.com/Job/jobs.htm?sc.keyword=${q}`,'#0caa41'],gj]};
+  return M[c]||M.other;
 }
-const WHERE=[['uae','UAE'],['remote','Remote'],['india','India'],['europe','Europe'],['any','Anywhere']];
+const WHERE=[['uae','UAE'],['india','India'],['us','USA'],['uk','UK'],['ca','Canada'],['au','Australia'],['saudi','Saudi Arabia'],['pk','Pakistan'],['remote','Remote'],['europe','Europe'],['any','Anywhere']];
+const defWhere=()=>{const w=COUNTRIES[countryKey()].w;return w?[w,'remote']:['remote']};
 const POSTED=[['1','Last 24 hours'],['3','Last 3 days'],['7','Last 7 days'],['30','Last 30 days']];
 const LEVELF=[['fit','Right for my level'],['any','Any level'],['3','Senior'],['4','Lead / Staff'],['5','Architect / Manager'],['2','Mid-level']];
 const TYPES=[['any','Any type'],['full','Full-time'],['contract','Contract / Freelance'],['part','Part-time']];
 const SORTS=[['match','Best match'],['new','Newest first'],['salary','Highest salary']];
 const LOCRE={uae:/uae|dubai|abu dhabi|sharjah|emirates|middle east|mena|gcc|ajman/i,india:/india|bangalore|bengaluru|pune|hyderabad|chennai|mumbai|delhi|noida|gurgaon|kochi/i,
+us:/\busa?\b|united states|america|new york|california|texas|seattle|boston|chicago|austin|san francisco|florida/i,uk:/\buk\b|united kingdom|england|london|manchester|scotland|britain/i,ca:/canada|toronto|vancouver|montreal|ottawa|calgary/i,au:/australia|sydney|melbourne|brisbane|perth/i,saudi:/saudi|riyadh|jeddah|\bksa\b/i,pk:/pakistan|karachi|lahore|islamabad/i,
  europe:/europe|emea|cet\b|germany|deutschland|berlin|munich|france|paris|netherlands|amsterdam|switzerland|zurich|bern|uk\b|united kingdom|london|spain|portugal|poland|italy|ireland|sweden|norway|oslo|denmark|finland|belgium|austria|cyprus|czech/i};
 const F=()=>{const st=J();st.f=Object.assign({q:'',posted:'30',level:'fit',type:'any',salary:false,sort:'match'},st.f||{});
-  if(!Array.isArray(st.f.where))st.f.where=Object.entries(st.locs||{uae:true,remote:true}).filter(([,v])=>v).map(([k])=>k);if(!st.f.where.length)st.f.where=['any'];return st.f};
+  if(!Array.isArray(st.f.where))st.f.where=defWhere();if(!st.f.where.length)st.f.where=['any'];return st.f};
 let jPage=1;
 function salaryNum(s){if(!s)return 0;const n=[...String(s).replace(/,/g,'').matchAll(/\d+(\.\d+)?/g)].map(m=>+m[0]);if(!n.length)return 0;let v=Math.max(...n);if(/k\b/i.test(s)&&v<1000)v*=1000;if(/month/i.test(s))v*=12;if(/hour/i.test(s))v*=2000;return v}
 function jobLevel(t){for(const[,re,l] of [...LEVELS].reverse())if(re.test(t))return l;return 0}
@@ -1332,7 +1397,7 @@ function openSheet(id){
   $('fTitle').textContent=title;
   $('fOpts').innerHTML=opts.map(([v,l])=>`<label class="fopt"><input type="${multi?'checkbox':'radio'}" name="fo" value="${v}" ${cur.includes(v)?'checked':''}>${esc(l)}</label>`).join('');
   const dl=$('fDlg');dl.returnValue='';
-  $('fReset').onclick=()=>{const def={where:['uae','remote'],posted:['30'],level:['fit'],type:['any'],sort:['match'],min:['60']}[id];$('fOpts').querySelectorAll('input').forEach(i=>i.checked=def.includes(i.value))};
+  $('fReset').onclick=()=>{const def={where:defWhere(),posted:['30'],level:['fit'],type:['any'],sort:['match'],min:['60']}[id];$('fOpts').querySelectorAll('input').forEach(i=>i.checked=def.includes(i.value))};
   dl.onclose=()=>{const vals=[...$('fOpts').querySelectorAll('input:checked')].map(i=>i.value);if(!vals.length&&id!=='where')return;
     if(id==='where'){f.where=vals.includes('any')||!vals.length?['any']:vals}else if(id==='min')st.minMatch=+vals[0];else f[id]=vals[0];
     jPage=1;save();renderJobs()};
@@ -1344,7 +1409,7 @@ function renderJobs(){
   $('jobProfile').innerHTML=p?`<div class="jp-top"><div><b>${esc(p.role)}</b><span class="mute">${p.years?p.years+'+ years · ':''}${esc(LEVELS[p.level-1][0])} · ${p.skills.length} skills</span></div><button class="ghost sm" id="profToggle" aria-expanded="${profOpen}">${profOpen?'Done':'Edit'}</button></div>
     ${profOpen?`<div class="row" style="margin-top:10px"><label class="btn ghost sm">Upload new resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div><div class="chips">${(skOpen?p.skills:p.skills.slice(0,6)).map(s=>`<button class="chip-s" data-rm="${esc(s)}" aria-label="Remove ${esc(s)}">${esc(s)} ×</button>`).join('')}${p.skills.length>6?`<button class="chip-s add" id="skMore">${skOpen?'Show less':'+'+(p.skills.length-6)+' more'}</button>`:''}<button class="chip-s add" id="addSkill">+ Add skill</button></div>`:''}`
    :`<div class="jp-empty"><b>Upload your resume</b><p class="mute">PDF, Word (.docx) or text. It is read on this phone only and never uploaded. Every job is then ranked against your skills, seniority and experience.</p><label class="btn">Choose resume<input type="file" accept="application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain,.pdf,.docx,.txt" hidden data-resume></label></div>`;
-  $('jobBoards').innerHTML=boards(p?p.role:'QA Engineer').map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · UAE</small></a>`).join('');
+  $('boardsTitle').textContent='More on '+(countryKey()==='other'?'job':COUNTRIES[countryKey()].name)+' boards';$('jobBoards').innerHTML=boards(p?p.role:FIELDS[fieldKey()].role).map(([n,u,c])=>`<a class="board" href="${u}" target="_blank" rel="noopener"><i style="background:${c}">${n[0]}</i><b>${n}</b><small>Last 24h · ${COUNTRIES[countryKey()].name==='Other country'?'Worldwide':COUNTRIES[countryKey()].name}</small></a>`).join('');
   const tabs={for:'For you',saved:'Saved',applied:'Applied'};let list=[],counts={for:0,saved:0,applied:0},total=0;
   if(JOBS){
     const seen=new Map();for(const j of JOBS.jobs){const k=(j.company||'').toLowerCase().replace(/[^a-z0-9]/g,'')+'|'+(j.title||'').toLowerCase().replace(/\((m|f|w|d|x|all|\/|\s)+\)|[^a-z0-9]/g,'');const o=seen.get(k);if(!o||(j.posted||'')>(o.posted||''))seen.set(k,j)}
@@ -1360,7 +1425,7 @@ function renderJobs(){
   $('jobCount').textContent=JOBS?`${total} jobs · updated ${ago(JOBS.generated)}`:'';
   $('jSummary').textContent=JOBS&&st.tab==='for'?(p?`${list.length} match${list.length===1?'':'es'}`:`${list.length} job${list.length===1?'':'s'} · upload a resume to rank them`):'';
   $('jMore').hidden=true;
-  if(!JOBS){$('jobList').innerHTML=`<div class="panel empty"><b>${navigator.onLine?'Loading jobs…':'You are offline'}</b><span class="mute">New QA openings are collected every morning. Tap ↻ to try again, or use the UAE job boards below.</span></div>`;return}
+  if(!JOBS){$('jobList').innerHTML=`<div class="panel empty"><b>${navigator.onLine?'Loading jobs…':'You are offline'}</b><span class="mute">New openings are collected every morning. Tap ↻ to try again, or use the UAE job boards below.</span></div>`;return}
   if(!list.length){$('jobList').innerHTML=`<div class="panel empty"><b>${st.tab==='for'?'No jobs match these filters':'Nothing here yet'}</b><span class="mute">${st.tab==='for'?'Try "Anywhere", a longer date range, "Any level" or a lower match score.':'Tap the heart on a job to save it.'}</span></div>`;return}
   const shown=list.slice(0,jPage*20);$('jMore').hidden=list.length<=shown.length;
   $('jobList').innerHTML=shown.map(j=>{
@@ -1382,7 +1447,7 @@ $('v-jobs').addEventListener('change',async e=>{
   if(!e.target.matches('[data-resume]'))return;const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
   toast('Reading your resume…');
   try{const text=await readResume(f);if(text.trim().length<80)throw new Error('empty');
-    const p=parseResume(text);J().profile=p;save();renderJobs();toast(`Found ${p.skills.length} skills · matching jobs`)}
+    const p=parseResume(text);const st0=J();st0.profile=p;st0.f=null;st0.minMatch=60;st0.tab='for';jPage=1;$('jq').value='';save();renderJobs();toast(`Found ${p.skills.length} skills · matching jobs`)}
   catch(err){toast(err.message==='type'?'Please choose a PDF, Word (.docx) or text file':err.message==='big'?'That file is larger than 8 MB':err.message==='scan'?'This PDF looks like a scanned image. Please use a text PDF or Word file.':err.message==='load'?'Could not load the PDF reader. Please try again.':'Could not read that resume. Try saving it as PDF or .docx.')}
 });
 $('v-jobs').addEventListener('click',async e=>{
@@ -1482,7 +1547,12 @@ function openView(v){document.querySelectorAll('nav button').forEach(x=>x.classL
   document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));document.querySelector('.hero').classList.add('compact');render();window.scrollTo(0,0)}
 document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)openView(g.dataset.go)});
 const FAMILIES=[['SDET',/sdet|development engineer in test|software engineer in test/i],['QA Lead / Manager',/lead|manager|head of|principal|architect|director/i],['Performance testing',/performance|load test/i],['Security testing',/security|pentest|penetration/i],['Mobile testing',/mobile|android|ios/i],['QA Automation Engineer',/automation|automated/i],['Manual / Functional QA',/manual|functional|uat|tester\b/i]];
-const roleFamily=t=>{for(const[n,re]of FAMILIES)if(re.test(t))return n;return 'QA Engineer'};
+const GFAM={dev:[['Frontend',/front.?end|react|vue|angular|web developer/i],['Backend',/back.?end|java\b|python|golang|node|\.net|php|ruby/i],['Full-stack',/full.?stack/i],['DevOps / Cloud',/devops|cloud|sre|site reliability|platform|infrastructure/i],['Mobile',/mobile|android|ios|flutter/i],['Security',/security/i],['Engineering management',/manager|head|director/i]],
+ data:[['Data analyst',/analyst|analytics|\bbi\b/i],['Data scientist',/scientist|research/i],['Data engineer',/data engineer|analytics engineer/i],['ML / AI engineer',/machine learning|\bml\b|ai\b|mlops/i]],
+ product:[['Product manager',/product (manager|owner|lead)|head of product/i],['Project / program manager',/project|program|delivery/i],['Business analyst',/business analyst/i],['Scrum / Agile',/scrum|agile/i]],
+ design:[['UX / Product design',/ux|product design|ui\b|user experience/i],['Graphic / Brand',/graphic|brand|visual|illustrat/i],['Motion / Creative',/motion|creative|video/i]],
+ marketing:[['Digital marketing',/digital|performance|ppc|paid/i],['SEO / Content',/seo|content|copywrit/i],['Growth',/growth/i],['Sales',/sales|account executive|business development|sdr|bdr/i],['Customer success',/customer success|community/i]]};
+const roleFamily=t=>{if(fieldKey()!=='qa'){for(const[n,re]of (GFAM[fieldKey()]||[]))if(re.test(t))return n;return 'Other roles'}for(const[n,re]of FAMILIES)if(re.test(t))return n;return 'QA Engineer'};
 const weekLabel=i=>i===0?'Now':i+'w';
 function renderInsights(){
   if(!$('v-ins').classList.contains('on'))return;
@@ -1532,16 +1602,18 @@ $('inBody').addEventListener('click',e=>{if(e.target.closest('#inGoJobs')){docum
 /* ---------- first-run setup ---------- */
 function onboard(){
   const s=S.settings;if(s.onboarded)return;
-  if(Object.keys(S.days).length>1||S.exp.length){s.onboarded=true;save();return}   // existing user
+  if(Object.keys(S.days).length>1||S.exp.length){s.onboarded=true;if(!s.field)s.field='qa';if(!s.country)s.country='ae';save();return}   // existing user
   const dl=$('onbDlg');if(!dl.showModal)return;
-  $('o-name').value=s.name;$('o-weight').value=s.weight;$('o-height').value=s.height;$('o-goal').value=String(s.stepGoal);$('o-cur').value=s.currency;$('o-wake').value=s.wake;
+  $('o-name').value=s.name||'';$('o-field').value='';$('o-country').value=guessCountry();$('o-cur').value=COUNTRIES[$('o-country').value].cur;$('o-weight').value=s.weight;$('o-height').value=s.height;$('o-goal').value=String(s.stepGoal);$('o-wake').value=s.wake;
+  dl.addEventListener('cancel',e=>e.preventDefault());
   dl.showModal();
   dl.onclose=()=>{
-    const n=$('o-name').value.trim().slice(0,24);if(n)s.name=n;
+    const n=$('o-name').value.trim().slice(0,24);s.name=n;
+    s.field=FIELD_KEYS.includes($('o-field').value)?$('o-field').value:'dev';s.country=COUNTRY_KEYS.includes($('o-country').value)?$('o-country').value:'other';
     const w=parseFloat($('o-weight').value),h=parseFloat($('o-height').value);if(w>=25&&w<=300)s.weight=w;if(h>=100&&h<=250)s.height=h;
     s.stepGoal=+$('o-goal').value||8000;const c=$('o-cur').value.trim().toUpperCase();if(/^[A-Z]{1,4}$/.test(c))s.currency=c;
     if(/^([01]\d|2[0-3]):[0-5]\d$/.test($('o-wake').value))s.wake=$('o-wake').value;
-    s.onboarded=true;save();loadSettings();render();toast(`All set, ${s.name}!`);
+    s.onboarded=true;J().f=null;save();loadSettings();render();loadJobs();loadNews();toast(`All set${s.name?', '+s.name:''}!`);
   };
 }
 /* ---------- weekly summary ---------- */

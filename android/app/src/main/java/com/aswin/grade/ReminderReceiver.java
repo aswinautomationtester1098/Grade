@@ -91,7 +91,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         boolean expLogged = sameDay && s.optBoolean("expLogged", false);
         int goal = s.optInt("waterGoal", 2500), glass = s.optInt("glassMl", 250);
         long every = Math.max(15, s.optInt("every", 60)) * 60_000L;
-        String name = s.optString("name", "Aswin");
+        String name = s.optString("name", "").trim();
 
         Calendar cal = Calendar.getInstance();
         int now = cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE);
@@ -107,7 +107,7 @@ public class ReminderReceiver extends BroadcastReceiver {
         int expTime = mins(s.optString("expTime", "21:00"), 1260);
         if (!expLogged && now >= expTime && !day.equals(p.getString("nExpDay", ""))) {
             Notifs.reminder(c, Notifs.ID_EXP, "How did you spend money today?",
-                    "Tap to log today's expenses, " + name + ". It takes 20 seconds.", "expask", null, null);
+                    "Tap to log today's expenses" + (name.isEmpty() ? "" : ", " + name) + ". It takes 20 seconds.", "expask", null, null);
             e.putString("nExpDay", day);
         }
 

@@ -85,3 +85,43 @@ window.QA_TIPS=[
 ['Use AI as a pair, not an oracle','AI can draft test ideas and code, but you must review and run everything. Never paste secrets or private data into it.'],
 ['Celebrate bugs found early','A bug found in a requirements review is a win. Make finding problems early a visible part of the team culture.']
 ];
+
+/* Field-neutral content, shown to every career field except QA (which has its own set above). */
+window.GEN_QUESTIONS=[
+['Tell me about yourself.','Give a 60-second story: your current role, one or two achievements with numbers, and why this role is the logical next step. Present, past, future. Do not recite your whole CV.','Interview basics'],
+['Why do you want this job?','Name something specific about the company or product, link it to your strengths, and say what you want to learn or deliver. Generic answers about salary or "growth" are forgettable.','Interview basics'],
+['What is your biggest weakness?','Pick a real, non-critical weakness, show what you have done to improve it and the result. Avoid fake weaknesses like "I work too hard".','Interview basics'],
+['Describe a time you failed.','Use the STAR method: Situation, Task, Action, Result. Own your part, explain what you changed afterwards, and show the lesson improved later work.','Behavioural'],
+['Tell me about a conflict with a colleague.','Describe the disagreement neutrally, how you listened and found shared goals, and the outcome. Show respect and focus on the work, not the person.','Behavioural'],
+['How do you prioritise when everything is urgent?','Clarify impact and deadlines, ask stakeholders to rank, do the highest value and highest risk first, and communicate what will slip. Give a real example.','Behavioural'],
+['Where do you see yourself in five years?','Show ambition that fits the role: deeper expertise, more ownership or leading others. Avoid naming a job title that sounds like you will leave.','Interview basics'],
+['How do you handle feedback?','Say you ask for it regularly, listen without defending, and act on it. Give one example where feedback changed how you work.','Behavioural'],
+['What are your salary expectations?','Research the market range first. Give a range based on that, say you are flexible for the right package, and ask what the budget for the role is.','Negotiation'],
+['Why are you leaving your current job?','Stay positive and forward-looking: you want a bigger challenge, new skills or a different domain. Never criticise your employer.','Interview basics'],
+['Tell me about a project you are proud of.','Pick one with a clear problem, your specific contribution, the actions you took and a measurable result. Be ready for follow-up questions on details.','Behavioural'],
+['Do you have any questions for us?','Always ask. Good ones: what does success look like in six months, how does the team work together, what are the biggest challenges right now.','Interview basics'],
+['How do you learn a new skill quickly?','Describe a method: a small real project, official docs, a mentor or community, and teaching it back. Give a recent example with a result.','Behavioural'],
+['How do you work with people who disagree with you?','Seek to understand their reasons, use data to decide, disagree respectfully and commit to the team decision once made.','Behavioural']
+];
+window.GEN_TIPS=[
+['Tailor every CV','Match the top skills in the job post to your CV wording. Recruiters and screening software look for the same keywords.'],
+['Lead with results','Replace "responsible for" with what you achieved: "cut report time by 40 percent". Numbers make achievements believable.'],
+['Keep your CV to one or two pages','Put the most relevant experience first. A recruiter spends under a minute on the first read.'],
+['Apply early','Jobs posted in the last 24 to 48 hours get far more attention. Check Grade each morning and apply to the best matches first.'],
+['Follow up after a week','A short, polite message to the recruiter after seven days shows interest and often gets you a reply.'],
+['Prepare three stories','Have three real examples ready (a success, a failure, a conflict). You can adapt them to most behavioural questions.'],
+['Research the company','Read their product page, recent news and the job post twice before the interview. Mention one specific thing.'],
+['Use STAR for answers','Situation, Task, Action, Result. It keeps answers short, structured and focused on what you did.'],
+['Clean up your LinkedIn','Use a clear photo, a headline with your role and skills, and a short summary. Many recruiters check it before calling.'],
+['Ask for referrals','A referral from an employee is the strongest way in. Message someone at the company with a specific, short request.'],
+['Practise out loud','Say your answers aloud or record yourself. It exposes rambling and builds confidence faster than reading notes.'],
+['Know your numbers','Be ready to explain your biggest achievements with figures: users, revenue, time saved, quality improved.'],
+['Test your tech','For video interviews, check camera, microphone, internet and lighting 15 minutes early.'],
+['Send a thank-you note','A short email within 24 hours of the interview repeats your interest and sets you apart.'],
+['Negotiate once you have an offer','Companies expect it. Ask politely, back it with market data and consider the whole package, not only salary.'],
+['Track your applications','Record where you applied, the date and any reply. Grade does this for you in the Applied tab.'],
+['Learn one new skill a month','The Level up card shows what employers ask for that you are missing. Small steady learning compounds.'],
+['Keep a brag file','Write down wins and positive feedback as they happen. It makes your CV and interviews much easier.'],
+['Do not apply to everything','Aim for roles you match at 70 percent or more. Quality applications get more replies than many weak ones.'],
+['Rest before big interviews','Sleep and a short walk help more than last-minute cramming. Grade will remind you to move and drink water too.']
+];
