@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#121212">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#f4f7fb">
+<meta name="color-scheme" content="light">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.github.io; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; manifest-src 'self'">
 <meta name="referrer" content="no-referrer">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -385,7 +385,7 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 #coDlg{max-height:88vh;overflow:auto;width:min(440px,calc(100% - 24px))}
 .cosec{display:grid;gap:6px;margin-top:14px}.cosec>b{font-size:13px;letter-spacing:.03em;text-transform:uppercase;color:var(--sub)}.cosec p{margin:0;line-height:1.45}
 .coflags{display:flex;flex-wrap:wrap;gap:6px}.coflags span{background:var(--ybg);color:var(--ink);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
-.colinks{display:flex;flex-wrap:wrap;gap:8px}.colinks a{background:var(--elev2);color:var(--ink);text-decoration:none;border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700}
+.colinks{display:grid;grid-template-columns:1fr 1fr;gap:8px}.colinks a{display:flex;align-items:center;justify-content:center;text-align:center;min-height:44px;background:var(--elev2);color:var(--ink);text-decoration:none;border:1.5px solid var(--green);border-radius:14px;padding:8px 10px;font-size:14px;font-weight:700}.colinks a:active{background:var(--gbg)}.colinks.sk{display:flex;flex-wrap:wrap}
 
 .terms{margin:0;padding-left:18px;display:grid;gap:7px;line-height:1.4;font-size:14px;color:var(--ink2)}
 #termsDlg{max-height:90vh;overflow:auto;width:min(440px,calc(100% - 24px))}
@@ -1598,10 +1598,13 @@ async function openCompany(id,gate){
       ['LinkedIn page',`https://www.linkedin.com/search/results/companies/?keywords=${q}`],
       ['Scam check',`https://www.google.com/search?q=${encodeURIComponent('"'+name+'" scam OR fake OR fraud interview')}`]];
     const flags=c&&c.flags||[];
+    const mine=(JOBS&&JOBS.jobs||[]).filter(x=>normCo(x.company)===normCo(name)),pd=Date.parse(j.posted),age=isNaN(pd)?null:Math.max(0,Math.round((Date.now()-pd)/864e5));
+    const facts=[`Role: ${esc(j.title||'')}`,j.loc?`Location: ${esc(j.loc)}${j.remote?' (remote friendly)':''}`:'',age!=null?`Posted ${age===0?'today':age+' day'+(age===1?'':'s')+' ago'}${age>30?'. Old posts are often already filled.':''}`:'',mine.length>1?`${mine.length} open roles from this company in your list`:'',`Listed on ${esc(j.source||'a job board')}. Open the company's own careers page to confirm it is real.`].filter(Boolean);
     $('coBody').innerHTML=`<h2>${esc(name)}</h2><p class="mute" style="margin:0 0 10px">${gate?'Take a minute to check this company before you apply.':'Public information in one place.'}${compGen&&!isNaN(Date.parse(compGen))?' Facts updated '+esc(ago(compGen))+'.':''}</p>
      ${flags.length?`<div class="coflags">${flags.map(f=>`<span>⚠ ${esc(FLAGTXT[f]||f)}</span>`).join('')}</div>`:''}
-     <div class="cosec"><b>About</b>${c&&c.about?`<p>${esc(c.about.text)}</p><small class="mute">From <a href="${esc(safeUrl(c.about.url))}" target="_blank" rel="noopener noreferrer">Wikipedia</a> (CC BY-SA)</small>`:`<p class="mute">${COMP?'No clear public summary found for this name. It may be a small or new company, so check the links below.':'Company facts load once you are online.'}</p>`}</div>
-     <div class="cosec"><b>In the news (last 90 days)</b>${c&&c.news&&c.news.length?c.news.map(n=>`<a class="xnews" href="${esc(safeUrl(n.u))}" target="_blank" rel="noopener noreferrer"><b>${esc(n.t)}</b><small>${esc(n.src||'')}</small></a>`).join(''):'<p class="mute">No recent headlines found.</p>'}</div>
+     <div class="cosec"><b>About this opening</b><ul class="terms">${facts.map(f=>`<li>${f}</li>`).join('')}</ul></div>
+     <div class="cosec"><b>About the company</b>${c&&c.about?`<p>${esc(c.about.text)}</p><small class="mute">From <a href="${esc(safeUrl(c.about.url))}" target="_blank" rel="noopener noreferrer">Wikipedia</a> (CC BY-SA)</small>`:`<p class="mute">${COMP?'No public summary found for this name. That is common for small, new or local companies, and is worth a closer look. Use the review links below.':'Company facts load once you are online.'}</p>`}</div>
+     <div class="cosec"><b>In the news (last 90 days)</b>${c&&c.news&&c.news.length?c.news.map(n=>`<a class="xnews" href="${esc(safeUrl(n.u))}" target="_blank" rel="noopener noreferrer"><b>${esc(n.t)}</b><small>${esc(n.src||'')}</small></a>`).join(''):'<p class="mute">No recent headlines. For smaller companies this is normal.</p>'}</div>
      <div class="cosec"><b>What people say</b><p class="mute" style="margin:0">Open reviews written by current and former staff. Read the newest ones and look for patterns, not single rants.</p><div class="colinks">${links.map(l=>`<a href="${esc(l[1])}" target="_blank" rel="noopener noreferrer">${esc(l[0])}</a>`).join('')}</div></div>
      <div class="cosec"><b>Before you apply</b>${['The job is on the company\'s own careers page','They never ask you to pay money or share bank or ID details','Salary, location and role match what you want','Reviews do not show repeated serious problems'].map((t,i)=>`<label class="ck"><input type="checkbox"><span>${esc(t)}</span></label>`).join('')}</div>
      <div style="display:grid;gap:10px;margin-top:14px">${gate?`<a class="apply" id="coGo" href="${esc(safeUrl(j.url))}" target="_blank" rel="noopener noreferrer">Continue to apply <svg><use href="#i-arrow"/></svg></a>`:''}<button class="ghost" id="coClose" type="button">${gate?'Not now':'Close'}</button></div>`;

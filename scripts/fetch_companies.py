@@ -18,12 +18,14 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 import xml.etree.ElementTree as ET
 
 WEB = os.path.join(os.path.dirname(__file__), "..", "web")
 UA = "GradeApp/1.0 (+https://github.com/aswinautomationtester1098/Grade)"
-MAX_COMPANIES = 90
-BUDGET_SECONDS = 9 * 60
+MAX_COMPANIES = 600
+BUDGET_SECONDS = 22 * 60
+WORKERS = 3
 
 SUFFIX = re.compile(r"\b(inc|llc|ltd|limited|pvt|private|plc|gmbh|corp|corporation|co|company|sa|ag|bv|the)\b\.?", re.I)
 COMPANY_WORDS = re.compile(r"\b(company|corporation|multinational|firm|startup|conglomerate|technology|software|"
@@ -122,24 +124,31 @@ def main():
             names.setdefault(k, c)
     top = sorted(count, key=lambda k: -count[k])[:MAX_COMPANIES]
     out = {}
-    for k in top:
+
+    def work(k):
         if time.time() - start > BUDGET_SECONDS:
-            print("time budget reached", file=sys.stderr)
-            break
+            return k, None
         name = names[k]
         entry = {"n": name, "jobs": count[k]}
         w = wiki(name)
         if w:
             entry["about"] = w
-        time.sleep(0.4)
+        time.sleep(0.5)
         items = news(name)
-        time.sleep(1.2)
+        time.sleep(1.0)
         if items:
             entry["news"] = items
             flags = [f for f, rx in RISK if any(rx.search(i["t"]) for i in items)]
             if flags:
                 entry["flags"] = flags
-        out[k] = entry
+        return k, entry
+
+    with ThreadPoolExecutor(max_workers=WORKERS) as ex:
+        for k, entry in ex.map(work, top):
+            if entry is not None:
+                out[k] = entry
+    if len(out) < len(top):
+        print("time budget reached: %d of %d companies" % (len(out), len(top)), file=sys.stderr)
     doc = {"generated": dt.datetime.now(dt.timezone.utc).isoformat(), "companies": out}
     with open(os.path.join(WEB, "companies.json"), "w", encoding="utf-8") as fh:
         json.dump(doc, fh, ensure_ascii=False)

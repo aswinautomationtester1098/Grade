@@ -1,13 +1,13 @@
 {
   "name": "Grade",
   "short_name": "Grade",
-  "description": "Grade: walking, water, vitamins and money coach. Works offline.",
+  "description": "Grade: find jobs, check companies, prepare for interviews and learn to code. Works offline.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#121212",
-  "theme_color": "#121212",
+  "background_color": "#f4f7fb",
+  "theme_color": "#f4f7fb",
   "icons": [
     {
       "src": "icon-192.png",

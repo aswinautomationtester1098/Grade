@@ -60,6 +60,12 @@ public class MainActivity extends Activity {
         FrameLayout root = new FrameLayout(this);
         rootView = root;
         root.addView(web, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        // The page draws its own light and dark themes, so stop Android from darkening it a second time.
+        if (Build.VERSION.SDK_INT >= 33) {
+            web.getSettings().setAlgorithmicDarkeningAllowed(false);
+        } else if (Build.VERSION.SDK_INT >= 29) {
+            web.getSettings().setForceDark(android.webkit.WebSettings.FORCE_DARK_OFF);
+        }
         setContentView(root);
         applyBars(false);
         // Android 15 draws apps edge to edge: keep content clear of the status and navigation bars.
