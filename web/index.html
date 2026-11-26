@@ -404,6 +404,14 @@ button.panel.pipe{border:0;color:var(--ink);cursor:pointer;display:block}
 .chkres{border-radius:14px;padding:12px 14px;margin-top:12px}.chkres b{font-size:17px}.chkres p{margin:4px 0 0;line-height:1.4}
 .tag.old{background:var(--ybg);color:var(--ink)}
 .nudge .sm{margin-left:6px;padding:5px 11px;min-height:0;font-size:12px}
+
+.cverd{display:grid;gap:2px;border-radius:14px;padding:12px 14px;margin-top:6px}.cverd b{font-size:17px}.cverd span{font-size:14px;line-height:1.35}
+.cverd.ok{background:var(--gbg);color:var(--gtxt)}.cverd.warn{background:var(--ybg);color:var(--ink)}.cverd.bad{background:var(--rbg);color:var(--ink)}
+.cchecks{display:grid;gap:8px;margin-top:10px}.cc{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;background:var(--elev2);border-radius:12px;padding:10px 12px}
+.cc i{font-style:normal;font-weight:900;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:14px}
+.cc.ok i{background:var(--green)}.cc.warn i{background:#e0a100}.cc.bad i{background:#d93a3a}
+.cc div{display:grid;gap:2px}.cc b{font-size:14px}.cc span{font-size:13px;color:var(--sub);line-height:1.35}
+.coopts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px}
 </style>
 </head>
 <body>
@@ -1599,16 +1607,43 @@ async function openCompany(id,gate){
       ['Scam check',`https://www.google.com/search?q=${encodeURIComponent('"'+name+'" scam OR fake OR fraud interview')}`]];
     const flags=c&&c.flags||[];
     const mine=(JOBS&&JOBS.jobs||[]).filter(x=>normCo(x.company)===normCo(name)),pd=Date.parse(j.posted),age=isNaN(pd)?null:Math.max(0,Math.round((Date.now()-pd)/864e5));
+    const checks=[];const addC=(lv,t,d)=>checks.push({lv,t,d});
+    {let host='';try{host=new URL(j.url).hostname.replace(/^www\./,'').toLowerCase()}catch(e){}
+     const key=normCo(name),hk=host.replace(/[^a-z0-9]/g,''),ATS=/(greenhouse|lever\.co|workable|ashbyhq|smartrecruiters|myworkdayjobs|bamboohr|recruitee|teamtailor|personio|jobvite|icims|breezy|rippling)/i,BOARD=/(remotive|jooble|arbeitnow|jobicy|remoteok|weworkremotely|himalayas|adzuna|indeed|linkedin|naukri|glassdoor|monster|ziprecruiter|bayt|gulftalent)/i;
+     if(key.length>2&&hk.includes(key))addC('ok','Official company site','The apply link is on the company\'s own website.');
+     else if(ATS.test(host))addC('ok','Company hiring system','The link goes to a standard hiring platform that companies use ('+host+').');
+     else if(BOARD.test(host)||/\b(remotive|jooble|arbeitnow|jobicy)\b/i.test(j.source||''))addC('warn','Listed on a job board','This is a copy of the post. Find the same job on the company\'s careers page before you share personal details.');
+     else addC('warn','Unknown website','The apply link goes to '+(host||'an unknown site')+'. Check it is the company\'s real site.')}
+    {const sc=scamScan(`${j.title} ${j.company||''} ${j.desc||''}`);
+     if(sc.level==='none')addC('ok','No scam wording','The post does not ask for money, ID or chat on WhatsApp.');
+     else addC(sc.level==='high'?'bad':'warn','Scam warning signs',sc.hits.map(r=>r[2]).join(' '))}
+    {const pr=J().profile;
+     if(pr){const r=scoreJob(j,pr),bits=[];if(r.matched.length)bits.push('You have '+r.matched.slice(0,4).join(', '));if(r.missing.length)bits.push('Brush up '+r.missing.join(', '));if(r.req&&pr.years<r.req)bits.push('Asks '+r.req+'+ years, you have '+pr.years);
+      addC(r.score>=60?'ok':r.score>=40?'warn':'bad','Fit for you: '+r.score+'%',bits.join('. ')||'Based on your skills and level.')}
+     else addC('warn','Fit not checked','Add your resume or pick your skills to see how well this job matches you.')}
+    {const pd2=Date.parse(j.posted),ag=isNaN(pd2)?null:Math.round((Date.now()-pd2)/864e5);
+     if(ag!=null)addC(ag<=21?'ok':ag<=45?'warn':'bad','Posted '+(ag<=0?'today':ag+' days ago'),ag<=21?'Recent, so likely still open.':'Older posts are often already filled or kept open for show.')}
+    {const fl=c&&c.flags||[];
+     if(fl.length)addC('warn','Negative news found',fl.map(f=>FLAGTXT[f]||f).join('. ')+'. Read the headlines below.');
+     else if(c&&(c.news&&c.news.length||c.about))addC('ok','No bad news found','Recent headlines show nothing about layoffs, lawsuits or scams.');
+     else addC('warn','Little public information',COMP?'I found no public summary or news for this name. Common for small or new firms, so confirm it is real.':'Company facts load once you are online.')}
+    const nBad=checks.filter(x=>x.lv==='bad').length,nWarn=checks.filter(x=>x.lv==='warn').length,
+      verdict=nBad?['bad','Not recommended yet','Fix or confirm the red items before you apply.']:nWarn>=3?['warn','Check a few things','Several items need a quick look.']:nWarn?['warn','Mostly good','Confirm the amber item, then you are fine.']:['ok','Looks good','Everything I could check looks fine.'];
     const facts=[`Role: ${esc(j.title||'')}`,j.loc?`Location: ${esc(j.loc)}${j.remote?' (remote friendly)':''}`:'',age!=null?`Posted ${age===0?'today':age+' day'+(age===1?'':'s')+' ago'}${age>30?'. Old posts are often already filled.':''}`:'',mine.length>1?`${mine.length} open roles from this company in your list`:'',`Listed on ${esc(j.source||'a job board')}. Open the company's own careers page to confirm it is real.`].filter(Boolean);
     $('coBody').innerHTML=`<h2>${esc(name)}</h2><p class="mute" style="margin:0 0 10px">${gate?'Take a minute to check this company before you apply.':'Public information in one place.'}${compGen&&!isNaN(Date.parse(compGen))?' Facts updated '+esc(ago(compGen))+'.':''}</p>
      ${flags.length?`<div class="coflags">${flags.map(f=>`<span>⚠ ${esc(FLAGTXT[f]||f)}</span>`).join('')}</div>`:''}
+     <div class="cverd ${verdict[0]}"><b>${verdict[1]}</b><span>${verdict[2]}</span></div>
+     <div class="cchecks">${checks.map(x=>`<div class="cc ${x.lv}"><i>${x.lv==='ok'?'✓':x.lv==='warn'?'!':'✕'}</i><div><b>${esc(x.t)}</b><span>${esc(x.d)}</span></div></div>`).join('')}</div>
      <div class="cosec"><b>About this opening</b><ul class="terms">${facts.map(f=>`<li>${f}</li>`).join('')}</ul></div>
      <div class="cosec"><b>About the company</b>${c&&c.about?`<p>${esc(c.about.text)}</p><small class="mute">From <a href="${esc(safeUrl(c.about.url))}" target="_blank" rel="noopener noreferrer">Wikipedia</a> (CC BY-SA)</small>`:`<p class="mute">${COMP?'No public summary found for this name. That is common for small, new or local companies, and is worth a closer look. Use the review links below.':'Company facts load once you are online.'}</p>`}</div>
      <div class="cosec"><b>In the news (last 90 days)</b>${c&&c.news&&c.news.length?c.news.map(n=>`<a class="xnews" href="${esc(safeUrl(n.u))}" target="_blank" rel="noopener noreferrer"><b>${esc(n.t)}</b><small>${esc(n.src||'')}</small></a>`).join(''):'<p class="mute">No recent headlines. For smaller companies this is normal.</p>'}</div>
      <div class="cosec"><b>What people say</b><p class="mute" style="margin:0">Open reviews written by current and former staff. Read the newest ones and look for patterns, not single rants.</p><div class="colinks">${links.map(l=>`<a href="${esc(l[1])}" target="_blank" rel="noopener noreferrer">${esc(l[0])}</a>`).join('')}</div></div>
-     <div class="cosec"><b>Before you apply</b>${['The job is on the company\'s own careers page','They never ask you to pay money or share bank or ID details','Salary, location and role match what you want','Reviews do not show repeated serious problems'].map((t,i)=>`<label class="ck"><input type="checkbox"><span>${esc(t)}</span></label>`).join('')}</div>
-     <div style="display:grid;gap:10px;margin-top:14px">${gate?`<a class="apply" id="coGo" href="${esc(safeUrl(j.url))}" target="_blank" rel="noopener noreferrer">Continue to apply <svg><use href="#i-arrow"/></svg></a>`:''}<button class="ghost" id="coClose" type="button">${gate?'Not now':'Close'}</button></div>`;
+     
+     <div class="coopts"><button class="ghost" id="coSave" type="button">★ Save</button><button class="ghost" id="coHide" type="button">Hide job</button></div>
+     <div style="display:grid;gap:10px;margin-top:10px">${gate?`<a class="apply" id="coGo" href="${esc(safeUrl(j.url))}" target="_blank" rel="noopener noreferrer">${nBad?'Apply anyway':'Continue to apply'} <svg><use href="#i-arrow"/></svg></a>`:''}<button class="ghost" id="coClose" type="button">${gate?'Not now':'Close'}</button></div>`;
     $('coClose').onclick=()=>$('coDlg').close();
+    $('coSave').onclick=()=>{J().status[id]='saved';save();$('coDlg').close();renderJobs();toast('Saved for later')};
+    $('coHide').onclick=()=>{J().status[id]='hidden';learn(j,-1);save();$('coDlg').close();renderJobs();renderHome();toast('Hidden. Similar jobs rank lower.')};
     const go=$('coGo');if(go)go.onclick=()=>{coSeen.add(id);const st=J();if(st.status[id]!=='applied'){st.status[id]='opened';queueApply(id)}save();$('coDlg').close();setTimeout(renderJobs,800)}};
   draw();if(!$('coDlg').open)$('coDlg').showModal();
   if(!COMP&&!compTried){await loadCompanies();draw()}}
