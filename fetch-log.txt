@@ -1,0 +1,97 @@
+[qablogs] feed failed: https://applitools.com/blog/feed/: mismatched tag: line 93, column 2
+[qa] feed returned 7
+[qa] feed returned 14
+[qa] feed returned 7
+[qa] relevance filter kept 15 of 28
+[qa] 6 items
+[qablogs] feed returned 25
+[qablogs] feed returned 15
+[qablogs] feed returned 10
+[qablogs] feed returned 10
+[qablogs] feed returned 20
+[qablogs] 4 items
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] feed returned 10
+[tools] 3 items
+[tech] feed returned 66
+[tech] 5 items
+[uae] feed returned 0
+[uae] feed returned 73
+[uae] 5 items
+[india] feed returned 46
+[india] feed returned 100
+[india] 5 items
+[f_dev] feed returned 100
+[f_dev] feed returned 38
+[f_dev] 6 items
+[f_data] feed returned 100
+[f_data] feed returned 100
+[f_data] 6 items
+[f_product] feed returned 26
+[f_product] 6 items
+[f_design] feed returned 70
+[f_design] 6 items
+[f_marketing] feed returned 100
+[f_marketing] 6 items
+[f_voices] feed returned 30
+[f_voices] feed returned 40
+[f_voices] feed returned 20
+[f_voices] feed returned 10
+[f_voices] feed returned 12
+[f_voices] 10 items
+[us] feed returned 70
+[us] feed returned 100
+[us] 5 items
+[uk] feed returned 70
+[uk] feed returned 100
+[uk] 5 items
+[ca] feed returned 67
+[ca] feed returned 64
+[ca] 5 items
+[au] feed returned 59
+[au] feed returned 58
+[au] 5 items
+[saudi] feed returned 0
+[saudi] feed returned 58
+[saudi] 5 items
+[pk] feed returned 52
+[pk] feed returned 39
+[pk] 5 items
+[world] feed returned 70
+[world] 5 items
+[uaeindia] feed returned 28
+[uaeindia] 3 items
+Wrote 106 items for 2026-11-28
+jobicy machine learning failed: URL can't contain control characters. '/api/v2/remote-jobs?count=50&tag=machine learning' (found at least ' ')
+jobicy project manager failed: URL can't contain control characters. '/api/v2/remote-jobs?count=50&tag=project manager' (found at least ' ')
+jooble: skipped (add the free JOOBLE_API_KEY secret for UAE office jobs)
+jooble: kept 0 | dropped {'no field': 0, 'not software': 0, 'intern': 0, 'too old': 0, 'duplicate': 0}
+remotive raw: 289
+remotive: kept 7 | dropped {'no field': 9, 'not software': 0, 'intern': 0, 'too old': 1, 'duplicate': 0}
+himalayas raw: 220
+himalayas: kept 142 | dropped {'no field': 23, 'not software': 6, 'intern': 3, 'too old': 28, 'duplicate': 18}
+jobicy raw: 321
+jobicy: kept 202 | dropped {'no field': 119, 'not software': 0, 'intern': 0, 'too old': 0, 'duplicate': 0}
+arbeitnow raw: 1473
+arbeitnow: kept 514 | dropped {'no field': 890, 'not software': 0, 'intern': 26, 'too old': 0, 'duplicate': 43}
+remoteok raw: 100
+remoteok: kept 52 | dropped {'no field': 45, 'not software': 0, 'intern': 0, 'too old': 0, 'duplicate': 3}
+workingnomads raw: 37
+workingnomads: kept 22 | dropped {'no field': 9, 'not software': 3, 'intern': 0, 'too old': 0, 'duplicate': 3}
+weworkremotely raw: 100
+weworkremotely: kept 43 | dropped {'no field': 55, 'not software': 1, 'intern': 0, 'too old': 0, 'duplicate': 1}
+field qa: 101 jobs
+field dev: 150 jobs
+field data: 119 jobs
+field product: 91 jobs
+field design: 48 jobs
+field marketing: 120 jobs
+Wrote 629 jobs
+companies: 420 written, 92 with summary, 237 with news

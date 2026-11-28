@@ -1,0 +1,869 @@
+{
+ "date": "2026-11-28",
+ "generated": "2026-11-28T09:01:53.659777+00:00",
+ "tz": "Asia/Dubai",
+ "sections": [
+  {
+   "id": "qa",
+   "title": "QA & Testing",
+   "items": [
+    {
+     "t": "Germany E-Prescription Outage Friday: Medisign Card Fault Limited Practices for Under One Hour",
+     "s": "",
+     "src": "Tech Times",
+     "u": "https://news.google.com/rss/articles/CBMi3AFBVV95cUxOR2hXMmZnUjNOb2c4NnUyVmpDV0FXNWsweXY4a0dhZDZyT0tsUWxZRlE4TXJKODJrNFduVzUzdGdqZGp5c2JLamF6Q0k1R0J5QTBHeGg1WlpDRkN3V1hWaGpQZFVZWEw3RWFLMEQzYjBFTHZyMDdsOHUteDVJWWZxZWRGaHlWS2lmTGdRTnhPbFJIQW1rZjhKWk1hLWlQN2l4UjVzakVUbnU5MUh2MVVzLUdlcWlpTXlDX3ZFaDl0TmJzMEstWVQ0WmJEMUxWSWtQS25jbXYzUzVYNVd4?oc=5",
+     "ts": "2026-11-27T19:31:52+00:00"
+    },
+    {
+     "t": "Allstate experiences nationwide service outage",
+     "s": "",
+     "src": "SC Media",
+     "u": "https://news.google.com/rss/articles/CBMiggFBVV95cUxPaWJEU2VtdkdqUTc3X0I3LXRWcnJaZFdvZlVDZ05ReFRIWmxEV05tU1JmVllHQXZUR1BHemJaZDdqTGZYaVpPZGYtcXpsdkFFQUxyQTY2MG1vRVhTWXlHR1J4UUZ1NElLWWo2V2pfMVVsOUlBeHFjUGlxckprUl8xblJn?oc=5",
+     "ts": "2026-11-27T19:22:53+00:00"
+    },
+    {
+     "t": "SQAT Bangladesh 2026 to focus on AI, software quality",
+     "s": "",
+     "src": "The New Nation",
+     "u": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5sbEtOaXJ4OGwxN2t3YktlZ2pYQkNqRzRIMkprdGYwc3BoR0Ywc0VMbW9sVUFYemoxMkd4VTU4VVl4eWtXZTlTcXdDUzlVcUU?oc=5",
+     "ts": "2026-11-27T18:06:17+00:00"
+    },
+    {
+     "t": "Berberine-Loaded Selenium Nanoparticles Reduce Cognitive Impairment in Alzheimer’s Mice",
+     "s": "",
+     "src": "Bioengineer.org",
+     "u": "https://news.google.com/rss/articles/CBMisAFBVV95cUxQV3RucndjYUtyZWlmR1QzSWt2OF92N2VKb2dtOFFEbUdwdHV2U3RLNzRUd0M2ajdpdVgzWUxvSXk2a2E1UFgzNENWQ0tpcFNLbVF4bWZub3pYdGhRbkl3aGVJc3NCWFJUU0JZVi1kekU5cVNsZ3FZdmg2c0tyTWtETUVGNFBBaFRla3FfV09jWW1IWTcwUmh0eFJsUU9USW5PQ2RHRzdTRWVaNEtaNVRZaw?oc=5",
+     "ts": "2026-11-27T13:52:09+00:00"
+    },
+    {
+     "t": "Bangladesh Software Testing Board to hold 4th software QA, testing symposium in Dhaka",
+     "s": "",
+     "src": "bdnews24.com",
+     "u": "https://news.google.com/rss/articles/CBMiVEFVX3lxTE9WbFZrN1RGcmdBbzM5T29SdExEdG9pMVVqdl9MbTJzR3RqVnIyUXh6LS1XbkhtdWhZSkdfVkRVR2hNZ2t2SEZHNFI1RFA0cnFQQUFSOQ?oc=5",
+     "ts": "2026-11-27T12:01:00+00:00"
+    },
+    {
+     "t": "7 Best Test Management Tools in 2026: Compared for QA & Automation",
+     "s": "",
+     "src": "Quasa.io",
+     "u": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPOTVaZ1VpZi0tSDlWQUJnenJaMHpqb1hzVllxcUNyMWhpb25qcGRvbWg4LWRpSjFzcWlfYjlRRVIzQ1BvWjM5Mld5UkxwOU9LY3g0N3o2cGlYckFDb1lISXpsbVhuNUhNYVJHcFlUSlROaUFOWmlvTGRIQVJmTWJ5WFJMaVJBREpfZ3R4T3U2cHJzOFNVaWJSV2RJNmp5TVBv?oc=5",
+     "ts": "2026-11-27T08:40:32+00:00"
+    }
+   ]
+  },
+  {
+   "id": "qablogs",
+   "title": "QA Reads",
+   "items": [
+    {
+     "t": "Cypress Ambassador Spotlight: Saran Kumar",
+     "s": "Every strong community has people who show up for others. They answer the question in the channel, review the flaky test, and walk a new teammate through their first spec. The Cypress Ambassador program recognizes those ",
+     "src": "Cypress Blog",
+     "u": "https://www.cypress.io/blog/cypress-ambassador-spotlight-saran-kumar/",
+     "ts": "2026-11-25T17:10:48+00:00"
+    },
+    {
+     "t": "Your Coding Agent Wrote the Test. Who Checks It? with Donovan Brady",
+     "s": "About This Episode: Your coding agent just wrote the test. Who checks it? Donovan Brady of Leapwork is back on […]",
+     "src": "Test Guild - Automation Testing Tools Community",
+     "u": "https://testguild.com/podcast/a613-donovan/",
+     "ts": "2026-11-24T21:17:30+00:00"
+    },
+    {
+     "t": "Robot Framework Test Automation: Automate Web, Desktop, Mobile, and Embedded Systems",
+     "s": "About This Episode: What makes Robot Framework flexible enough to test medical devices, low code bots, monitoring systems, and embedded […]",
+     "src": "Test Guild - Automation Testing Tools Community",
+     "u": "https://testguild.com/podcast/a612-robocon2027/",
+     "ts": "2026-11-17T15:43:23+00:00"
+    },
+    {
+     "t": "Multi-tab testing in Cypress: @cypress/puppeteer 1.0 is generally available",
+     "s": "Cypress runs each test in one tab, so flows that open a new tab or popup have been hard to test. @cypress/puppeteer 1.0 is now generally available, with a stable API, Puppeteer v24, and a new multi-tab testing guide. See",
+     "src": "Cypress Blog",
+     "u": "https://www.cypress.io/blog/cypress-puppeteer-ga/",
+     "ts": "2026-11-12T20:55:15+00:00"
+    }
+   ]
+  },
+  {
+   "id": "tools",
+   "title": "QA Tool Releases",
+   "items": [
+    {
+     "t": "selenium Nightly",
+     "s": "",
+     "src": "selenium",
+     "u": "https://github.com/SeleniumHQ/selenium/releases/tag/nightly",
+     "ts": "2026-11-28T00:15:12+00:00"
+    },
+    {
+     "t": "appium@4.0.2",
+     "s": "",
+     "src": "appium",
+     "u": "https://github.com/appium/appium/releases/tag/appium%404.0.2",
+     "ts": "2026-11-27T07:31:48+00:00"
+    },
+    {
+     "t": "cypress v16.4.0",
+     "s": "",
+     "src": "cypress",
+     "u": "https://github.com/cypress-io/cypress/releases/tag/v16.4.0",
+     "ts": "2026-11-25T20:57:36+00:00"
+    }
+   ]
+  },
+  {
+   "id": "tech",
+   "title": "Tech & AI",
+   "items": [
+    {
+     "t": "The M5 MacBook Air just got its biggest discount since Apple raised the price",
+     "s": "",
+     "src": "The Verge",
+     "u": "https://news.google.com/rss/articles/CBMiiwFBVV95cUxObFpZdk93Vmh3R1JleFQ0eGdvaS1rZTMxNVNfRy1RbG93RGZhY2ozVktGc2ZuakNzZXZ0cDN5Y2ttdXVENlVJVmtoX0hNZGhQb3M5S1RNYkMwd0JrZXdLNXJiLUExNjFHS0lZLXRlYUYxX3VLYlhOZW9nazRhTHFEc000TnFLU0FQR2FJ?oc=5",
+     "ts": "2026-11-28T03:30:00+00:00"
+    },
+    {
+     "t": "iPhone 18 and iPhone 18e production reportedly delayed again - GSMArena.com news",
+     "s": "",
+     "src": "GSMArena.com",
+     "u": "https://news.google.com/rss/articles/CBMiogFBVV95cUxNUEtsS1YwcDgtVVVXazRBODJkcW5aZWNDTWRLYTA1YTI4VDhPLWVoYnFZX1BManJaRjFKMGRDZjM3WFBtZUZBTGUwYXhQR3M5UE1TVWtYRVRBbW0xckNDemsyV1hmejI1MnIzNjRYcUNiNGFscVl0ZUdnVnltVFpZWVBwQ2pBaFdGUWxIQ0paaDZJOXRNV2NCWmU3YjNRajU0WmfSAZ4BQVVfeXFMUENGeUgyalJVYXhJU0h2b3RmNndjQ1pkWERtTl9ueEpFTVV6Y0c2WGpBMzR5eDl4UXlCOHZqWklTZFBIWUxHWTFVUGFtQ3JZb1hSdkNKckpMSXlDUV9ZUW0wdnp4aEFqX2RyV0tRN2tqNDgtdEVkTDVVTXUtTWUyY2tMamR2cnprbDctOG4zSTZpMVhEMTd4NW03VndjWkE?oc=5",
+     "ts": "2026-11-27T22:39:02+00:00"
+    },
+    {
+     "t": "Yooka-Laylee studio explains upcoming Definitive Edition's absence on Xbox to 'frustrated' fans",
+     "s": "",
+     "src": "Eurogamer.net",
+     "u": "https://news.google.com/rss/articles/CBMiakFVX3lxTE1fZmt2ZzdDczA2U01qWW1XVUhuQWJ6QTlPTU4tOGx2aXpRbDJ4dnlxdTBfbk93OGhaaFNHbnJTUVViejl5WDlZQ3VYVDlybjE0X21kS1RPZWI1bzNZSkNIanhGek9FUU9TU3c?oc=5",
+     "ts": "2026-11-27T19:08:10+00:00"
+    },
+    {
+     "t": "Finally, some promising Galaxy S27 Ultra news",
+     "s": "",
+     "src": "PhoneArena",
+     "u": "https://news.google.com/rss/articles/CBMigAFBVV95cUxOY2M1blA3VXJfaDlwNzJtY0JSekQwdVlzVE4ydXdHRWRQeE54YlRsWmc1anJHX2ZucTZRSzNzb0RKNDhlVmFVNmJEb0pXOHNQWkZlOG9qVldTeDVqNTNhWm1tUlh3R1dkT2RUa0l1M3pKMTlsZ3pkLVcxRDFLY2hpRg?oc=5",
+     "ts": "2026-11-27T16:11:26+00:00"
+    },
+    {
+     "t": "Wordle today: The answer and hints for November 28, 2026",
+     "s": "",
+     "src": "Mashable",
+     "u": "https://news.google.com/rss/articles/CBMie0FVX3lxTFBRVmJ0ZFhrVzFva29nYkFmVUc3Z2RJTVBkUXpNVUV1clVjQzVRSWh6a2VxN05JX3RHb2NuVG9nVFZoR2pVQzBVeVhHTXNJT1dONHI1RENYQ0M3WXluRlBqd1poNTA3d0xyUFRSY3pHai1BamdWOUhtUnFpUQ?oc=5",
+     "ts": "2026-11-28T06:04:42+00:00"
+    }
+   ]
+  },
+  {
+   "id": "uae",
+   "title": "UAE",
+   "items": [
+    {
+     "t": "Worldwide: Temporary Ebola-Related Entry Restrictions Introduced",
+     "s": "",
+     "src": "Fragomen",
+     "u": "https://news.google.com/rss/articles/CBMirwFBVV95cUxQQ19nMnBtZVRSWjltTERDLTExVWpoeWFzVnB6NERSdVBlUmVLNXN3bk9aenM5QU93cmJLWXBsd3VUMkJSejY4SlRyWlZoaml3YjMwWS1IS0FIVHdZU2pkY25uc3dvb0xlS1lMemZtdXNvTzZFelZZYTJXZFh4UnlBeFZYbTE5NHR2dk1ocnI5R1dBM21oSWFCLWJ4aTRicnJyMGdRTVV0UHUwa21UcE9n?oc=5",
+     "ts": "2026-11-28T01:43:46+00:00"
+    },
+    {
+     "t": "UAE Expresses Solidarity with Turkey Following Military Helicopter Crash",
+     "s": "",
+     "src": "Global Arab Network",
+     "u": "https://news.google.com/rss/articles/CBMivwFBVV95cUxPbDRXTHpjbUhZUHVNeVhIeGxoSThjUXZoYl9oNGNDMjh5THgtRUVVZ3RqTjdtSXdaTXFnb2w4cU43S0FuSV9kcmUxTFlRcFJobUNoLXEtb3pRMEJ5aFp6TDA2TjVBeXBsTXBHZTFyTzA5c190SkhQVkRGcWZ6ZHNQU0VnNXdNWnpwN21sSTJhaFN3S2pvS25jT2lLam90a240T1RHRXhkbld0Vl8zQVk4eEJIZURXLWJReWw5RW1Haw?oc=5",
+     "ts": "2026-11-27T15:32:27+00:00"
+    },
+    {
+     "t": "Golden Visa: Is It Worth It? Comparing UAE Residence Routes, Costs and Trade-offs",
+     "s": "",
+     "src": "Global Advisory Experts",
+     "u": "https://news.google.com/rss/articles/CBMikgFBVV95cUxOU1I5al9DM0pRNzh1czhfVUlvWGVObEE4YWxrYmNCcDRFR2todVpOWjhFbEJ5SnllMHVhNGFVUm4ySVItbEJWRXBFemxJUHV0MWpEYXk3RWI4Q284NGEtcWpwZ2NBMnNleXBJYzhsNTRYSW5TZzhWNzhlSk9Kd2lwQTRxYTRjLVNMb29ZbjI4N1dmZw?oc=5",
+     "ts": "2026-11-28T06:14:47+00:00"
+    },
+    {
+     "t": "Saudi Arabia, UAE urge Yemen government and separatists to halt military actions",
+     "s": "",
+     "src": "Yeni Safak English",
+     "u": "https://news.google.com/rss/articles/CBMiugFBVV95cUxNN0tqcFduZWc4RlJLTkVDZVU5M2lkY2NlZU9fX0EzUXlSeUtlbm9XN09KcXBfSkt1S3VYZzRRR3otRjc0NGtqaEdGQnUwQUdkckZlRXBhdVptbThidnhJQm5DZHh6cVZDcUJDT2dNendhMjZCNE5hNXhIQnRzNWNUM19UWEpVcXJMNHdGeUgzdlJNdVBBRHd1Wk1xUnQxOEF3YkdSMVNVcjNvSmFfT0tCWVhTWHREdDBEY2c?oc=5",
+     "ts": "2026-11-28T00:33:23+00:00"
+    },
+    {
+     "t": "UAE Cabinet approves Agentic AI strategy, sets March 2027 launch for government AI concierge Mira",
+     "s": "",
+     "src": "Gulf Business",
+     "u": "https://news.google.com/rss/articles/CBMizwFBVV95cUxQTTk2LXp0WElqWkZJLWVZRkRWMjhHeVNPLXZsUTVzamZxcUR5UjViOERJT3VoanJxRGZ3WXYwQzFRSEk1U2ZBdTZRWU9QRGtmUTJMRDRJRHotZ2Q5c3VwLWN4SEF4NS11ZlNsOHVvbHZqOGhSQ0h0cGNZNktBTHVHT0NVT1NidzBIemJEclhkc18tb0FzZDhsWFFadmZxZHhRM2RLaXFNNlJGaE9uenJQQ2NhdjYxSVVZamFmOV95UFZrLTAtNGJPbC1CUEhzZk0?oc=5",
+     "ts": "2026-11-27T23:30:53+00:00"
+    }
+   ]
+  },
+  {
+   "id": "india",
+   "title": "India",
+   "items": [
+    {
+     "t": "Delimitation Bill LIVE: INDIA bloc meets ahead of special Parliament session; DMK announces support for Centre's proposal",
+     "s": "",
+     "src": "The Hindu",
+     "u": "https://news.google.com/rss/articles/CBMi-wFBVV95cUxObnluZ1FjVjVnYVlqVlBjWERqdFc0YmVYb2dWYk1ZWTVESmFwTXN4WlVXWHU1UHFodlFkYzB6blBhODFLeHN0T1R4ZS12RE5zaWR2OEt0eTF6ekk1U2hwS091VUdkOURYdWVPdlVzcVJaNUw4Mi1DOG5Tbko0cmp6cm5VRWlHeXZ2Q1FBT0g5RFphOEFxNF9RT2I2ODJxRGRXWERueUp0NU1qWWpkWENVVnhpRVVkYUg4OTB3ZXduR0RaOGxwNFVoRnBxeFU3RzNoemIwOHBqaXhsWWljRXNIcmZIUTMyZTFIRnlWQmJuS0Z1VEZHM080WkRVd9IBggJBVV95cUxNMEZPcFRESmhIWGx2SzlEWDFaR3pIZDBtb3BMUGlyZWRXUl81bWk3cVVlRlEwREJHMFpYWVAxZmtRNzFhMVA3TnhKamYtcmUwX0RfNkh5M3lyaEc2VVlVSlJhMGhqT3k1NVN6YlY0WDRieXVhQm9CTzVKTkxaUDNFemJfb0lPX1Q1R0QybjNnTXFfallJOEQweExhVEpranJ5WTdQV0kteXROSXAtdnRhR0dEZ2FvOTZvakF2aExwb3BkSUZWd202cXR3SzB3XzVNMVlHcTJCdWRaQnF2SWJuQW50amV1a3c1V2plbVBVdEJCd3VCbEc2RjVxR2xCdHVlWGc?oc=5",
+     "ts": "2026-11-28T08:12:04+00:00"
+    },
+    {
+     "t": "SC orders lamp to be lit at Thiruparankundram Deepathoon on Nov 28, suspends temple trustees",
+     "s": "",
+     "src": "The News Minute",
+     "u": "https://news.google.com/rss/articles/CBMizAFBVV95cUxPWXI0U3pkU1Q3ZTktTnlVVzMwSWZwNG5GSzJLTUJ6NmUyQXJNdE1CRkhKNjQwMkpYcEJrMjlUV2M0enlpNWhwNTc0Q19KVUFTbVpoU1lqbjNTbDEyclByb1Flb1lucDY0elllNEJfeFdUcVQ1eTlqNk85RlMxZGZBTVJWWlFlYndsdWQ5LXV0VkZXUXhzVlFKcnJWaEtBTUptV3ZidENGSVhYZlgzLVZtdUg5OGhMelQwdkVZRF9hZmlKTU1nYUdWbnp5R1E?oc=5",
+     "ts": "2026-11-27T10:11:56+00:00"
+    },
+    {
+     "t": "'Mischievous PM-HM jodi is lying': Special session aimed at delimitation, not women's quota, says Congress",
+     "s": "",
+     "src": "The New Indian Express",
+     "u": "https://news.google.com/rss/articles/CBMi5gFBVV95cUxPNVcxc2NrM2UtOE5iRDRnY3JEa1Ywc3JzMVJLN1ZqMEEzQTZJd0RtT3h3eHZLQy0xcURNWE9xWC1mYndpZ1BCSnBKVGhUWHlZRVEwTTVtbDFKN3J1b3pYekRKQmJKY01VUm94eEJzV0F6dHlNVjl0VGdCdXZMcXlyRUpjTW5fUzcxVkEtaUI4Yk92dWJZcVVlMUVRWVlpeEM0YVhfZThwLUc1M21TUVBvb0ptWHZZZDZtcFgyVkgwem81d2hPQ1huTGFwNFMwdG4xa0FUaEtRNUtzd2twTjV1aVo0amI3UdIB8wFBVV95cUxONHBKQVM0X1ZoZmx0VjZvNWg5NWd3ZXkyN0FpUHVHektZSnNzNTl1UGxYb1JNOEtOTG9jcmpvcmwxX0ZzV2RQT2FORjdTbnNDSEo2eEc4em5qdXZNTTQ1dkJudjVsSklaWGctLXhTdkhSeUpzTDVlX1JpbGdYbEFHSEZRYnA4UklFaUtVeHlOSEwzYjRNNXYxWmVEaVBncTQ4TEs1VEt0cXZaUUFKZ1d6SzhiV0hvMHJiRFFTM0lEM3lkdFctbElIcENtdFZsdzB2ZTRYdW9yXzFINlBGWFZqYlhndXR3V191YVhrTnB5eFowTjA?oc=5",
+     "ts": "2026-11-27T04:50:55+00:00"
+    },
+    {
+     "t": "India's bottled-water crackdown widens as new Bisleri sample found with bacteria",
+     "s": "",
+     "src": "Reuters",
+     "u": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPVVo0MmV3VWE5bkFxdlExTW5Qa1VRUm4tcHZnbmJKbmNwSjJiNjVuRFlwbHZqcFJYR2pHekJKdFptbDJlekZ0Z0VSRTV3bm5ydUNNNmdLMU5sZkFMLU95SVpnNW9MaXNPNllyZFJleUFWcHEteFZGczZzNHdBY1o3bERlTVp6a3lvd0E1RjFZNXNmRVFpdVVkNVR3MVpJa1dsVW0zcGVTM1I5UmRBVU5icmdB?oc=5",
+     "ts": "2026-11-28T05:09:00+00:00"
+    },
+    {
+     "t": "'Mann ka na ho toh jyada acha hai': Piyush Goyal quotes poet Harivansh Bachchan on tariff chaos, India-US",
+     "s": "",
+     "src": "The Times of India",
+     "u": "https://news.google.com/rss/articles/CBMiowJBVV95cUxNYUdqRlZvandSTk4wNEhEMTNoSjdVVkU5aGVnd252SkQ0c1l4T212bmp4Y2MwTGJhRUprUUJLTVJkMENpb20wWWtQeXpRaV9DSnF6RGpvRWFPckdxTTN1bWVvYVJMZlRpZ2UtUWNMdnV2YVh6aXZnSnVJSVRoRkxyblRaTV9aUWRGZG9FS0dFX2R6QWw4N2lQTjlKdzJWcjV0ZTA3Wm15clh0dk1QRWplcXBqeW5VOTVaT1hMZHp2enNFZlZLOENQNDVwallKaGd0cVFCRFFiOVJYZWhpd0x6Q0ZxSk1ySlY2UjhSZTE0R2ducWtIbkZLMUlMdXFra01OUVg2SXpYUThWTU4zcUxuSkRoUjdweHlzbnA2ZFFYX1R0SGc?oc=5",
+     "ts": "2026-11-27T07:23:00+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f_dev",
+   "title": "Software Development",
+   "items": [
+    {
+     "t": "Memory, Testimony and the Truth About the Holodomor: Special Programming on Ukraine’s International Broadcasting Channels",
+     "s": "",
+     "src": "uatv.ua",
+     "u": "https://news.google.com/rss/articles/CBMi1gFBVV95cUxQdEFaT0ktNnZwQkF6c0lMakpJOVRzUjJ3cHlRSUs3TjNwNnJYbHJiVWNybWwzY3RCVEdOZHNSTEJ3R3dhQ3BwdGtWQWdmQWFGWlZ5NjhaMWF1ZmFDTWtNYWp3alRfREpkbW9fSTUzeDRnb3dPT2tJZzY0MThxek0xLUlBRU5NTlVTRWQwdm0za3FZcXpSRG9id1ZIbW5aMFNtUkQyNWItNUFQUjJhbGwxcTR2RS11TUp1X0FmS2lES1hLZWtpZHVyX18wdHo0RXpVeHU4akZB?oc=5",
+     "ts": "2026-11-28T06:00:00+00:00"
+    },
+    {
+     "t": "Richmond Heights to start its own, in-house programming for seniors in 2027",
+     "s": "",
+     "src": "Cleveland.com",
+     "u": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxPei1HZjI1UGRXbzFFRmxvUHFsQl9ubU5DYnk5eW9fc1V4RlY3RWlzaVpTQmozYlpqM0RyR2RnTExkeVkzUDRCbzlCNDcwWkpXNUlUaS1qeFA2ZUtubW53T2RTZ29LUHR6dUVfZWRQSl9jOEdxVnhGRUQ2S1JhLVZVYXZQUGFrOWtGRmV5MHV6bVEzTm5iazRRVTBNRDMwd2ZrU3RqSGVGY2h1LXpLUFYxRXRhUnpGQlRydkZTVDV2c18?oc=5",
+     "ts": "2026-11-28T05:03:00+00:00"
+    },
+    {
+     "t": "ZenSMU: Open-Source Alternative to AMD Ryzen Master Enables Undervolting, PBO and CPU Monitoring on Linux",
+     "s": "",
+     "src": "igor´sLAB",
+     "u": "https://news.google.com/rss/articles/CBMiowFBVV95cUxNTGVFZnF3N2xaOUdhemVvcVlOelVZbEN5U2syUDVMLU9WV2tDN0d0NFhXMHE2MUkzZy1xOUhsWGIxNVpZT2Uxd201Sl9EVUgtUmc5LTRiSXhfSjBHWVJYOU9pSVFkcmJlNDlwMFRxNlBsRTlNa3g4RDJXQnNnRkFhQTNDM1AxWlRfZWFsTVJGZFVxZFN5SS00MUtpRDJDSy0zNzc4?oc=5",
+     "ts": "2026-11-28T05:00:00+00:00"
+    },
+    {
+     "t": "British police link substance release at concert to robbery attempts",
+     "s": "",
+     "src": "1News",
+     "u": "https://news.google.com/rss/articles/CBMipwFBVV95cUxQRlRiVFVvNHdZSU00cXFfQjdENnBqVkI2MThzVnY5WG9wajc2RUloZmdOcEZOaXhRbEt5dW1zV2tBSFdBazVKQnJPSmRMZ0pMak5mQkFEaDBETDNXaE12RXVlMkFKQ01FNm43RzFoMjZkRWstMVExRnFKd3Vpc1htcXZuQ2paSDdGcXQ3RDI3S3FvbWIwZzUxRi05eFJhamlEU1loWlFoOA?oc=5",
+     "ts": "2026-11-28T04:22:06+00:00"
+    },
+    {
+     "t": "German Leaders Link Public Sector Open Source Adoption to National Security",
+     "s": "",
+     "src": "Bioengineer.org",
+     "u": "https://news.google.com/rss/articles/CBMiogFBVV95cUxON0VQaVVSX2d1ZERkdVZVNkRzcTQ0eVJlRmQ2VUFJRGFPMFdSc2NmaDZPOHZ6TlJEQzJPVkowVGhiRjhuNzFsaWhnN0tHWXJtQ1U3b1VkcnVqNDB2SFpteDFJZEhFRF9mdk5YaU5pX0VBcTFqbmR0dk9VYlNEckJMbG5PbGlWV1BLRmhwZERpNjd3dzN2dEYza3B2eHhHdWVLdEE?oc=5",
+     "ts": "2026-11-28T03:07:36+00:00"
+    },
+    {
+     "t": "Don seeks homegrown software engineering solutions to security challenge",
+     "s": "",
+     "src": "The Guardian Nigeria News",
+     "u": "https://news.google.com/rss/articles/CBMisgFBVV95cUxPbVVUUXhQb0pVMUN5ekdGZkNkQnFrbGdpVmxSS0M0MEFFVzhCeE05Z05Xd1lQY0lqOE5mSWdoMG0tVmZ4UE95ekdZWVB5aUdEaHNUUWY0bF9hN2FUaDZfbTY5cjJhel9wVFc3WnJVMlhVd1RPa1AtSDk1OU1udFFBOXZjemlVT3VXVXFWQUllV2YtenRRZWJLSkFYdWN5X3lKV19DeFd4eFh4S3ZJM01jNHd3?oc=5",
+     "ts": "2026-11-28T03:00:35+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f_data",
+   "title": "Data & AI",
+   "items": [
+    {
+     "t": "Generative AI Indian Feature ‘Maharaja in Denims,’ Inspired by Sikh Ruler Maharaja Ranjit Singh, Sets April 2027 Release (Exclusive)",
+     "s": "",
+     "src": "IMDb",
+     "u": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1WQmFJUHF0UFNlc3RTSXBTbVNBR1hKbDZfWmFqSFdPRWdQak1VTnViT0toeHh2UVV3LVU2a3pVM0RlVGZYZnVEYU9VSl9RTWNhMDZOY3VSNHlsTklaMzdJak5Eak5GZw?oc=5",
+     "ts": "2026-11-28T08:56:04+00:00"
+    },
+    {
+     "t": "'Planning India-made AI model for securities market': SEBI chairman Tuhin Kanta Pandey- Moneycontrol.com",
+     "s": "",
+     "src": "LinkedIn",
+     "u": "https://news.google.com/rss/articles/CBMivgFBVV95cUxQT18yZzJsanpRWHFrVWcySFh5OGJYWVVEc3BYUHVXOE43ODU4b011R051ODI3YnAwTUR4NnRxeVFTWUpBZU9MakVsSG1yLWxfd29SRmNCamM5VlJISUF2SFRQRnpvNkZXREF6V1ljaEZLNXFyUnNJOW5pYW5JeWZ5cC1iZTRCTlpHRUdKRWVyWTcxc0hXRXRSZUNyZUtTVnZyOUFGSkRveTBocGo2WXJFNTR5Sm1ESjd2bGd5S0pR?oc=5",
+     "ts": "2026-11-28T08:30:10+00:00"
+    },
+    {
+     "t": "Spatial Validation Exposes Overestimated Accuracy in Machine Learning Soil Carbon Maps",
+     "s": "",
+     "src": "Bioengineer.org",
+     "u": "https://news.google.com/rss/articles/CBMisAFBVV95cUxNd0t4djRHM2RxSkJwZE9KN09Lc2NNUkxuRktUUi1RWFlldGQzZ3pCSVN6NFJFNXNEN0JQaFZwLWZDd3lVbjdqSXJ6aEluTmROLVNCU1JGbEFyY3NnNFVkYUlPLWhfNjVUTFhfWk52d0hmMzZpbWN5bWdCdDRQMnJUY0NjVFN2OGl4Szc1dzlyT0dEdXFyUDU5dFNwczlYNDJ6WEpLdW5aVWFCQ3FmVk8wQw?oc=5",
+     "ts": "2026-11-28T08:10:35+00:00"
+    },
+    {
+     "t": "Friday Night Fever: Snowflake (11-0) vs. Bradshaw Mountain (8-3)",
+     "s": "",
+     "src": "12News",
+     "u": "https://news.google.com/rss/articles/CBMi-AFBVV95cUxPeV9PNVB3WnE0dlFIZUxROEdFcjRjTEtYRTRyQTJVaUpTSklxYm1raGozSE43WjRqUXBzRHgtdGt2RDBUSk5MWmJBSkNUUjB2X2I2WmFpOFN5eVpjTzFzSTJZVFpEUHp1ckFKcXo2MXBoWjlvLUtmakR4bGppcHZCRDZ3ZTI0TlllSmpCM3FVVkU1SThYNGlRcmlDcl9ldG5uRFFTWjE5XzY5OUJUamk2YjBKelVoVkJJdTFCT3l1OVNBbXdwYWVTeTYxanVVZElPVnUyRll5MzZZYV9kemxvV0Vjd2FfWjlsU0V3TEFaVVZNcnR6UG5tbQ?oc=5",
+     "ts": "2026-11-28T07:35:00+00:00"
+    },
+    {
+     "t": "GP Resident Doctors Use Generative AI for Administration While Navigating Clinical Risks",
+     "s": "",
+     "src": "Bioengineer.org",
+     "u": "https://news.google.com/rss/articles/CBMiswFBVV95cUxPcXdOcmY4SzI0TXBqYnJtakhEZVR3UjJLVWlwRnVTZHJGRVdfMTU4ODNGNzl4UF9rX1BrS2JBanN3Q3k1NWNnSWM2ZFRveDhsWXBlZ0REbUstMl9ObE5KVWN1ZElQZ3dCS2xDYVFHNy02UUtUZTZ4dDVFaDlGTHNDWkFqMGliVHIzSWVlejVrVk9JZllNRXBZYjlWV3BDUG81ZUI1SjBxSE9CUEdXNGdCX1NLQQ?oc=5",
+     "ts": "2026-11-28T07:08:13+00:00"
+    },
+    {
+     "t": "Currency Fluctuation Prediction Using Machine Learning: Evaluation Examples",
+     "s": "",
+     "src": "Rebellion Research",
+     "u": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQVURNZmVqd1hNWjVhbVJCcWUtNGY4RXZYUm9nUC02Rl9rYzlZczlTcWRVVDVUVUk0NWJyZTFoSm5rTVZSbzI2WWtFNGk1dDNVRlJBMEJ0NmxGUEtMVkZVYWdZckQxTlhnSkE0X0hDOFhma2lIeGtVT3RWbHNQeHhOUkNFQnYtZ0EzTFZFUHJWRXRWdEJlbkNTS0NiUTJITDZHaUg5Wkh3aXdsYkhC?oc=5",
+     "ts": "2026-11-28T07:07:45+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f_product",
+   "title": "Product & Project Management",
+   "items": [
+    {
+     "t": "Skate is dropping seasons and season passes in favor of 'regular, agile content updates'",
+     "s": "",
+     "src": "PC Gamer",
+     "u": "https://news.google.com/rss/articles/CBMiwAFBVV95cUxNaURJclRvSW11LW0wdDBEWU9SRkR0WFEtclpMdkFxWGlvMVBtTUNwcEQ4NjZUNVpPS1IzallJWTV3TTBkajZmSEd1VzA4U0pUbGp6enA5d0dkM1Ayb1N5Z0ZKX1puV3hReS1RcWN0bFZaV0Jjb0dKU1dCZkU4Ny01OWxDSkNWdVQyb3pFTGNKM20tSzFUODNpRUg3TG94UFZhYUpqSjdWMzNfNjNVN2tMWm12Z1ZvdXVqSXpLNXFXbVo?oc=5",
+     "ts": "2026-11-27T22:13:12+00:00"
+    },
+    {
+     "t": "Techfibrr Passes 9,000 Trustpilot Reviews as Agile Tech Forecasts Double-Digit Sales Growth for 2026",
+     "s": "",
+     "src": "Yahoo Finance",
+     "u": "https://news.google.com/rss/articles/CBMimgFBVV95cUxPTlNCSHZ3OXpXT3BuWDk2Qk5mUUR0bWFScWhjb2RHUnYwQVVLbncwZnZCdmhqeGlGblhvSWs0NEVNOHJ6LTRRWVhNYURpc09RU0REOV85bXJLVlRMS2pNZV82T042UlQtVWlRdV9nbGxwdVpVWm04bWpJaWItYkg1amZvcnl4dFo5S29zdWhlQTF0VVNtRjMyeThn?oc=5",
+     "ts": "2026-11-27T15:48:00+00:00"
+    },
+    {
+     "t": "AI. Autonomous. Agile. Atmanirbhar. India’s entrepreneurial landscape is being shaped by visionary leaders who are building homegrown enterprises, embracing innovation and taking Indian businesses to ",
+     "s": "",
+     "src": "Facebook",
+     "u": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPNmNzTVpzbWlIZnJ6Y3I2ZnBlVjRlV1JSb2hwYjVfZzdjLWdmYmc1ZXd4azkwTnZuQmk0WDdtY0FRZFNUM1ZObWZkNWZVNnVDdWNyamFheUJTa2ZyVV9CV1daZnVZazZsWEZTTXd3eXp1clgyM3l1NUVkTlUwWTAwQzlyWWs2cTNYZWM2VmhER1BxYWowTEtJYUQ5ZzZGTlBVcDdXblEtMlJucjFhSXZiZ29mRzB5d0hFZ3RLWjhoR2ZRMVRVM05MUy1jTE9Gbk5Lb1EwZHhMVFJkNFZ0MVRmWXNR?oc=5",
+     "ts": "2026-11-27T14:50:47+00:00"
+    },
+    {
+     "t": "Allied fighters trained in dispersed operations during Finnish-led Exercise Protective Fence 26",
+     "s": "",
+     "src": "ac.nato.int",
+     "u": "https://news.google.com/rss/articles/CBMizAFBVV95cUxQVlFuTDVXOVpLVzNGWGNKakdRMmVFN0c3TlRiWXFOWGJXWGdMTjRBY3ZwM0I2MTZTel94VXhySnhoUVpoTmdvUXpWSnkyZWc1VExsZHJCT3hZT0JldkMyeWhOZnZGZUtoMTR3Rlh3b1Y5Um5Kd0QtNmRuNVNJVXNtRVhaOVlKX3lKMDV2UVZRVHpUeVF2QzFSYzIyaC1wdDU3amdBbWY2VWxmLUJJLTlkR0hGMFZ2Rk83a1UxNE5sS1NTbHBfRjNOaVZOcWU?oc=5",
+     "ts": "2026-11-27T13:56:39+00:00"
+    },
+    {
+     "t": "Mercedes-Benz's electric CLA delivers agile handling and lively performance with youthful appeal [Test Drive]",
+     "s": "",
+     "src": "머니투데이",
+     "u": "https://news.google.com/rss/articles/CBMicEFVX3lxTE56QmZGdlhNdF9kWUVKUFVGQkVQTUxCWngwWUpmc2xRWEpybWhPbWVRN2d2Q19HTHVjdWJ5UTBPcjFpbjhzeVpWaEF3QVl6WnR3N3A2d1IzdWdfd3BXTHVxVVRlemltWFlveTZHX1h5cjg?oc=5",
+     "ts": "2026-11-27T13:47:55+00:00"
+    },
+    {
+     "t": "CI AWARDS 2026 WINNER: Distributor of the Year – Project Management",
+     "s": "",
+     "src": "Catering Insight",
+     "u": "https://news.google.com/rss/articles/CBMingFBVV95cUxOU3hETFFINXhoQjZEWlpncGNpeDQ5MjMxYVd2Q0FsX2UxeV9MNmV2eWJvMDlPSHhLa1o0elI4cUFsbFVLRHp4S0hfaldZaWFlM1VsbE9oUGw5b3pvYkVOb3JlNnc3Q1hQU1dYV0lQY1RPUFNZaUxOQ3RGNWxNOW5Sc1VBZU9BSjk4QkxxOS1kR3pTOXNQTkRjTXExd3Z3Zw?oc=5",
+     "ts": "2026-11-27T13:20:32+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f_design",
+   "title": "Design & UX",
+   "items": [
+    {
+     "t": "Atreides Management LP Makes New Investment in Figma, Inc. $FIG",
+     "s": "",
+     "src": "MarketBeat",
+     "u": "https://news.google.com/rss/articles/CBMivgFBVV95cUxNRjNUTlR1cVloUlVHNHZ6eV9KcUIxcXB4NW9RUUZCeE9GTlJ2cUZTa2RrZjhzNXJGS2wxWncxWC0wYVVGdVYzU1lFX1lxRlB5TGNyTHByRC1vTkZ1bEYta3hVTTBkRWIxVDd3MzF5cTVoTjRURE03OGtxWERNOXBZOUpUS1NKOGNVTnhlZGdiRDFWQmlkWDlYUFFYemViZk16blZLY193TlA5ZXp3Y3BTcUdDa1Jwd3B0TEt2MkZB?oc=5",
+     "ts": "2026-11-28T08:11:40+00:00"
+    },
+    {
+     "t": "Form 4 Cadence Design Systems Inc For: 28 November By Investing.com",
+     "s": "",
+     "src": "Investing.com UK",
+     "u": "https://news.google.com/rss/articles/CBMirwFBVV95cUxOd294Ti0wS1NTZlowcE8yNVJDRktweEgtZjFCTzgyTm1aNWtVRjVYUmlOaXp6eThOakpaV0dKb1dEeTk4ZUItc0drTkNYZnU2RkNLeEJiZThsMEJ3Szc5YnR2TS1mbHRzTzJsUEJOM1NJdGJ1NXFDSlF5ZHBoZHV5MHFCaUZUTnZZM2FHWWttY1BrRW90TjRnT19PTkpablNSLUp1X083TlY0VXVITVpN?oc=5",
+     "ts": "2026-11-28T05:02:00+00:00"
+    },
+    {
+     "t": "Cadence Design Systems Inc. stock underperforms Friday when compared to competitors despite daily gains",
+     "s": "",
+     "src": "MarketWatch",
+     "u": "https://news.google.com/rss/articles/CBMijAJBVV95cUxQUkZiak54cUZXV3RYU2x3dmVUWFVtLVNWM1JKSWFraGRiNVZhdjBleUJoZFNPSEMxX0htSFhLSEVRSVpud3ZWd2NJd0trRlpCdnNZNTA0MWVINnA1Z0daU3VMZVgxeHc3cE5WRERnR244VDl6MDlub3JIejR4cWZURnNwVElwRUJjTUhMNmhaT0RvYWNzVkpIOUxvRUd1RWJXOUlrcWh6LWoxMFJFR3lTTUd6cHdRczVjWGJlVUZmNEliZkJEdEtxRmlYck5BZGNuMk5fRXc3VDJLelRMOHhYRTNOaUhyUzJpSHN4NjVGMnh3UjBQSkpYNXdMdnRiTmE0N1Q1dGpucEFFV3Q3?oc=5",
+     "ts": "2026-11-27T21:44:00+00:00"
+    },
+    {
+     "t": "How does the touchscreen work on the new MacBook Pro? PROLED technical details and user experience",
+     "s": "",
+     "src": "آي-فون إسلام",
+     "u": "https://news.google.com/rss/articles/CBMi4gFBVV95cUxPSURsQUg3aVV3cVBtX2pBbWVQaExVVXdhSDVZTHk1Vm5aajBZY0JBSUxuZkF2LVZreTB4WDNTdVhIY0R3Zmg5Tk5xUmdRQno1TDEtYzd3QUxjRTZfR1pKTlhvaGh6ZUpQdTFfX2VCdnNTWEtZRklvV2RPT2tXbXlpVHR0OXN5NlhmQk84bnJUSTU3ZUltQ1JlbXdZeGp0b2x2ODVsTnpLYzM3TUd3eUJtSlFwcFN4S3pFd213QnU5VzdUMVdmcDA5c2lpYjdsV2ltM08xXzRLWUZPODF6SjlHeGlR?oc=5",
+     "ts": "2026-11-27T19:37:28+00:00"
+    },
+    {
+     "t": "Figma: Existential Crisis And Dilution Make It Lackluster (NYSE:FIG)",
+     "s": "",
+     "src": "Seeking Alpha",
+     "u": "https://news.google.com/rss/articles/CBMinwFBVV95cUxNS0dzRHdITVliak9YQ3h6T1pka0c5ZmdWbk9KTzk5X2lOcHZ6MGVpU0JndS1fcklNeXFGRDRTNWd6X2RvdGJPZjZ3WWZjQlBkNlBHalJqNmZBMkJTWno2S2VWRjRxVzBac2JFeGRHaVpDRXRkQlMzcnpYRGdHcWRpR2dVUXdzb3R5clpRdWo1ZWh5ZmZ5T1VENDZ5bUEyNlU?oc=5",
+     "ts": "2026-11-27T16:26:48+00:00"
+    },
+    {
+     "t": "Not Only Figma and AI: Must-Have Skills For Designers in 2027 and Beyond",
+     "s": "",
+     "src": "Университет ИТМО",
+     "u": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1yOEJvZmpuaEVEZTJkZkRaaTZQaUVpMk9HMmF2OW9zMmF6cTdfZEp2Tlo4UlV1ekhsY1pHRzg1NmQ0SzZsUHR4bUJhSzFNR182aERmeVYyOUdfa0o4di1meA?oc=5",
+     "ts": "2026-11-27T16:16:17+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f_marketing",
+   "title": "Marketing & Sales",
+   "items": [
+    {
+     "t": "Seo Dong-ju, Amid Infertility Struggles, Cherishes a Single Embryo: \"I Hope It Can Come into the World\" [Star Issue]",
+     "s": "",
+     "src": "스타뉴스",
+     "u": "https://news.google.com/rss/articles/CBMid0FVX3lxTE1BdUdaNWFjWlR5RUk4QlNEXzZ2Q2JkdDg5Zl9YajBjSjVCaDl4WWQ4ZDZ4anR0cmtnREFjcXhzblRKSVdWYmJ5NmJtd0ZqN2RmV0ItWk1BU1BUM01Sbmg1RzJ4MzFyZ19OZXZtNGJ4dlh4M3FYc2ZV?oc=5",
+     "ts": "2026-11-28T08:40:03+00:00"
+    },
+    {
+     "t": "Seo Hyun-jin's 'Liar' Character Arrested, Attitude Shifts",
+     "s": "",
+     "src": "조선일보",
+     "u": "https://news.google.com/rss/articles/CBMijgFBVV95cUxPMzVjcE1xaDYzbmpNamlPQkJIUWdiQXJhajJlckNEMzRoMHRWNDNZVktWTGsxMGNIUWVXdDNfRzFTLThtY0pGN1F1RnJQdVVMeklaOS1iYUY3MHU2emtBOXhmMnRqdnpRZXN3VldSTnhjcW1xRTkyaGk4a1E3cS0zMTVtQzk0QVhCRVhtZ0xR?oc=5",
+     "ts": "2026-11-28T08:03:45+00:00"
+    },
+    {
+     "t": "MTDLN Media Presents \"100 Digital Marketing Revenue Strategies\", Exploring Business Opportunities in the AI Economy",
+     "s": "",
+     "src": "24-7 Press Release",
+     "u": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxOQ1c2U1UyczdQWW5mRS0yRXZzSHpyZ2oxOEtKTkpvUGtrdmlqOHR1VHZCM1ExY2stcEcxVm9ZVF9ZUmY1QnNiUmRGTVJSWGdhdlpKekZ5WjRFZHB0R0RBclBtZVhXM2VTd1JmbEpjaDhmNDRKNkNjQWQ2Q1JBNmR6LXRFRzBlUEYxRnBsckhudG9KMWZYVlB5eVhfYkJVakdzZGVJNXR4MmtwUXBnYUxSd1hSdzdDOVhKZm1lQjFqNmZXSGxtR0lDWTJXWW9mZXJNWnlWLXVsbExleWoyNGJtZTJZcy0xbENNVmNkRVdHb1JHaHpybFN3Vk13?oc=5",
+     "ts": "2026-11-28T07:05:54+00:00"
+    },
+    {
+     "t": "Democratic Party Lawmaker, Minister Clash Over Legislation Committee Authority",
+     "s": "",
+     "src": "조선일보",
+     "u": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxOYlBCSUxWOGFxcjFOR2FOYmVBXzlVNllJRU1xWk9wbEI5a0s5WnFtcEkzdlc1c0tfUDFObVotM0hoQk1RenBfWE9KS2RWaExKVkJJcW5uT0RBRW9hLTZOUUk1bkNOclNkdjRaODVSMW9iQ01ZT09sYjVZS3ZXTThONmRUSC1wdURy?oc=5",
+     "ts": "2026-11-28T06:19:39+00:00"
+    },
+    {
+     "t": "Seo Hyunjin’s character becomes murder suspect in “The Perfect Lie”",
+     "s": "",
+     "src": "Chosunbiz",
+     "u": "https://news.google.com/rss/articles/CBMiiAFBVV95cUxQaU5RYmNyNXQ1UmpQdUF3VS0yYTk1ZXl0NjdxSkplVjNzV0Z2NS1jNHB1cEQ3YWFKVktza3AwaTRIaEtDQThaMnNSR21jdWVzQURnMUNDRnhyN2N0LWgzN1FXZHZMWk1Oci1xX0ZaZzJnVjlXelprblFmMXl6X25FSmczazZQczll0gGcAUFVX3lxTFBKVjJJOW90bHZrSjhCRGtHemVCU0dmcFJCTnhmcmptSjM0MnVfN2hybHJuWXoxTzhlOGw0R0hPaTdpaUtGR1VqZ0NQUlU2aS1LbnlwM2RRcUxybXgtTHMzYzJMbjZ4NVhkaUlXU2tfbWFwVjJ5RGZTMUxaSVl5ay1XYV82TUlmeUQyb2Y0V1dFQkNsS0VCQ0xrbDhFZw?oc=5",
+     "ts": "2026-11-28T06:10:00+00:00"
+    },
+    {
+     "t": "Seo Hyun Jin — Suspenseful Turn From Victim to Suspect in ‘Liar’",
+     "s": "",
+     "src": "The Korea Daily",
+     "u": "https://news.google.com/rss/articles/CBMiYkFVX3lxTE1GZzFBRUE4d3FpVHNOM2o4cTlXdHhhVVJSNHNvbmJUQ01Eck1MVGd4d1dFdFdVc2p0NTJEU0x2LUtnT0h2aXkyT2dfQjZTbVRVZk9ibFl1eW9SQzBDelFPVHR3?oc=5",
+     "ts": "2026-11-28T06:09:12+00:00"
+    }
+   ]
+  },
+  {
+   "id": "f_voices",
+   "title": "Industry voices",
+   "items": [
+    {
+     "t": "Why a Personal Free AI Account at Work Is a Real Risk",
+     "s": "I understand why people do it. A task lands on the desk, a personal ChatGPT or Gemini tab is already open, and pasting a paragraph feels faster than asking whether the company has an approved tool. I still think it is a ",
+     "src": "DEV Community: career",
+     "u": "https://dev.to/sauliussteponkus/why-a-personal-free-ai-account-at-work-is-a-real-risk-4kah",
+     "ts": "2026-11-28T09:00:00+00:00"
+    },
+    {
+     "t": "Digital Marketing Agency in Chennai: Grow Your Business Online with MS Digital Media",
+     "s": "As a digital marketing agency in Chennai , we work with businesses to improve their visibility across search engines, social media, and online advertising platforms. Whether you are building a new brand or looking to str",
+     "src": "DEV Community: career",
+     "u": "https://dev.to/msdm_seo_403c68b6b70f4e2c/digital-marketing-agency-in-chennai-grow-your-business-online-with-ms-digital-media-33h0",
+     "ts": "2026-11-28T08:55:00+00:00"
+    },
+    {
+     "t": "Sandboxes, secure inference, and keeping agents from going rogue",
+     "s": "At We Are Developers, Ryan talks with Daytona CEO and cofounder Ivan Burazin about agent sandboxes and Blackbox AI CTO and cofounder Richard Risk about encrypted inference.",
+     "src": "Stack Overflow Blog",
+     "u": "https://stackoverflow.blog/2026/11/27/sandboxes-secure-inference-and-rogue-agents/",
+     "ts": "2026-11-27T08:40:00+00:00"
+    },
+    {
+     "t": "How Wearables Can Turn Your Body Into a Dashboard",
+     "s": "Have you ever found yourself waking up feeling perfectly normal and then being told by your wearable app that you've slept poorly? And perhaps not only that, but somehow finding yourself starting to f",
+     "src": "freeCodeCamp Programming Tutorials: Python, JavaScript, Git ",
+     "u": "https://www.freecodecamp.org/news/how-wearables-can-turn-your-body-into-a-dashboard/",
+     "ts": "2026-11-25T20:11:21+00:00"
+    },
+    {
+     "t": "How to Deploy to Amazon S3 Using GitLab CI/CD and AWS OIDC Without AWS Access Keys",
+     "s": "When you're learning AWS, Amazon S3 is one of the services you're likely to come across early. Storage is one of the core components of cloud computing, and S3 makes it easy to store and manage files",
+     "src": "freeCodeCamp Programming Tutorials: Python, JavaScript, Git ",
+     "u": "https://www.freecodecamp.org/news/how-to-deploy-to-amazon-s3-using-gitlab-ci-cd-and-aws-oidc-without-aws-access-keys/",
+     "ts": "2026-11-25T19:49:25+00:00"
+    },
+    {
+     "t": "How Anthropic builds software in 2026 with Katelyn Lesse",
+     "s": "Katelyn Lesse explains how Anthropic rewrote Claude’s API in Rust and how AI agents are changing engineering at the company.",
+     "src": "The Pragmatic Engineer",
+     "u": "https://newsletter.pragmaticengineer.com/p/how-anthropic-builds-software-in",
+     "ts": "2026-11-25T17:31:32+00:00"
+    },
+    {
+     "t": "When AI Writes the Code, What Counts as Evidence?",
+     "s": "",
+     "src": "Stack Overflow Blog",
+     "u": "https://stackoverflow.blog/2026/11/25/when-ai-writes-the-code-what-counts-as-evidence/",
+     "ts": "2026-11-25T15:59:41+00:00"
+    },
+    {
+     "t": "The Pragmatic Engineer Essay Challenge: Category Winners (Part 1)",
+     "s": "How is AI changing the way we build software? Excerpts from three category winners of our recent essay contest, with links to 40 more by software engineers and experts",
+     "src": "The Pragmatic Engineer",
+     "u": "https://newsletter.pragmaticengineer.com/p/the-pragmatic-engineer-essay-challenge",
+     "ts": "2026-11-24T19:16:38+00:00"
+    },
+    {
+     "t": "Fragments: November 20",
+     "s": "Marcus Borg recounts an experiment to investigate if healthy code was cheaper for agents to review . Between a typical unhealthy pull request (CodeHealth 2.8) and a typical healthy one (9.7), that adds up to 22 to 35%. T",
+     "src": "Martin Fowler",
+     "u": "https://martinfowler.com/fragments/2026-11-20.html",
+     "ts": "2026-11-20T13:38:00-05:00"
+    },
+    {
+     "t": "Data Contracts",
+     "s": "",
+     "src": "Martin Fowler",
+     "u": "https://martinfowler.com/articles/data-contracts.html",
+     "ts": "2026-11-18T09:02:00-05:00"
+    }
+   ]
+  },
+  {
+   "id": "us",
+   "title": "United States",
+   "items": [
+    {
+     "t": "Army deems lead azide detonation a success but criticism lingers over notification",
+     "s": "",
+     "src": "AP News",
+     "u": "https://news.google.com/rss/articles/CBMihwFBVV95cUxPR0EtR1JfYXg0UHhDSHFDWWtYcXE4eWFIcjhydk1IbVZjQUh4VjItVmYtQ3J1SzBQQ0JqcUlrcVBoODlTeHNPTUdpdmxKVHlycUU1NVFFc1BGMWxFS2NYOXlpU3dObXpiZ3ZYQ1RrYTdWc2tmREtqTXNNVWxkZG9aa1hMOGZDLVU?oc=5",
+     "ts": "2026-11-27T22:45:00+00:00"
+    },
+    {
+     "t": "2 American Airlines Jets Clip Wings at Reagan Airport",
+     "s": "",
+     "src": "The New York Times",
+     "u": "https://news.google.com/rss/articles/CBMihwFBVV95cUxOTFl6ZmcxZzB3VkVqMHhQenU0cjFYZHhfeGRzYmFTSUZTbGhfaFhGbTQ0c19OcEdMSnNLNEgtc190TXVhVmhxVTExUDVKcm51eDgxeTZZaGtCNEh6TXNSYVk0VjZ5ZWpSZEMzTGw0T1F0aE9PZ3ZBcVNjTlVIaFhJZC1MRk9zNVU?oc=5",
+     "ts": "2026-11-28T02:55:37+00:00"
+    },
+    {
+     "t": "Hundreds of thousands still without power after severe Thanksgiving weather",
+     "s": "",
+     "src": "NBC News",
+     "u": "https://news.google.com/rss/articles/CBMinAFBVV95cUxPbHZDcGNBblpnR2Zwdy1RRWhBTmhpOTAwRWhNdDJHS1BXNDBsSFVHQml1eHU5NEVrUUM4bVpJN2xBMFdUTXp0VFYtcU1PYTVHS0lBb2ZuOWw3OGZRaEdDSlN3d1o2bU56Q2NBaXlVSTFWaS13bnp4NnhFQ3hhNW4zVlBvRHNUc2VEX2haa1hnQl9xdm5aX1J4RDVhQUk?oc=5",
+     "ts": "2026-11-28T05:01:00+00:00"
+    },
+    {
+     "t": "Andrea Stewart-Cousins, NY Senate leader, dies at 76",
+     "s": "",
+     "src": "ABC7 New York",
+     "u": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQMkNXTVl5TndwZFpYcVRUVV92eUJ6N19wV3Z4UjJFZE03cnhxR3F0ZXM4VGMyZWJHd1ZIb1k3WnVYNkpkVnpiejdBSnJMWTB2RUlrelJzYlNGb2lOYndia1A4OV9BZjJOeHNRWkxBaXFJRDlxeVB3eDhaLXB6RUpteEs1VHphRVp6aGNHOWVfMnc1QkozM1gxVHNB0gGfAUFVX3lxTE1icFF1Unc4aFN0Zk9aRW8wdFpsMkp1V3h3Ujh6SDJxaW5TWEVPamllNWFnYXRkZkRYRFM1YXRFY1MtNFJVNmhEdmxBTzhXWHNvYjktckhQOERJLWI1emNxTnA3dlNna3AxdnhKcV9Fd2RGU1EycXRfdjk3MjRhZHNLU01FUDdxNjhiNnFLVE9JMXgtN21pWG53LW43dmhjdw?oc=5",
+     "ts": "2026-11-28T01:28:02+00:00"
+    },
+    {
+     "t": "'We couldn't give up that easily': Marching bands scramble to cover costs after Thanksgiving parade rearranged",
+     "s": "",
+     "src": "BBC",
+     "u": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE80dndNMHZlUjVKYU12RGk5d25yQ09veXd4LUxYdjJoYXhldUVHbnlYLUJHWUIzRmk0enJueDBoQ2UyRExnVzdvSVNQbG5HTl9uZHFoTm03S285a0E?oc=5",
+     "ts": "2026-11-27T20:06:31+00:00"
+    }
+   ]
+  },
+  {
+   "id": "uk",
+   "title": "United Kingdom",
+   "items": [
+    {
+     "t": "Pensions and benefits services still down after 'cyber incident'",
+     "s": "",
+     "src": "BBC",
+     "u": "https://news.google.com/rss/articles/CBMiXkFVX3lxTFBGV0JOSVVCcEFVY0VjOEplSXVPQV9ia09pOHdfMzgwOXExbXlvYlAtNUFnVW5RRE83VFBYdmdnbjVBOVk4U3MwNzh2Y3d2eHRDenFuTVJMeUZBaVRpU2c?oc=5",
+     "ts": "2026-11-28T07:26:06+00:00"
+    },
+    {
+     "t": "Princess of Wales documentary Heal charts ‘pilgrimage’ after cancer treatment",
+     "s": "",
+     "src": "The Guardian",
+     "u": "https://news.google.com/rss/articles/CBMioAFBVV95cUxPdTloblNzSjA1S0pYZk5ETFFxTU1wYWYzSGc2WTVUVUdSd3dqX2toZ3V5UUN1RVdhQm5aNnllTlFXOVROcjVYUFRSZ3I5V3FUbkhWcDlTeWpIakxEX2V5TUY3Mk9mRGF6ZDUxSVRid3NwMXV1a2JUTTA0WkJjLUhBZm01c0hkR1lYVHdCQVVDRUNDcGJPVlF1alpPcmYyZm9L?oc=5",
+     "ts": "2026-11-27T22:00:00+00:00"
+    },
+    {
+     "t": "Andy Burnham ‘faces Labour civil war’ over Rosebank as MPs plan to ‘hijack legislation’",
+     "s": "",
+     "src": "The Independent",
+     "u": "https://news.google.com/rss/articles/CBMivwFBVV95cUxQVnVldjlpeDRHYXJ3Tmg5dktEQm1UanF5cHd6MVVBUDBNTHhja3VwYWNla0pfU0tRaHpxY2hXQmdNRC1ucTFsRmxkY013Yk5kdHVVYWtpaWJkXzkzaVlPREF1NVVKbmF5SmF4a2V0cUFEaW50TG9sTUZITlZLU2lnSC1jbzNOUnZsdTR6Q1RHS3VwbWtXbUZXNklxRHlMWWRhMndaWW01MW1vTEFRQ1dzQzdzaGZ6aXNPUlFfcW82Yw?oc=5",
+     "ts": "2026-11-27T21:14:00+00:00"
+    },
+    {
+     "t": "Former defence minister: I failed Tory ‘purity test’",
+     "s": "",
+     "src": "The Telegraph",
+     "u": "https://news.google.com/rss/articles/CBMijAFBVV95cUxOX25saWhXNXMwM3phZ2NYcFYxQ1hpZE1QQnFsd05XWV8xM1ZNVWpGVFFqTnd4elk3SUhjUS1nQVFzMFh3cGtRZ29MSmI3eE9QeXdmSi0temt3OFk2QXVVWVRkVER3d0NVVEZ1LTBfLUprek44OFdQQ0VaeVZrbEJpS3VRRzlGQ3RYd2lsbQ?oc=5",
+     "ts": "2026-11-27T15:34:00+00:00"
+    },
+    {
+     "t": "Stop worrying about young people’s sex lives",
+     "s": "",
+     "src": "New Statesman",
+     "u": "https://news.google.com/rss/articles/CBMimAFBVV95cUxQN0dtYTc3YW9MQlpESWg0eV9ZeGlGUGowV2c0U25nSTJ0TlQzRVdCV2JRYnZHX2U4WE1BRm8zSTdGaHBJRFJ3RGE0T2NkQldZTF9mRmhuUlJCN3loWUwtYndvTGZ6YmwwNGl0TTB5bUpzb2VhakNOZW42ZHJZWUdLamx1eDdHMGphbW94eDltYlVQYnROcVNvNQ?oc=5",
+     "ts": "2026-11-27T14:11:09+00:00"
+    }
+   ]
+  },
+  {
+   "id": "ca",
+   "title": "Canada",
+   "items": [
+    {
+     "t": "Canada's top court upholds Quebec law banning some workers from wearing religious symbols",
+     "s": "",
+     "src": "CBC",
+     "u": "https://news.google.com/rss/articles/CBMiqAFBVV95cUxPZWMwbElUbnVua1FUMjNIRVY3elkxbjNsY0lOTTQ1ZzZDRk9wMlZKQzhrUmViNGJLaUlMUHJWUzlpMnBZSGVCY1d5WVNHRmd1am14MjFieWlyc0dyY1owZnVSU2NlSktVTTlvR2IydmdBS2ItOEFYZEljdHEwSzlsdlRYNGpPRHhzOWV0YzI1TXUxZGMyT3EwWVY5MXpUSzhPN1VUTVNId3A?oc=5",
+     "ts": "2026-11-28T05:49:52+00:00"
+    },
+    {
+     "t": "Former B.C. minister George Heyman, ‘giant’ and ‘troublemaker,’ dies at 77",
+     "s": "",
+     "src": "CTV News",
+     "u": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQLVF0cUF2NlkxNS1vZGJjVkRmbVh0SFE2OUhpQkkxUVhNQ0xzaHRfbjBUNVc2SllGeXZiTXRRY3lzMHpNNklpc2JkMmRaRTRxVk5CLWVZZElFTExiYVVpdVZKbENrSzlKYWZ5M1ZfdS1iR1dUMm1wMUNPX1dxbkRlMFdCZ0NRYktPdlFhME1NLU9IQm1jUUotV1Q0MDhCMFpVeVNNeklpTkIyMkg0?oc=5",
+     "ts": "2026-11-27T23:16:47+00:00"
+    },
+    {
+     "t": "Carney to fast-track approvals for northern highway, citing Arctic security and economy",
+     "s": "",
+     "src": "The Globe and Mail",
+     "u": "https://news.google.com/rss/articles/CBMiuwFBVV95cUxQQV9KZHpNeWY2dGs5SFB5UElpSVpJSHhEcnNOU3NNMTlyTW11RlBkNGFxcXhYRVc2NkdOTkVka2EyclFfN241dnAzcnIyc1hkN0Z4NWVDNDNRNjl6Slp5TV93N3RGaWRLcDJEV3hTN050c0VKSmsxNmJpQjN4eXAwVjlPZHV0eDdUWWxYS08tMXZMSW15QkNWUng3NWdpbUFzc2UwamVmd1hITjMyTkQwQklGWGgzdW1uaE5B?oc=5",
+     "ts": "2026-11-27T21:33:52+00:00"
+    },
+    {
+     "t": "One day after MacKinnon called Bill C-39 a ‘slam dunk,’ PM Carney says he will whip votes",
+     "s": "",
+     "src": "BNN Bloomberg",
+     "u": "https://news.google.com/rss/articles/CBMi6AFBVV95cUxORnBJMEFpdVVLVG5EX04zSWhyUTNXcGdCeXlIeW1McjQyTDhXaUtnaEktQlpUT1kySml5eG5RTy1zZEVyZEFwLUhZeTRRMlBINmdyRHlDVEFQa0xfQnJlaVdLVkJZSlNTUVZyUjBTZ2NleHQ2U0N2dE1QT2g2d2hQR1owZ2kzMS1UWXN3OEFjVlZ3TGhySkNpM3BkWWM5T1JiRmhEMmZMSzctcFYxUUJFRW5tV2JMRFEzbmtjR09SSkpNUFU4VVFLQVRoTkNvLUZOcW01azRISjZ6dlE2SUR6OTd5UGNvOGpo?oc=5",
+     "ts": "2026-11-27T22:37:53+00:00"
+    },
+    {
+     "t": "Ontario calls for Criminal Code changes to give home invasion victims more protection",
+     "s": "",
+     "src": "Global News",
+     "u": "https://news.google.com/rss/articles/CBMigwFBVV95cUxPX3hCaXRsZzRlZVA0MVdDc0Uwc1lXdUhJdnZEalU1cGJodEtxNjQybGluUVFDM0FqQW92VGpYNkNJWHpGNzY4ZHRodUMtMWcyYnBQRVpjbkVKV0ozN1FMeW1OTXVyUWV2MlpIV3d0b3FJRlBLTVhDZmYyQkd6X1VhY2Nlcw?oc=5",
+     "ts": "2026-11-27T18:39:38+00:00"
+    }
+   ]
+  },
+  {
+   "id": "au",
+   "title": "Australia",
+   "items": [
+    {
+     "t": "Victorian election 2026 live updates: polls point to Coalition win over Labor in state election results – latest news",
+     "s": "",
+     "src": "The Guardian",
+     "u": "https://news.google.com/rss/articles/CBMingJBVV95cUxOZHVnZmtpRUNrVHRkTTYwYm9XT1l0ZGRCeTdfYTBTOUlhTXhFbnV0QmxXaGlzWlJ2WVhjbmhudHoxblU2REVXNWtyNEtkU3hVRWtDQXRjZm9DWmkyS1hjZUJjSG1zR1IzRVZGRjhKaTRwVGhaOGZwWGs5NGJwM1VPRERtV2lEVnhIOXhfOWFqeE1XNXJCWUtnbEhyYzlKWUZTU2VTekdSamV6b2tieFRTME0wa0V6bzRLdXcwajdjbURlRVdyMzVxdk1mUDN4clJSenp4MEozM2NfS0piYWRZRHlQbEc5MU5Xb09INHpmNHlhN1EybEpYd0R0d3FPcV9XZGUyMjJsM3NNWVRGcVlvT2tHMTAySy15NUNNT0hn?oc=5",
+     "ts": "2026-11-28T07:37:00+00:00"
+    },
+    {
+     "t": "Unoccupied house collapses in Mornington Peninsula landslide",
+     "s": "",
+     "src": "ABC News & Headlines – Australian Broadcasting Corporation",
+     "u": "https://news.google.com/rss/articles/CBMimgFBVV95cUxOYmpNSExEZlo3T2wyWnZIR3lsM3Nmd2h4cHN1TnYwZFhlZktGck1XRE5PNnh3RzQtSzdzbUR0bEZUazJuS1loTWxZU3VpODNUTU8zbWxaWnpfdTFsdFBTOTJVSEZJelI3MlVQY0FYSDc3UGtZamM4T2c5b2tXblRBei12azNsaXJtalhjUGNvdHJyTkJjZFFvWEVR?oc=5",
+     "ts": "2026-11-27T23:17:29+00:00"
+    },
+    {
+     "t": "Ballot bungle: What a 10-second photo op at Kensington Primary revealed about Ellen Sandell’s vote",
+     "s": "",
+     "src": "The Age",
+     "u": "https://news.google.com/rss/articles/CBMivAFBVV95cUxNVW96dW9Xd0x6SVJ4TUdobU5XUF9ScDk4YlRucXRHQ0tiZ1MtcUxtdHNkbHFmSVdqbW5DMDdadm0tcmlHaFZvbUVrbjBkcDJuNm1CSzhlVzkzY2hOTGhiT1k5U01HSHBMWm15Z0VXSzdMNXNjQjIyRzhzQUkxS1BKVEViZnFIbks1bVp0OUNVRE91Q0pWSzlYUkJKZlVuajFBVlIwWHdQNlBJZXVSMFBwdmNuZjBLTDVZMEJiVA?oc=5",
+     "ts": "2026-11-28T06:40:58+00:00"
+    },
+    {
+     "t": "'Really frightening and real': Australia's summer warning",
+     "s": "",
+     "src": "SBS",
+     "u": "https://news.google.com/rss/articles/CBMisgFBVV95cUxQQUx2YVlURjBlbXFLX0poM2pBakIyeVp2dnJXZG9vOGY2d29WaHdDWDJpbzQwTDF0YWltSWVSTlN3dUcxanZJYlRfV2tpWS1qZ25qN0RlbDVfSUs1bGItWVV4SmFLdmRtQS1fc3gxdmtrZDUwbEVJYkxKSXdOenZ5UzY3ZWljYXBzUEFUMXh4X2IyYlFxTk04OFhTazVYM0c1UGlwWWlXWnR3c3BLZE1kZ0pR?oc=5",
+     "ts": "2026-11-27T19:31:50+00:00"
+    },
+    {
+     "t": "BUSTED: AI cameras snap Perth’s worst drivers as fines begin",
+     "s": "",
+     "src": "The West Australian",
+     "u": "https://news.google.com/rss/articles/CBMi-gFBVV95cUxQcjhGeHJRczh4RUJLTVl3b0hiakNwY3ZBVkt4TURJYkNtbnBuZ2FOQ09aUXBnRDJYc1FjRjQ1SUY5Szd3Z3d4c0tUNHF3Ni1zeFZ1Y05OOGVGVUF0YVdtdjczTVEzMUozd2ExVVBsbk9vYXI4OGRhcWQtTWpiMnRrUnVGVVdpNDVqVnoyRTZEaFhIQlBCTGJSYTVUaC05ZUNWTmZmbF9oaG00d1Vkbkx2aWRhMHhkTzVSNzdwZWJEdFFNdVczUXhrMjZrWVlvajZmZmZDeU15UzIyWkdYdkE5MnA2Rmt6OGoyLUZQZGVRRnNRUGlYblUyNHln?oc=5",
+     "ts": "2026-11-27T23:30:00+00:00"
+    }
+   ]
+  },
+  {
+   "id": "saudi",
+   "title": "Saudi Arabia",
+   "items": [
+    {
+     "t": "Saudi Arabia shifts Vision 2030 spending amid economic and security pressure",
+     "s": "",
+     "src": "CNBC",
+     "u": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5kTDVKTld6YXNveU40V0o0bWRaUDB0b0VNRmJ5RVlERWo5OUdVVXBsNGpTQmlSUzRDTDQzc193VG1QR0p6RDZPWklxZ2ZiM1VMWHdxZkJZUUtSSHlCVHRnSDlHQ3M4bWVPLVVPNjBVVFlaNUZpUEdLVWZR0gF_QVVfeXFMTVh2czYwZTAxaGF2LThUZGJUdnhEUC1pUk9PUnZOLWxJOGd3MUtKdjB0OVAzOWVCRS12Q1BLMEhPTzNqMFM2UUJta2ZHbGdZdC11Yk8tX0dWMVpwTjBJZEJNOEdXRU5QQ0lkMmF4MjQ3b29ZVjI4WGpxTEFZa1FPOA?oc=5",
+     "ts": "2026-11-28T06:00:01+00:00"
+    },
+    {
+     "t": "Saudi Arabia Rethinks Its Vision 2030 Ambitions",
+     "s": "",
+     "src": "الحرة",
+     "u": "https://news.google.com/rss/articles/CBMiQkFVX3lxTE5vbmNVYjhKazEtZXF3YU1YOUdsakowUnhWRzFudk5kdU9ISk1aOGJIQ2oyWEI3OWh2Sl9zdlRuVlYwZw?oc=5",
+     "ts": "2026-11-27T18:24:24+00:00"
+    },
+    {
+     "t": "Saudi Arabia Raises Electricity, Water Tariffs January 2027",
+     "s": "",
+     "src": "https://houseofsaud.com/",
+     "u": "https://news.google.com/rss/articles/CBMieEFVX3lxTE1TMW1BS2gtakpmNGZvSmdDVmp4MW9aa2JFazNrVV9VX2JreXR5OUtfaWFoNEYxd29tNHhhS1FvbWpnNTVtMGRJUGVWOTZuNkE3aC1GM2FYOG82dDFKNWZEYi1IZkVUY3c4S19LdkhXVFNWM09uMzFldQ?oc=5",
+     "ts": "2026-11-28T08:08:15+00:00"
+    },
+    {
+     "t": "OIL CLOUDS: War-Torn Present Clouds Saudi Arabia’s Post-Oil Future: Bousso",
+     "s": "",
+     "src": "EnergyNow.com",
+     "u": "https://news.google.com/rss/articles/CBMilgFBVV95cUxPWmtOVVJ1d29EZlY4UERFUU9lSm1mQmw2R3dIMmY4LXE4eGt6TW5DNDhGaFM0R05fanpsUjhyZ1JGQTlFajl1X3M2ZnRLMkZBa2Y3R0lYTFdvRVFmT3RzQmowRVJ6b05GXzlJWmh2UWhOTDZPbF9zTU1DRUFVeS1yUzlmd2RmeWdoQ003a09raWtncnZWcXc?oc=5",
+     "ts": "2026-11-27T21:38:14+00:00"
+    },
+    {
+     "t": "Saudi Arabia records highest global growth in tourist arrivals since 2019, says minister",
+     "s": "",
+     "src": "blooloop",
+     "u": "https://news.google.com/rss/articles/CBMibkFVX3lxTE5aN1ZCQnhTdnpBZFFybGVQdzA2MGh2V0F0VUdkWEwtR1I2SGlCVnlTOGYtczFNNnpIaENOYm9yLU1Ebm95OGk2MlV6bXo1U1BFS3NybzhQT2Z6ck5JektRWnlTblhYTUstTTQwS2Vn?oc=5",
+     "ts": "2026-11-27T11:36:23+00:00"
+    }
+   ]
+  },
+  {
+   "id": "pk",
+   "title": "Pakistan",
+   "items": [
+    {
+     "t": "JUI-F claims scores held amid protests",
+     "s": "",
+     "src": "Dawn",
+     "u": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE40aWl2N0dhSExLOHFKNTNicVU1ZlB6OXYtaUV4a3hPaU5JbWVucXd2STdBUGREaGJiX2hIXzFlclJPeUtXWThUXw?oc=5",
+     "ts": "2026-11-28T00:02:17+00:00"
+    },
+    {
+     "t": "Talagang to be fully functional district today, announces CM Maryam",
+     "s": "",
+     "src": "The Nation (Pakistan )",
+     "u": "https://news.google.com/rss/articles/CBMinwFBVV95cUxQMjc5U3ZBZko3dlBJUnVYWDBEQjh1MXVnYmI4eG85a3BpNV9NTF90MkkxQWNtOWhSbS11WHhEM21pSzRHVTBvVkZZb21WcTA2bUdjb0NsMUhoNWtnbFFTdW5jUDVOSUZNX3B1UW1IaEpnbWx5c3Z0ZFFzZjJ3WXlYUEExbjQxWTBtSm5LZXhPeHdZRklaSHM1ZVlMSG5DVlU?oc=5",
+     "ts": "2026-11-27T21:01:00+00:00"
+    },
+    {
+     "t": "Pakistan’s Space Journey Takes Off Aboard A Chinese Spacecraft – OpEd",
+     "s": "",
+     "src": "Eurasia Review",
+     "u": "https://news.google.com/rss/articles/CBMiqgFBVV95cUxOQXZlQ1FVNnF0QTdzNFhveGhUWl9TTUFpY0o4azhZYk1DVTJYdkpWNEhvRUpWMEVJSjFKYWRleFhCN2oxU3VSZzhhRVU1bDB2RDh6UFNRYy1IaWxEX1Rud05HYUprM3NrQ1ZiTUNsWkFoZWFyek02Q0l6a0ZjLXBVcHNJcHVfVzBMTzNqNExETzR3dGdwaDA4cDJpRUNPOTRBR1l6Q2duSUEwdw?oc=5",
+     "ts": "2026-11-27T21:04:01+00:00"
+    },
+    {
+     "t": "Death toll in Pakistan building collapse rises to 8 with about 10 missing",
+     "s": "",
+     "src": "AP News",
+     "u": "https://news.google.com/rss/articles/CBMimgFBVV95cUxQQVdFOTRHX1VCZDE1Qkl5RVAxT2pFNS1ZcHI1blh2dzJVdUt6M3lBZWdxWFJYYkNjWDgweTQ5T2VCa0hQa2plLWE5R0lDMm5rZXB5TEJrVklrWU05U3ZweGVjTXgxQTF5VW5ybmx2ZVZVZHNVZm92RzBxcHkyVDRwNHphU25WZHhPNndScEpyc3duX1lvUEdaNTB3?oc=5",
+     "ts": "2026-11-27T16:23:00+00:00"
+    },
+    {
+     "t": "Govt revises petroleum prices for next three days",
+     "s": "",
+     "src": "RADIO PAKISTAN",
+     "u": "https://news.google.com/rss/articles/CBMimAFBVV95cUxPaFlIVzA1YlBfSUZ0ZGRkckdiQU84dURiZTdCOEQ1WVJRbDJ0NmlIblFmMHU1RnVyQ19BSUdySjlzNk5jXy05SjhQV2k5ZG56NHdueG45LWk4UUF5VUtwRU9haW9WRzNTQ1dDRXV6TTJIYUNjaVFZWHJmTG1qY19pZUlrbzMzUDY1Z2N0VlRyOGdEODJoeEhZMg?oc=5",
+     "ts": "2026-11-28T03:20:04+00:00"
+    }
+   ]
+  },
+  {
+   "id": "world",
+   "title": "World",
+   "items": [
+    {
+     "t": "Spain's Sanchez makes final appeal to voters before election",
+     "s": "",
+     "src": "DW.com",
+     "u": "https://news.google.com/rss/articles/CBMilwFBVV95cUxNSHZ4TkgzX0pQREY4em9GUUgyMlFZSFdYZWtXY0hXZjNBM3B0VjRTWGYxbVpETnZ4WnJ2UmswQXV1blVkM1lqb1lMRGlKV09Iaml1bi1aQ3ZGNzRlcTcwS3F6U05PLXhScHdxeHgyQlZCQXpWM1FQTzhQTTZRcUlreENqQVpxUGU2b2NjU0pIV3Bxc1A3OFlr0gGXAUFVX3lxTE5sRWNDZUZBcVZ4T0JYSG9mUG5JTXFNeFNsb0Fib0FlSkFxZDliRHpWWktjejJLWjBfRmhibGJfazRPVmtlbGJSZFZzbS1ZRC1HaGtHOUtqZWZMc29NWXVaX1FzbWdFSE5UVk5QQVJmRndiS0l5dzNWeXFvLVhrU1RBSFRuT3N3eWpjU3lSZ2VnNm5qQktUVkU?oc=5",
+     "ts": "2026-11-28T00:56:12+00:00"
+    },
+    {
+     "t": "'Poison seller' Kenneth Law apologises in court to the families of his victims",
+     "s": "",
+     "src": "BBC",
+     "u": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1aNlBBMDZZVTMtSFRUc1pneTVHVXAzOW1YOEpyVW4zRjI2V1ZhcENHNkNfem43MmEtaklRVExwQ2RMTGZBYmZJcjRNQzlkYkZGZjh4Qjc1Q2EtSWs?oc=5",
+     "ts": "2026-11-28T00:56:55+00:00"
+    },
+    {
+     "t": "Far-Right Vigilantes Have Inflamed France’s Unrest, Officials Say",
+     "s": "",
+     "src": "The New York Times",
+     "u": "https://news.google.com/rss/articles/CBMihAFBVV95cUxQMElsVW1iY2Qwd3Zob0xzSHZqZEk2cWo1aTZuWUs5WjNXb25SOGxQS0c5bE1OOGlxVGMtWW9kcDA0MEotaGFQSmxydkxKRmZscmlkZnNmOXJ4Z285Ni04ZWV6XzVKdmF5eEpqMlhLOVE1dWEtaXh2UUM5MGhHRjM2WWJQNlY?oc=5",
+     "ts": "2026-11-28T05:01:18+00:00"
+    },
+    {
+     "t": "Canada's Supreme Court largely upholds a Quebec ban on religious symbols for public servants",
+     "s": "",
+     "src": "PBS",
+     "u": "https://news.google.com/rss/articles/CBMixAFBVV95cUxNOGRLLU9ZUjNWTkMtTENvQm81MDNGdFltZzJFSHRfV2pwbndVX2tsMzlfXzVlMjBNNzJYclg1LVFyczVINWZfSjZXa1RWbF9jRjA2cEg3VU82YkViZmluU0NFd3NSeVpuZ0ZJUnpqcWtvTzZCSGtzVm0wOTh2VXdBWGZnc0IxNVc4TUx1ZjhqXy1yTE8xNWU4UXFBd0dYSFdDRTdhLVBlb21ZMVZkenY3SEF2QjZ3MllOQVNmU2xLSGVqcDRr0gHKAUFVX3lxTE5lMVBaaFhoLUhDRHdIQ1kyeUtQRFc2Z2UwUGphcENFVmp5azhRMXd6ZVNlem9qanlhRWR4cm9ETFN5UVNtblZZVHVaTThOYzIzczhYWXljUS1aMVMxT2xzWVFqNWlpOHBtckV1dktJNWdHZ2h0bXd5UndVN2RwcUk2Sms5NVYxenJaanQwNlJIUEk4cG1RMmxmRWZMeDF0dk5iSC1JLVpCLUFhMGY5Q09aRmdXZDNMWFd6UlFINVlRZGpYdW1Uc1IwVmc?oc=5",
+     "ts": "2026-11-27T20:48:47+00:00"
+    },
+    {
+     "t": "Iran War Updates: U.S. forces disable commercial ship that allegedly tried to breach blockade on Iranian ports",
+     "s": "",
+     "src": "CBS News",
+     "u": "https://news.google.com/rss/articles/CBMilAFBVV95cUxPa0lGZ2x0YXZLeTRTdE1zN09yX3E5enVIX0ZnUmhUVDVfMlVNeVpqUmlxN3ZLZFM1X2hfZGl0MVZmV1ZQZTFoUkpFNDVMM3E5bVhpZTRWdWZ5SVQtTEx6UFBGRWRkNjM0b0hvbnRpNzJscmVLMG95Mk1vUGt0YW1DQmxxbTZzUEVVOFJWdTVGNThiLU9G?oc=5",
+     "ts": "2026-11-28T01:10:00+00:00"
+    }
+   ]
+  },
+  {
+   "id": "uaeindia",
+   "title": "UAE–India",
+   "items": [
+    {
+     "t": "Limited Use of FTA Benefits by Indian Exports Raises Concerns",
+     "s": "",
+     "src": "UPPERNEWS",
+     "u": "https://news.google.com/rss/articles/CBMilAFBVV95cUxNU1E5ejhsLTBnX2luV2taWEZ0TnU1YVFzaFhEc0RyNUlNelN0LTJoQ1g0RUt4ZjVVMTR2YnVTRHY1c3RmLXNXVVBXTDdZR1hBcFE0YTdOWDhZR0F2cE5WOW90TFN6QW1YNzVKcVhCMWhuWGJJejItV3QxS05aMG1VMjhKV1JoSVRSQTA0ZUtXemxXU0RJ?oc=5",
+     "ts": "2026-11-28T07:09:03+00:00"
+    },
+    {
+     "t": "Nigeria STR visa fees 2026: Top 10 countries with highest charges listed",
+     "s": "",
+     "src": "Legit.ng",
+     "u": "https://news.google.com/rss/articles/CBMirAFBVV95cUxQc1ZHWlNmT19mWlY4Q3J4RXFPMzBJUlQ5V3JYdlBuLXlRTTBHQjQxT3ZaUEdBRXVDTmFOVnVnWXRxOVRxX2FCSWdmRmVaRGh0eTBSUl9aOUxhTDB2bTNTaTFkdzVwel9nWjI3RmpvazVDTUR4djVUMEp5OHJ6UWJBaGhUamJ3bWhZRmtRcFE3TDMyeHRMWkN6YzBTWk11RVdDdEM4b2w5UmNEMDE0?oc=5",
+     "ts": "2026-11-27T22:58:24+00:00"
+    },
+    {
+     "t": "ORF, UAE's ECSSR expand partnership, announce joint study on Arabian Sea security",
+     "s": "",
+     "src": "https://www.indiagazette.com/",
+     "u": "https://news.google.com/rss/articles/CBMivgFBVV95cUxOaVkzRzNIRGphamo2M0RwdVBpQ3pCVjRJX3pWWVJCMk9xNkptUTNEQ1pSa1EwZVVMLW5Ea2RXeDdpWm8zMmswUXZJNmVtN2EzNDNxT1FodlZpbTZRWUFodFNIMk1WTVdrZHdmNEtBeFpBMXM1bWYzUjV3ZWhuLWR1NUVlYzYwQXhiOFVpUmJvRGhlVGFxNFU1SHJMX3BMcV96Yk56MW5VcTZ1MFVYN3VaUjgtbElld3hUZWd2alNB?oc=5",
+     "ts": "2026-11-27T21:23:00+00:00"
+    }
+   ]
+  }
+ ]
+}
